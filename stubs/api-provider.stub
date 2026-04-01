@@ -1,0 +1,20 @@
+<?php
+
+namespace {{ namespace }};
+
+use ApiPlatform\State\ProviderInterface;
+use Gingerminds\LaravelCore\ApiProvider\AbstractApiProvider;
+use Gingerminds\LaravelCore\ApiProvider\ApiProviderInterface;
+use {{ resourceRepositoryFqcn }}Repository;
+use {{ resourceModelFqcn }};
+
+/**
+ * @implements ProviderInterface<{{ resourceModel }}>
+ */
+class {{ class }}Provider extends AbstractApiProvider implements ProviderInterface, ApiProviderInterface
+{
+    public function __construct({{ class }}Repository $repository)
+    {
+        parent::__construct($repository);
+    }
+}

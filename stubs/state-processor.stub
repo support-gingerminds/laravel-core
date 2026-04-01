@@ -1,0 +1,27 @@
+<?php
+
+namespace {{ namespace }};
+
+use ApiPlatform\State\ProcessorInterface;
+use {{ resourceRequestFqcn }};
+use {{ resourceModelFqcn }};
+use {{ resourceRepositoryFqcn }};
+use Gingerminds\LaravelCore\StateProcessor\BaseStateProcessor;
+use Illuminate\Contracts\Validation\Factory as ValidationFactory;
+
+/**
+ * @implements ProcessorInterface<{{ resourceModel }}, {{ resourceModel }}>
+ */
+class {{ class }}StateProcessor extends BaseStateProcessor implements ProcessorInterface
+{
+    public function __construct(
+        {{ resourceRepository }} $repository,
+        ValidationFactory $validationFactory
+    ) {
+        $this->repository    = $repository;
+        $this->formRequest   = new {{ resourceRequest }}();
+        $this->resourceModel = new {{ resourceModel }}();
+
+        parent::__construct($validationFactory);
+    }
+}
