@@ -1,0 +1,84 @@
+<?php
+
+namespace {{ namespace }};
+
+use Gingerminds\LaravelCore\Http\Controllers\AbstractController;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use {{ modelFqcn }};
+use {{ requestNamespace }}\{{ model }}Request;
+use {{ repositoryNamespace }}\{{ model }}Repository;
+
+class {{ class }} extends AbstractController
+{
+    public function __construct(
+        private readonly {{ model }}Repository $repository
+    ) {
+    }
+
+    public function index(Request $request): Factory|View
+    {
+        $this->authorize('viewAny');
+
+        $items = $this->repository->get($request);
+
+        return view('pages.{{ resource }}.index', [
+            'resource' => {{ model }}::class,
+            'items'    => $items,
+        ]);
+    }
+
+    public function create(): View
+    {
+        return view('pages.{{ resource }}.create');
+    }
+
+    public function edit({{ model }} ${{ modelVariable }}): View
+    {
+        return view('pages.{{ resource }}.edit', ['{{ modelVariable }}' => ${{ modelVariable }}]);
+    }
+
+    public function store({{ model }}Request $request): RedirectResponse
+    {
+        $this->authorize('create', {{ model }}::class);
+
+        /** @var {{ model }} ${{ modelVariable }} */
+        ${{ modelVariable }} = $this->repository->update($request, new {{ model }}());
+
+        return redirect()->route('{{ resource }}.index')
+            ->with('success', __('gingerminds-core::translation.successfully_created', [
+                'model' => __('gingerminds-core::translation.{{ tradBase }}.name_s')
+                    . ' '
+                    . (${{ modelVariable }}->name ?? ${{ modelVariable }}->id),
+            ]));
+    }
+
+    public function update({{ model }}Request $request, {{ model }} ${{ modelVariable }}): RedirectResponse
+    {
+        $this->authorize('update', ${{ modelVariable }});
+
+        $this->repository->update($request, ${{ modelVariable }});
+
+        return redirect()->route('{{ resource }}.edit', ${{ modelVariable }}->id)
+            ->with('success', __('gingerminds-core::translation.successfully_updated', [
+                'model' => __('gingerminds-core::translation.{{ tradBase }}.name_s')
+                    . ' '
+                    . (${{ modelVariable }}->name ?? ${{ modelVariable }}->id),
+            ]));
+    }
+
+    public function destroy({{ model }} ${{ modelVariable }}): RedirectResponse
+    {
+        $this->authorize('delete', ${{ modelVariable }});
+        ${{ modelVariable }}->delete();
+
+        return redirect()->route('{{ resource }}.index')
+            ->with('success', __('gingerminds-core::translation.successfully_deleted', [
+                'model' => __('gingerminds-core::translation.{{ tradBase }}.name_s')
+                    . ' '
+                    . (${{ modelVariable }}->name ?? ${{ modelVariable }}->id),
+            ]));
+    }
+}

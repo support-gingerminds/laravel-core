@@ -1,0 +1,34 @@
+@extends('gingerminds-core::layouts.crud.form')
+
+@section('title')
+    @lang('gingerminds-core::translation.title_m_create', ['model' => __('translation.{{ tradBase }}.name_s')])
+@endsection
+
+@section('breadcrumb')
+    @component('gingerminds-core::components.navigation.breadcrumb')
+        @slot('li_1_link')
+            {{ route('{{ resource }}.index') }}
+        @endslot
+        @slot('li_1')
+            @lang('translation.{{ tradBase }}.name_p')
+        @endslot
+        @slot('title')
+            @lang('translation.{{ tradBase }}.manage')
+        @endslot
+        @slot('current')
+            @lang('translation.title_m_create', ['model' => __('translation.{{ tradBase }}.name_s')])
+        @endslot
+    @endcomponent
+@endsection
+
+@php
+    $action = route('{{ resource }}.store');
+    $indexRoute = route('{{ resource }}.index');
+    $method = 'POST';
+    $id = 'create-{{ tradBase }}-form';
+    $title = __('gingerminds-core::translation.title_m_create', ['model' => __('translation.{{ tradBase }}.name_s')]);
+@endphp
+
+@section('fields')
+    @include('pages.{{ resource }}.partials.fields')
+@endsection
