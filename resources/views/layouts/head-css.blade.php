@@ -3,8 +3,8 @@
 @yield('css')
 
 @vite([
-    'vendor/gingerminds/laravel-core/resources/scss/bootstrap.scss',
-    'vendor/gingerminds/laravel-core/resources/scss/icons.scss',
-    'vendor/gingerminds/laravel-core/resources/scss/app.scss',
-    'vendor/gingerminds/laravel-core/resources/js/plugin.js'
+    'resources/scss/bootstrap.scss',
+    'resources/scss/icons.scss',
+    'resources/scss/app.scss',
+    'resources/js/plugin.js'
 ])
