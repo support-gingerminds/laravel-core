@@ -4,7 +4,7 @@
   "type": "module",
   "dependencies": {
     "jquery": "^3.7.1",
-    "select2": "^4.1.0",
+    "select2": "^4.0.13",
     "simplebar": "^7.3.5",
     "node-waves": "^0.7.6",
     "metismenu": "^3.0.7"
