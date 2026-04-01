@@ -57,6 +57,15 @@ class LaravelCoreServiceProvider extends ServiceProvider
                 CreateRepository::class,
                 CreateStateProcessor::class,
             ]);
+
+            $this->app->extend(BaseModelMakeCommand::class, function ($command, $app) {
+                return new class($app['files']) extends BaseModelMakeCommand {
+                    protected function getStub()
+                    {
+                        return __DIR__ . '/../stubs/model.stub';
+                    }
+                };
+            });
         }
     }
 }
