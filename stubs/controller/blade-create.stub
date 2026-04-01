@@ -16,7 +16,7 @@
             @lang('translation.{{ tradBase }}.manage')
         @endslot
         @slot('current')
-            @lang('translation.title_m_create', ['model' => __('translation.{{ tradBase }}.name_s')])
+            @lang('gingerminds-core::translation.title_m_create', ['model' => __('translation.{{ tradBase }}.name_s')])
         @endslot
     @endcomponent
 @endsection

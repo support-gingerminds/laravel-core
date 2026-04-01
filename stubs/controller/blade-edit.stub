@@ -5,7 +5,7 @@
 @endsection
 
 @section('breadcrumb')
-    @component('components.navigation.breadcrumb')
+    @component('gingerminds-core::components.navigation.breadcrumb')
         @slot('li_1_link')
             {{ route('{{ resource }}.index') }}
         @endslot
@@ -16,7 +16,7 @@
             @lang('translation.{{ tradBase }}.manage')
         @endslot
         @slot('current')
-            @lang('translation.title_m_edit', ['model' => __('translation.{{ tradBase }}.name_s')])
+            @lang('gingerminds-core::translation.title_m_edit', ['model' => __('translation.{{ tradBase }}.name_s')])
         @endslot
     @endcomponent
 @endsection
@@ -26,7 +26,7 @@
     $indexRoute = route('{{ resource }}.index');
     $method = 'PATCH';
     $id = 'edit-{{ tradBase }}-form';
-    $title = __('translation.title_m_edit', ['model' => __('translation.{{ tradBase }}.name_s')]);
+    $title = __('gingerminds-core::translation.title_m_edit', ['model' => __('translation.{{ tradBase }}.name_s')]);
 @endphp
 
 @section('fields')

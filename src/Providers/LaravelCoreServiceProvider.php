@@ -44,6 +44,11 @@ class LaravelCoreServiceProvider extends ServiceProvider
                 __DIR__ . '/../../stubs' => base_path('stubs/vendor/gingerminds-core'),
             ], 'gingerminds-stubs');
 
+            $this->publishes([
+                __DIR__ . '/../../resources/scss' => resource_path('scss/vendor/gingerminds-core'),
+                __DIR__ . '/../../resources/js' => resource_path('js/vendor/gingerminds-core'),
+            ], 'gingerminds-assets');
+
             $this->commands([
                 CreateApiProvider::class,
                 CreateResource::class,

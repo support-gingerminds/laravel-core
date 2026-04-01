@@ -35,8 +35,8 @@
 @php
     $columns = [
         ['name' => '#', 'sortable' => false],
-//        ['name' => __('translation.form.name'), 'sortable' => true, 'property' => 'name'],
-        ['name' => __('translation.actions'), 'sortable' => false],
+//        ['name' => __('gingerminds-core::translation.form.name'), 'sortable' => true, 'property' => 'name'],
+        ['name' => __('gingerminds-core::translation.actions'), 'sortable' => false],
     ];
     $sortBy = request()->query('sortBy');
     $sortOrder = request()->query('sort');
@@ -47,5 +47,5 @@
 @endsection
 
 @push('modals')
-    <x-modal.modal-delete :model="__('translation.{{ tradBase }}.name_s')" routing="{{ resource }}"/>
+    <x-gingerminds-core::modal.modal-delete :model="__('translation.{{ tradBase }}.name_s')" routing="{{ resource }}"/>
 @endpush
