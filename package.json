@@ -1,17 +1,12 @@
 {
-  "name": "laravel-core",
+  "name": "@gingerminds/laravel-core",
   "version": "1.0.0",
-  "private": true,
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build"
-  },
-  "devDependencies": {
-    "jquery": "^3.7.0",
-    "select2": "^4.1.0",
-    "simplebar": "^6.2.3",
-    "metismenu": "^3.0.7",
+  "type": "module",
+  "dependencies": {
+    "jquery": "^3.7.1",
+    "select2": "^4.0.13",
+    "simplebar": "^6.2.8",
     "node-waves": "^0.7.6",
-    "vite": "^4.4.9"
+    "metismenu": "^3.0.7"
   }
 }

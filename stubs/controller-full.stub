@@ -49,7 +49,7 @@ class {{ class }} extends AbstractController
 
         return redirect()->route('{{ resource }}.index')
             ->with('success', __('gingerminds-core::translation.successfully_created', [
-                'model' => __('gingerminds-core::translation.{{ tradBase }}.name_s')
+                'model' => __('translation.{{ tradBase }}.name_s')
                     . ' '
                     . (${{ modelVariable }}->name ?? ${{ modelVariable }}->id),
             ]));
@@ -63,7 +63,7 @@ class {{ class }} extends AbstractController
 
         return redirect()->route('{{ resource }}.edit', ${{ modelVariable }}->id)
             ->with('success', __('gingerminds-core::translation.successfully_updated', [
-                'model' => __('gingerminds-core::translation.{{ tradBase }}.name_s')
+                'model' => __('translation.{{ tradBase }}.name_s')
                     . ' '
                     . (${{ modelVariable }}->name ?? ${{ modelVariable }}->id),
             ]));
@@ -76,7 +76,7 @@ class {{ class }} extends AbstractController
 
         return redirect()->route('{{ resource }}.index')
             ->with('success', __('gingerminds-core::translation.successfully_deleted', [
-                'model' => __('gingerminds-core::translation.{{ tradBase }}.name_s')
+                'model' => __('translation.{{ tradBase }}.name_s')
                     . ' '
                     . (${{ modelVariable }}->name ?? ${{ modelVariable }}->id),
             ]));

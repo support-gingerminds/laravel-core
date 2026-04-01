@@ -10,6 +10,7 @@ use Gingerminds\LaravelCore\Console\Commands\CreateFormRequest;
 use Gingerminds\LaravelCore\Console\Commands\CreateRepository;
 use Gingerminds\LaravelCore\Console\Commands\CreateStateProcessor;
 use Gingerminds\LaravelCore\Livewire\Component\List\Filter\SelectModel;
+use Illuminate\Foundation\Console\ModelMakeCommand as BaseModelMakeCommand;
 use Livewire\Livewire;
 
 class LaravelCoreServiceProvider extends ServiceProvider
@@ -57,6 +58,15 @@ class LaravelCoreServiceProvider extends ServiceProvider
                 CreateRepository::class,
                 CreateStateProcessor::class,
             ]);
+
+            $this->app->extend(BaseModelMakeCommand::class, function ($command, $app) {
+                return new class($app['files']) extends BaseModelMakeCommand {
+                    protected function getStub()
+                    {
+                        return __DIR__ . '/../../stubs/model.stub';
+                    }
+                };
+            });
         }
     }
 }
