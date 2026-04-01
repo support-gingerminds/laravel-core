@@ -6,8 +6,9 @@
 <script src="{{ URL::asset('build/libs/select2/js/select2.full.min.js') }}"></script>
 
 @vite([
-    'vendor/gingerminds/laravel-core/resources/js/app.js'
-])
+    'resources/js/app.js',
+    'resources/js/plugin.js'
+    ])
 <script>
     (function () {
         // Avoid initializing Select2 on elements managed by the Livewire/Alpine contact-select component

@@ -3,8 +3,7 @@
 @yield('css')
 
 @vite([
-    'resources/scss/vendor/gingerminds-core/bootstrap.scss',
-    'resources/scss/vendor/gingerminds-core/icons.scss',
-    'resources/scss/vendor/gingerminds-core/app.scss',
-    'resources/js/vendor/gingerminds-core/plugin.js'
+    'resources/scss/bootstrap.scss',
+    'resources/scss/icons.scss',
+    'resources/scss/app.scss',
 ])
