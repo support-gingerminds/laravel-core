@@ -1,0 +1,15 @@
+<?php
+
+namespace {{ namespace }};
+
+use Illuminate\Foundation\Http\FormRequest;
+use Gingerminds\LaravelCore\Http\Requests\FormRequestInterface;
+
+class {{ class }}Request extends FormRequest implements FormRequestInterface
+{
+    /** @return  string[] */
+    public function rules(): array
+    {
+        return [];
+    }
+}
