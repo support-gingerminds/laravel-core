@@ -7,6 +7,11 @@ use Illuminate\Support\Str;
 
 class CreateResource extends Command
 {
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
     protected $signature = 'make:resource
         {name : Namespace/Model name (e.g. PartnerCompany/PartnerCompany)}
         {--trad-base=}
@@ -14,9 +19,17 @@ class CreateResource extends Command
         {--m|migration}
         {--f|factory}';
 
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
     protected $description = 'Create a full resource: Model, Repository, FormRequest, '
     . 'and Controller with blades, routes, and translations';
 
+    /**
+     * Execute the console command.
+     */
     public function handle(): int
     {
         $name     = trim((string) $this->argument('name'));
@@ -54,8 +67,11 @@ class CreateResource extends Command
         }
         $this->call('make:controller-full', $controllerOptions);
 
+        $this->info('Step 4: Creating Policy...');
+        $this->call('make:policy', ['name' => $name]);
+
         if ($this->option('api')) {
-            $this->info('Step 4: Setting up API Resource in Model...');
+            $this->info('Step 5: Setting up API Resource in Model...');
             $this->setupApi($name);
         }
 
@@ -64,6 +80,9 @@ class CreateResource extends Command
         return Command::SUCCESS;
     }
 
+    /**
+     * Setup API Resource in the model.
+     */
     protected function setupApi(string $name): void
     {
         $modelPath = app_path('Models/' . str_replace('\\', '/', $name) . '.php');
@@ -112,11 +131,7 @@ class CreateResource extends Command
             $content = (string) preg_replace('/namespace .*;/', "$0\n\n" . rtrim($usesContent), $content);
         }
 
-        $stubPath = base_path('stubs/vendor/gingerminds-core/api-resource.stub');
-        if (!file_exists($stubPath)) {
-            $stubPath = __DIR__ . '/../../../stubs/api-resource.stub';
-        }
-
+        $stubPath = base_path('stubs/api-resource.stub');
         if (!file_exists($stubPath)) {
             $this->error("Stub not found at: {$stubPath}");
             return;
