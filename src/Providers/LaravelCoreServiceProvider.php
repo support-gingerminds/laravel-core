@@ -22,6 +22,9 @@ class LaravelCoreServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // Chargement des migrations
+        $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations');
+
         // Enregistrement des composants Livewire
         Livewire::component('gingerminds.core.list.filter.select-model', SelectModel::class);
 
