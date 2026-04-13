@@ -55,6 +55,29 @@ This will automatically add a select field into crud filters `boolean_property`.
 
 ## Select filters
 
+### Select filter
+
+```php
+public static function getFilters(): array
+{
+    return [
+        'select_state_property' => [
+            'type'    => 'select',
+            'label'   => 'your_label_translation_key',
+            'choices' => [
+                    0 => 'translation.choice.0',
+                    1 => 'translation.choice.1',
+                    2 => 'translation.choice.2',
+                    3 => 'translation.choice.3',
+                    4 => 'translation.choice.4',
+                ]
+            'multiple' => true, // this option is optional, by default if not set it's false
+            'disabled_for_back' => true, // this option is optional, by default is true,
+        ],
+    ];
+}
+```
+
 ### Select state filter
 
 ```php
