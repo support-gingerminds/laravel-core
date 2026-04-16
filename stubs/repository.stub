@@ -1,0 +1,42 @@
+<?php
+
+namespace {{ namespace }};
+
+use Gingerminds\LaravelCore\Http\Requests\FormRequestInterface;
+use Gingerminds\LaravelCore\Models\ResourceModelInterface;
+use Gingerminds\LaravelCore\Repositories\RepositoryInterface;
+use Gingerminds\LaravelCore\Repositories\AbstractRepository;
+use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use InvalidArgumentException;
+use {{ resourceModelFqcn }};
+
+/**
+ * @extends AbstractRepository<{{ resourceModel }}>
+ * @implements RepositoryInterface<{{ resourceModel }}>
+ */
+class {{ class }}Repository extends AbstractRepository implements RepositoryInterface
+{
+    public function getModelClass(): string
+    {
+        return {{ resourceModel }}::class;
+    }
+
+    public function update(
+        ?FormRequestInterface $request,
+        ResourceModelInterface $resourceModel
+    ): ResourceModelInterface {
+        if (!$resourceModel instanceof {{ resourceModel }}) {
+            throw new InvalidArgumentException('ResourceModelInterface must be an instance of ' . {{ resourceModel }}::class);
+        }
+
+        if (!$request instanceof FormRequestInterface) {
+            return $resourceModel;
+        }
+
+        $resourceModel->fill($request->all());
+        $resourceModel->save();
+
+        return $resourceModel;
+    }
+}

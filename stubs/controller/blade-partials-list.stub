@@ -1,0 +1,22 @@
+@foreach($items as ${{ modelVariable }})
+    <tr>
+        <td>{{ ${{ modelVariable }}->id }}</td>
+        <td class="text-end">
+            <div class="btn-group" role="group">
+                <a class="btn btn-sm btn-outline-primary" href="{{ route('{{ resource }}.edit', ${{ modelVariable }}) }}">
+                    <i class="bx bx-edit"></i>
+                </a>
+                <button type="button"
+                        class="btn btn-outline-danger btn-sm js-remove-item"
+                        data-bs-toggle="modal"
+                        data-bs-target="#removeModal"
+                        data-model="@lang('translation.{{ tradBase }}.name_s')"
+                        data-remove-name="{{ ${{ modelVariable }}->name ?? ${{ modelVariable }}->id }}"
+                        data-destroy-url="{{ route('{{ resource }}.destroy', ${{ modelVariable }}) }}"
+                >
+                    <i class="bx bx-trash"></i>
+                </button>
+            </div>
+        </td>
+    </tr>
+@endforeach
