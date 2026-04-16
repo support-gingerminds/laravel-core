@@ -41,5 +41,10 @@ return [
         'cancel' => 'Cancel',
         'remove' => 'Remove',
         'remove_confirm' => 'Are you sure you want to remove this item?',
+        'sign_out' => 'Sign out',
+    ],
+
+    'profile' => [
+      'settings' => 'Settings',
     ]
 ];
