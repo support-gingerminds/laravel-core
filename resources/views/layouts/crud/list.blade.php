@@ -49,8 +49,8 @@
                                             @if($isSearchable)
                                                 @include('gingerminds-core::components.list.filters.text', [
                                                 'property' => 'search',
-                                                'label' => __('translation.action.search'),
-                                                'placeholder' => __('translation.form.placeholder.search'),
+                                                'label' => __('gingerminds-core::translation.action.search'),
+                                                'placeholder' => __('gingerminds-core::translation.form.placeholder.search'),
                                                 'filters' => $filters
                                             ])
                                             @endif

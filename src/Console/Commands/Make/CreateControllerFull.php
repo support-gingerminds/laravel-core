@@ -1,6 +1,6 @@
 <?php
 
-namespace Gingerminds\LaravelCore\Console\Commands;
+namespace Gingerminds\LaravelCore\Console\Commands\Make;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
@@ -9,10 +9,20 @@ use Symfony\Component\Console\Command\Command as CommandAlias;
 
 class CreateControllerFull extends Command
 {
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
     protected $signature = 'make:controller-full
         {name : Namespace/Model name (e.g. PartnerCompany/PartnerCompany)}
         {--trad-base=}';
 
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
     protected $description = 'Create a controller with CRUD methods (except show), ' .
         'blades, routes, and translation scaffolding';
 
@@ -45,12 +55,14 @@ class CreateControllerFull extends Command
             $repositoryNamespace .= '\\' . implode('\\', $parts);
         }
 
+        // Compute resource/route segment and views path
         $resourceSegment = Str::kebab(Str::pluralStudly($model));
         $viewsDir        = resource_path('views/pages/' . $resourceSegment);
         $modelVariable   = Str::camel($model);
 
         $tradBase = $this->option('trad-base');
         if (!$tradBase) {
+            // Try to infer from resource segment (snake with underscores)
             $tradBase = Str::snake($resourceSegment);
         }
 
@@ -121,10 +133,6 @@ class CreateControllerFull extends Command
     private function registerResourceRoute(string $segment, string $controllerFqcn): void
     {
         $web     = base_path('routes/web.php');
-        if (!file_exists($web)) {
-             $this->warn('routes/web.php not found, skipping route registration.');
-             return;
-        }
         $content = (string) file_get_contents($web);
 
         $routeLine = "    Route::resource('{$segment}', \\{$controllerFqcn}::class);";
@@ -133,6 +141,7 @@ class CreateControllerFull extends Command
             return;
         }
 
+        // Insert before the end of the auth middleware group.
         $needle = "});\n\nRoute::get('/health'";
         if (str_contains($content, $needle)) {
             $content = str_replace($needle, $routeLine . "\n});\n\nRoute::get('/health'", $content);
@@ -141,6 +150,7 @@ class CreateControllerFull extends Command
             return;
         }
 
+        // Fallback: append at end of file
         $content .= "\n" . $routeLine . "\n";
         file_put_contents($web, $content);
         $this->warn('Could not find auth group end, route appended at end of routes/web.php');
@@ -148,9 +158,9 @@ class CreateControllerFull extends Command
 
     private function ensureTranslation(string $base, string $model): void
     {
-        $file = base_path('lang/en/translation.php');
+        $file = base_path('lang/fr/translation.php');
         if (!file_exists($file)) {
-            $this->warn('lang/en/translation.php not found, skipping translation scaffolding.');
+            $this->warn('lang/fr/translation.php not found, skipping translation scaffolding.');
             return;
         }
         $content = (string) file_get_contents($file);
@@ -165,16 +175,18 @@ class CreateControllerFull extends Command
         $block = "    '{$base}' => [\n" .
             "        'name_s' => '{$singular}',\n" .
             "        'name_p' => '{$plural}',\n" .
-            "        'manage' => 'Manage {$plural}',\n" .
+            "        'manage' => 'Gestion des {$plural}',\n" .
             "        'message' => [\n" .
-            "            'no_{$base}' => 'No {$singular} founded'\n" .
+            "            'no_{$base}' => 'Aucun {$singular} trouvé'\n" .
             "        ]\n" .
             '    ]';
 
+        // Try to insert before final "];"
         if (preg_match('/(\n\s*)\s*];\s*$/', $content, $matches)) {
             $indent  = $matches[1];
             $content = preg_replace('/(\n\s*)\s*];\s*$/', ",\n\n" . $block . $indent . "];\n", $content);
         } else {
+            // Fallback: append near end
             $content .= "\n{$block}\n";
         }
 
@@ -182,18 +194,17 @@ class CreateControllerFull extends Command
         $this->info("Translation scaffolding added under key '{$base}'.");
     }
 
+    /**
+     * @param array<string, string> $data
+     */
     private function compileStub(string $name, array $data): string
     {
-        $stubPath = base_path("stubs/vendor/gingerminds-core/{$name}.stub");
-        if (!file_exists($stubPath)) {
-            $stubPath = __DIR__ . "/../../../stubs/{$name}.stub";
-        }
-        
-        if (!file_exists($stubPath)) {
-            throw new RuntimeException("Stub not found: {$stubPath}");
+        $path = base_path("stubs/{$name}.stub");
+        if (!file_exists($path)) {
+            throw new RuntimeException("Stub not found: {$path}");
         }
 
-        $content = (string) file_get_contents($stubPath);
+        $content = (string) file_get_contents($path);
 
         foreach ($data as $key => $value) {
             $content = str_replace("{{ {$key} }}", $value, $content);

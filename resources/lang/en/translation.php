@@ -4,6 +4,10 @@ return [
     'dashboard' => 'Dashboard',
     'actions' => 'Actions',
     'display' => 'Display',
+    'none' => 'Aucun',
+    'settings' => 'Settings',
+    'previous' => 'Previous',
+    'next' => 'Next',
 
     'successfully_created' => ':model successfully created.',
     'successfully_updated' => ':model updated successfully.',
@@ -22,14 +26,21 @@ return [
     ],
 
     'message' => [
-        'no_result' => 'No results found'
+        'no_result' => 'No results found',
     ],
 
     'form' => [
         'name' => 'Name',
+        'lastname' => 'Name',
+        'firstname' => 'Firstname',
+        'code' => 'Code',
+        'email' => 'Email',
         'placeholder' => [
-            'search' => 'Search...'
-        ]
+            'search' => 'Search...',
+        ],
+        'helpers' => [
+            'no_change_if_kept_empty' => 'Leave blank to keep the current setting.',
+        ],
     ],
 
     'action' => [
@@ -44,7 +55,81 @@ return [
         'sign_out' => 'Sign out',
     ],
 
+    'users' => [
+        'manage' => 'Manage users',
+        'name_s' => 'User',
+        'name_p' => 'Users',
+        'form' => [
+            'mr' => "Mr",
+            'mrs' => "Mrs",
+            'email' => "Email",
+            'password' => "Password",
+            'password_confirmation' => "Confirmation",
+            'roles' => "Roles",
+            'roles_placeholder' => "Hold down Ctrl/Cmd to select multiple roles.",
+            'contributor' => "Contributor",
+            'contributor_associate' => "Associated contributor",
+            'contributor_new' => "New contributor",
+            'contributor_civility' => "Civility",
+            'contributor_lastname' => "Lastname",
+            'contributor_firstname' => "Firstname",
+            'contributor_trigram' => "Trigram",
+            'contributor_info' => "Edit the associated contributor's information.",
+        ],
+        'message' => [
+            'no_users' => 'Empty users',
+        ],
+    ],
+
+    'contributors' => [
+        'manage' => 'Manage contributors',
+        'name_s' => 'Contributor',
+        'name_p' => 'Contributors',
+        'associated_user' => 'Associated user',
+        'form' => [
+            'civility' => "Civility",
+            'lastname' => "Lastname",
+            'firstname' => "Firstname",
+            'trigram' => "Trigram",
+        ],
+        'message' => [
+            'no_contributors' => 'Empty contributors',
+        ],
+    ],
+
+    'roles' => [
+        'manage' => 'Manage roles',
+        'name_s' => 'Role',
+        'name_p' => 'Roles',
+        'form' => [
+            'name' => "Name",
+            'name_placeholder' => "Please enter the role name",
+            'permissions' => "Permissions",
+            'permissions_placeholder' => "Hold down Ctrl/Cmd to select multiple permissions.",
+            'resource' => "Ressource",
+            'check_all' => "Check all",
+            'is_external' => "External ?",
+            'is_default' => "Default ?",
+        ],
+        'message' => [
+            'no_roles' => 'Empty roles',
+        ],
+    ],
+
+    'permissions' => [
+        'manage' => 'Manager permissions',
+        'name_s' => 'Permission',
+        'name_p' => 'Permissions',
+        'form' => [
+            'name' => "Name",
+            'name_placeholder' => "Please enter the permission name",
+        ],
+        'message' => [
+            'no_permissions' => 'Empty permissions',
+        ],
+    ],
+
     'profile' => [
-      'settings' => 'Settings',
-    ]
+        'settings' => 'Settings',
+    ],
 ];

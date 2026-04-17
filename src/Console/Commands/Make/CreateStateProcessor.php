@@ -1,32 +1,50 @@
 <?php
 
-namespace Gingerminds\LaravelCore\Console\Commands;
+namespace Gingerminds\LaravelCore\Console\Commands\Make;
 
 use Illuminate\Console\Command;
 
 class CreateStateProcessor extends Command
 {
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
     protected $signature = 'make:state-processor {name}';
 
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
     protected $description = 'Artisan make command to create StateProcessor';
 
+    /**
+     * Execute the console command.
+     */
     public function handle(): void
     {
         $stateProcessorName = $this->argument('name');
+
         $stateProcessorPathParts = explode('/', $stateProcessorName);
+
         $modelClass = array_pop($stateProcessorPathParts);
+
         $namespace = 'App\\StateProcessor';
 
         if ($stateProcessorPathParts !== []) {
             $namespace .= '\\' . implode('\\', $stateProcessorPathParts);
         }
 
-        $stubPath = base_path('stubs/vendor/gingerminds-core/state-processor.stub');
+        $stubPath = base_path('stubs/state-processor.stub');
         if (!file_exists($stubPath)) {
-            $stubPath = __DIR__ . '/../../../stubs/state-processor.stub';
+            $this->error("Stub file not found: {$stubPath}");
+            return;
         }
 
         $stub = file_get_contents($stubPath);
+
         if ($stub === false) {
             $this->error("Failed to read stub file: {$stubPath}");
             return;
@@ -60,6 +78,7 @@ class CreateStateProcessor extends Command
         }
 
         file_put_contents($path, $stub);
+
         $this->info("State processor created successfully: {$path}");
     }
 }

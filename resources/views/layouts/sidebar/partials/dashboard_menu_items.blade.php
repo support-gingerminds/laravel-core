@@ -34,14 +34,14 @@
     <li class="mb-1">
         <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0" data-bs-toggle="collapse"
                 data-bs-target="#orders-collapse" aria-expanded="true">
-            Items
+            @lang('gingerminds-core::translation.settings')
         </button>
         <div class="collapse show" id="orders-collapse" style="">
             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                <li><a href="#" class="d-inline-flex text-decoration-none rounded">Item</a></li>
-                <li><a href="#" class="d-inline-flex text-decoration-none rounded">Item</a></li>
-                <li><a href="#" class="d-inline-flex text-decoration-none rounded">Item</a></li>
-                <li><a href="#" class="d-inline-flex text-decoration-none rounded">Item</a></li>
+                <li><a href="{{ route('gingerminds-core.users.index') }}" class="d-inline-flex text-decoration-none rounded">@lang('gingerminds-core::translation.users.name_p')</a></li>
+                <li><a href="{{ route('gingerminds-core.contributors.index') }}" class="d-inline-flex text-decoration-none rounded">@lang('gingerminds-core::translation.contributors.name_p')</a></li>
+                <li><a href="{{ route('gingerminds-core.roles.index') }}" class="d-inline-flex text-decoration-none rounded">@lang('gingerminds-core::translation.roles.name_p')</a></li>
+                <li><a href="{{ route('gingerminds-core.permissions.index') }}" class="d-inline-flex text-decoration-none rounded">@lang('gingerminds-core::translation.permissions.name_p')</a></li>
             </ul>
         </div>
     </li>

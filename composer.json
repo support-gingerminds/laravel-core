@@ -5,7 +5,9 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Gingerminds\\LaravelCore\\": "src/"
+            "Gingerminds\\LaravelCore\\": "src/",
+            "Gingerminds\\LaravelCore\\Database\\Factories\\": "src/Database/Factories/",
+            "Gingerminds\\LaravelCore\\Database\\Seeders\\": "database/seeders/"
         }
     },
     "authors": [
@@ -17,8 +19,10 @@
         "php": "^8.2",
         "laravel/framework": "^12.0",
         "api-platform/laravel": "^4.3",
+        "laravel/sanctum": "^4.2",
         "laravel/tinker": "^2.9",
-        "livewire/livewire": "^3.5"
+        "livewire/livewire": "^3.5",
+        "spatie/laravel-permission": "^6.23"
     },
     "extra": {
         "laravel": {

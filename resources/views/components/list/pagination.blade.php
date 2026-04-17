@@ -21,7 +21,7 @@
             {{-- Previous --}}
             <li @class(['page-item', 'disabled' => $items->onFirstPage()])>
                 <a class="page-link" href="{{ $items->onFirstPage() ? '#' : url()->current() . '?' . http_build_query(array_merge(request()->query(), ['page' => $current - 1])) }}">
-                    @lang('translation.previous')
+                    @lang('gingerminds-core::translation.previous')
                 </a>
             </li>
 
@@ -37,7 +37,7 @@
             {{-- Next --}}
             <li @class(['page-item', 'disabled' => !$items->hasMorePages()])>
                 <a class="page-link" href="{{ !$items->hasMorePages() ? '#' : url()->current() . '?' . http_build_query(array_merge(request()->query(), ['page' => $current + 1])) }}">
-                    @lang('translation.next')
+                    @lang('gingerminds-core::translation.next')
                 </a>
             </li>
 

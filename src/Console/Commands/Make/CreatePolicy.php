@@ -1,6 +1,6 @@
 <?php
 
-namespace Gingerminds\LaravelCore\Console\Commands;
+namespace Gingerminds\LaravelCore\Console\Commands\Make;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
@@ -12,7 +12,7 @@ class CreatePolicy extends Command
      *
      * @var string
      */
-    protected $signature = 'make:policy {name : Namespace/Model name (e.g. Model/Model)}';
+    protected $signature = 'make:policy {name : Namespace/Model name (e.g. PartnerCompany/PartnerCompany)}';
 
     /**
      * The console command description.

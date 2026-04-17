@@ -1,6 +1,6 @@
 <?php
 
-namespace Gingerminds\LaravelCore\Console\Commands;
+namespace Gingerminds\LaravelCore\Console\Commands\Make;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
@@ -25,7 +25,7 @@ class CreateResource extends Command
      * @var string
      */
     protected $description = 'Create a full resource: Model, Repository, FormRequest, '
-    . 'and Controller with blades, routes, and translations';
+        . 'and Controller with blades, routes, and translations';
 
     /**
      * Execute the console command.
