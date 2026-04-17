@@ -145,6 +145,7 @@ return [
     ],
 
     'profile' => [
-        'settings' => 'Settings',
+        'name' => 'Profile',
+        'settings' => 'Profile Settings',
     ],
 ];

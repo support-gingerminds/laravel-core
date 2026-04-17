@@ -25,6 +25,7 @@
                 @include('gingerminds-core::components.alert.alert')
 
                 <div class="flex-grow-1 p-4 overflow-auto">
+                    @yield('breadcrumb')
                     @yield('content')
                 </div>
 

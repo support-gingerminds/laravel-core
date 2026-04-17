@@ -5,20 +5,13 @@
 @endsection
 
 @section('breadcrumb')
-    @component('gingerminds-core::components.navigation.breadcrumb')
-        @slot('li_1_link')
-            {{ route('gingerminds-core.roles.index') }}
-        @endslot
-        @slot('li_1')
-            @lang('gingerminds-core::translation.roles.name_p')
-        @endslot
-        @slot('title')
-            @lang('gingerminds-core::translation.title_m_edit', ['model' => __('gingerminds-core::translation.roles.name_s')])
-        @endslot
-        @slot('current')
-            @lang('gingerminds-core::translation.roles.manage')
-        @endslot
-    @endcomponent
+    <x-gingerminds-core::navigation.breadcrumb
+        :title="__('gingerminds-core::translation.title_m_edit', ['model' => __('gingerminds-core::translation.roles.name_s')])"
+        :items="[
+            ['label' => __('gingerminds-core::translation.roles.name_p'), 'url' => route('gingerminds-core.roles.index')],
+            ['label' => __('gingerminds-core::translation.roles.manage'), 'active' => true],
+        ]"
+    />
 @endsection
 
 @php

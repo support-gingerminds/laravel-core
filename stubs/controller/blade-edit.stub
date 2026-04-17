@@ -5,20 +5,13 @@
 @endsection
 
 @section('breadcrumb')
-    @component('gingerminds-core::components.navigation.breadcrumb')
-        @slot('li_1_link')
-            {{ route('{{ resource }}.index') }}
-        @endslot
-        @slot('li_1')
-            @lang('translation.{{ tradBase }}.name_p')
-        @endslot
-        @slot('title')
-            @lang('translation.{{ tradBase }}.manage')
-        @endslot
-        @slot('current')
-            @lang('gingerminds-core::translation.title_m_edit', ['model' => __('translation.{{ tradBase }}.name_s')])
-        @endslot
-    @endcomponent
+    <x-gingerminds-core::navigation.breadcrumb
+        :title="__('gingerminds-core::translation.title_m_edit', ['model' => __('translation.{{ tradBase }}.name_s')])"
+        :items="[
+            ['label' => __('translation.{{ tradBase }}.name_p'), 'url' => route('{{ resource }}.index')],
+            ['label' => __('gingerminds-core::translation.title_m_edit', ['model' => __('translation.{{ tradBase }}.name_s')]), 'active' => true],
+        ]"
+    />
 @endsection
 
 @php

@@ -5,6 +5,7 @@ use Gingerminds\LaravelCore\Http\Controllers\User\ContributorController;
 use Gingerminds\LaravelCore\Http\Controllers\Permission\PermissionController;
 use Gingerminds\LaravelCore\Http\Controllers\Role\RoleController;
 use Gingerminds\LaravelCore\Http\Controllers\User\UserController;
+use Gingerminds\LaravelCore\Http\Controllers\User\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('web')
@@ -21,6 +22,12 @@ Route::middleware('web')
           Route::controller(AuthController::class)->group(function () {
               Route::post('logout', 'logout')->name('logout');
           });
+
+          Route::controller(ProfileController::class)->name('profile.')->group(function () {
+              Route::get('profile', 'edit')->name('edit');
+              Route::post('profile', 'update')->name('update');
+          });
+
           Route::resource('users', UserController::class);
           Route::resource('contributors', ContributorController::class);
           Route::resource('roles', RoleController::class);

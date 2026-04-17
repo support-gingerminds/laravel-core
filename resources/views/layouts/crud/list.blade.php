@@ -2,8 +2,6 @@
 @extends('gingerminds-core::layouts.master')
 
 @section('content')
-    @yield('breadcrumb')
-
     @hasSection('back-btn')
         <div class="row">
             <div class="col-3 mb-3">

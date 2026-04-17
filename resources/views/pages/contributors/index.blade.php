@@ -10,20 +10,13 @@
 @endsection
 
 @section('breadcrumb')
-    @component('gingerminds-core::components.navigation.breadcrumb')
-        @slot('li_1_link')
-            {{ route($indexRoute) }}
-        @endslot
-        @slot('li_1')
-            @lang('gingerminds-core::translation.contributors.name_p')
-        @endslot
-        @slot('title')
-            @lang('gingerminds-core::translation.title_list', ['model' => __('gingerminds-core::translation.contributors.name_p')])
-        @endslot
-        @slot('current')
-            @lang('gingerminds-core::translation.contributors.manage')
-        @endslot
-    @endcomponent
+    <x-gingerminds-core::navigation.breadcrumb
+        :title="__('gingerminds-core::translation.title_list', ['model' => __('gingerminds-core::translation.contributors.name_p')])"
+        :items="[
+            ['label' => __('gingerminds-core::translation.contributors.name_p'), 'url' => route($indexRoute)],
+            ['label' => __('gingerminds-core::translation.contributors.manage'), 'active' => true],
+        ]"
+    />
 @endsection
 
 @section('actions')

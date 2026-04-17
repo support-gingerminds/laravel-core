@@ -10,17 +10,13 @@
 @endsection
 
 @section('breadcrumb')
-    @component('gingerminds-core::components.navigation.breadcrumb')
-        @slot('li_1')
-            @lang('gingerminds-core::translation.settings')
-        @endslot
-        @slot('title')
-            @lang('gingerminds-core::translation.roles.name_p')
-        @endslot
-        @slot('current')
-            @lang('gingerminds-core::translation.roles.manage')
-        @endslot
-    @endcomponent
+    <x-gingerminds-core::navigation.breadcrumb
+        :title="__('gingerminds-core::translation.roles.name_p')"
+        :items="[
+            ['label' => __('gingerminds-core::translation.settings')],
+            ['label' => __('gingerminds-core::translation.roles.manage'), 'active' => true],
+        ]"
+    />
 @endsection
 
 @section('actions')

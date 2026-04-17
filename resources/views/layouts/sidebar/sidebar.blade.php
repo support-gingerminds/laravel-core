@@ -7,13 +7,20 @@
         <a href="#"
            class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
            data-bs-toggle="dropdown" aria-expanded="false">
-            <img src="https://github.com/mdo.png"
-                 alt="" width="32" height="32"
-                 class="rounded-circle me-2">
-            <strong>mdo</strong>
+            @php($user = Auth::user())
+            @if($user && $user->contributor && $user->contributor->avatar)
+                <img src="{{ $user->contributor->avatar }}"
+                     alt="" width="32" height="32"
+                     class="rounded-circle me-2">
+            @else
+                <div class="rounded-circle me-2 bg-primary d-flex align-items-center justify-content-center text-white fw-bold" style="width: 32px; height: 32px; font-size: 12px;">
+                    {{ $user ? strtoupper(substr($user->email, 0, 1)) : '?' }}
+                </div>
+            @endif
+            <strong>{{ $user ? ($user->contributor ? $user->contributor->firstname . ' ' . $user->contributor->lastname : $user->email) : 'Guest' }}</strong>
         </a>
         <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
-            <li><a class="dropdown-item" href="#">@lang('gingerminds-core::translation.profile.settings')</a></li>
+            <li><a class="dropdown-item" href="{{ route('gingerminds-core.profile.edit') }}">@lang('gingerminds-core::translation.profile.settings')</a></li>
             <li>
                 <hr class="dropdown-divider">
             </li>
