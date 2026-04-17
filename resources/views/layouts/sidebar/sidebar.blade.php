@@ -17,7 +17,13 @@
             <li>
                 <hr class="dropdown-divider">
             </li>
-            <li><a class="dropdown-item" href="#">@lang('gingerminds-core::translation.action.sign_out')</a></li>
+            <li>
+                <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="dropdown-item">
+                    @lang('gingerminds-core::translation.action.sign_out')
+                </a>
+                <form id="logout-form" method="POST" action="{{ route('gingerminds-core.logout') }}" style="display:none;">
+                    @csrf
+                </form>
         </ul>
     </div>
 </div>

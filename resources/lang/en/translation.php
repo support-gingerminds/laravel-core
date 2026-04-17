@@ -27,6 +27,21 @@ return [
 
     'message' => [
         'no_result' => 'No results found',
+        'login' => [
+            'welcome_back' => 'Welcome back !',
+            'sign_in_to_access' => 'Sign in to access'
+        ],
+    ],
+
+    'auth' => [
+        'form' => [
+            'login' => 'Login',
+            'login_placeholder' => 'Enter your login',
+            'password' => 'Password',
+            'password_placeholder' => 'Enter your password',
+            'remember' => 'Remember me',
+            'forgot_password' => 'Forgot your password ?',
+        ]
     ],
 
     'form' => [

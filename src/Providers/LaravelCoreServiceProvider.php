@@ -2,7 +2,6 @@
 
 namespace Gingerminds\LaravelCore\Providers;
 
-use Illuminate\Support\ServiceProvider;
 use Gingerminds\LaravelCore\Console\Commands\Make\CreateApiProvider;
 use Gingerminds\LaravelCore\Console\Commands\Make\CreateControllerFull;
 use Gingerminds\LaravelCore\Console\Commands\Make\CreateFormRequest;
@@ -11,7 +10,9 @@ use Gingerminds\LaravelCore\Console\Commands\Make\CreateRepository;
 use Gingerminds\LaravelCore\Console\Commands\Make\CreateResource;
 use Gingerminds\LaravelCore\Console\Commands\Make\CreateStateProcessor;
 use Gingerminds\LaravelCore\Console\Commands\Security\CreateUser;
+use Gingerminds\LaravelCore\Http\Middelware\Authenticate;
 use Gingerminds\LaravelCore\Livewire\Component\List\Filter\SelectModel;
+use Illuminate\Support\ServiceProvider;
 use Illuminate\Foundation\Console\ModelMakeCommand as BaseModelMakeCommand;
 use Livewire\Livewire;
 
@@ -25,11 +26,11 @@ class LaravelCoreServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        // Chargement des migrations
-        $this->loadMigrationsFrom(__DIR__.'/../../database/migrations');
-
         // Chargement des routes du package
         $this->loadRoutesFrom(__DIR__.'/../../routes/web.php');
+
+        // Chargement des migrations
+        $this->loadMigrationsFrom(__DIR__.'/../../database/migrations');
 
         // Enregistrement des composants Livewire
         Livewire::component('gingerminds.core.list.filter.select-model',
@@ -85,6 +86,11 @@ class LaravelCoreServiceProvider extends ServiceProvider
                   };
               });
         }
+
+        $this->app['router']->aliasMiddleware(
+            'gingerminds-core.auth',
+            Authenticate::class
+        );
     }
 
 }
