@@ -64,7 +64,7 @@ class UserController extends Controller
         return redirect()
             ->route('gingerminds-core.users.index')
             ->with('success', __('gingerminds-core::translation.successfully_created', [
-                'model' => __('tgingerminds-core::ranslation.users.name_s') . ' ' . $user->email,
+                'model' => __('gingerminds-core::translation.users.name_s') . ' ' . $user->email,
             ]));
     }
 

@@ -9,11 +9,11 @@
             </div>
             <div class="modal-body px-4 py-5 text-center">
                 <div class="avatar-sm mb-4 mx-auto">
-                    <div class="avatar-title bg-primary text-primary bg-opacity-10 font-size-20 rounded-3">
-                        <i class="mdi mdi-help-circle-outline"></i>
+                    <div class="avatar-title bg-primary text-primary bg-opacity-10 fs-24 rounded-3">
+                        <i class="bi bi-question-circle"></i>
                     </div>
                 </div>
-                <p class="text-muted font-size-16 mb-4">{{ $message ?? __('gingerminds-core::translation.confirm.message') }}</p>
+                <p class="text-muted fs-16 mb-4">{{ $message ?? __('gingerminds-core::translation.confirm.message') }}</p>
                 <div class="hstack gap-2 justify-content-center mb-0">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                         @lang('gingerminds-core::translation.action.cancel')

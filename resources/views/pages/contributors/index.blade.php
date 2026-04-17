@@ -27,10 +27,8 @@
 @endsection
 
 @section('actions')
-    <a href="{{ route('gingerminds-core.contributors.create') }}"
-       class="btn btn-success btn-rounded waves-effect waves-light mb-2"
-    >
-        <i class="mdi mdi-plus me-1"></i> @lang('gingerminds-core::translation.title_m_create', ['model' => __('gingerminds-core::translation.contributors.name_s')])
+    <a href="{{ route('gingerminds-core.contributors.create') }}" class="btn btn-sm btn-success">
+        <i class="bi bi-plus-lg me-1"></i> @lang('gingerminds-core::translation.title_m_create', ['model' => __('gingerminds-core::translation.contributors.name_s')])
     </a>
 @endsection
 

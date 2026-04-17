@@ -1,60 +1,77 @@
 
 @forelse($items as $contributor)
     <tr>
-        <td></td>
+        <td class="text-center text-muted small">{{ $loop->iteration + ($items instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($items->currentPage() - 1) * $items->perPage() : 0) }}</td>
         <td>
-            <h5 class="text-truncate font-size-14 mb-0">
-                <a href="{{ route('gingerminds-core.contributors.edit', $contributor->id) }}" class="dropdown-item js-edit-item">
-                    {{ $contributor->firstname }} {{ $contributor->lastname }}
+            <div class="d-flex align-items-center">
+                <div class="flex-shrink-0 me-2">
+                    <div class="avatar-xs">
+                        <span class="avatar-title rounded-circle bg-info-subtle text-info fw-bold">
+                            {{ strtoupper(substr($contributor->lastname, 0, 1)) }}
+                        </span>
+                    </div>
+                </div>
+                <div class="flex-grow-1">
+                    <div class="fs-13 mb-0">
+                        <a href="{{ route('gingerminds-core.contributors.edit', $contributor->id) }}" class="text-body fw-medium">
+                            {{ $contributor->firstname }} {{ $contributor->lastname }}
+                        </a>
+                    </div>
                     @if($contributor->trigram)
-                        ({{ $contributor->trigram }})
+                        <span class="text-muted small fs-12">{{ $contributor->trigram }}</span>
                     @endif
-                </a>
-            </h5>
+                </div>
+            </div>
         </td>
         <td>
             @if($contributor->user)
-                <span class="badge bg-success p-1"><i class="bx bxs-contact"></i> {{ $contributor->user?->email }}</span>
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-person-check me-1 text-success fs-13"></i>
+                    <span class="text-muted small fs-12">{{ $contributor->user->email }}</span>
+                </div>
             @else
-                <span class="badge bg-warning p-1"><i class="bx bx-x"></i>@lang('gingerminds-core::translation.users.message.no_users')</span>
+                <span class="badge bg-warning-subtle text-warning fs-11">@lang('gingerminds-core::translation.none')</span>
             @endif
         </td>
         <td class="text-end">
-            <div class="btn-group" role="group">
+            <div class="d-flex justify-content-end gap-2">
                 <a href="{{ route('gingerminds-core.contributors.edit', $contributor->id) }}"
-                   class="btn btn-sm btn-outline-primary js-edit-item"
+                   class="btn btn-sm btn-primary fs-12"
+                   data-bs-toggle="tooltip"
+                   title="@lang('gingerminds-core::translation.action.edit')"
                 >
-                    <i class="bx bx-edit"></i>
+                    <i class="bi bi-pencil-square"></i> Edit
                 </a>
                 <button type="button"
-                        class="btn btn-outline-danger btn-sm js-remove-item"
+                        class="btn btn-sm btn-danger js-remove-item fs-12"
                         data-bs-toggle="modal"
                         data-bs-target="#removeModal"
                         data-gender="m"
-                        data-model="contributeur"
+                        data-model="@lang('gingerminds-core::translation.contributors.name_s')"
                         data-remove-name="{{ $contributor->firstname.' '.$contributor->lastname }}"
                         data-remove-id="{{ $contributor->id }}"
                         data-destroy-url="{{ route('gingerminds-core.contributors.destroy', $contributor->id) }}"
+                        title="@lang('gingerminds-core::translation.action.delete')"
                 >
-                    <i class="bx bx-trash"></i>
+                    <i class="bi bi-trash"></i> Delete
                 </button>
             </div>
         </td>
     </tr>
 @empty
     <tr>
-        <td colspan="5" class="text-center text-muted py-4">
-            <div class="py-4">
-                <i class="bx bx-user font-size-24 mb-2"></i>
-                <p>@lang('gingerminds-core::translation.message.no_contributors')</p>
-
-                <a href="{{ route('gingerminds-core.contributors.create') }}"
-                   class="btn btn-primary waves-effect waves-light mb-2"
-                >
-                    <i class="mdi mdi-plus"></i>
-                    @lang('gingerminds-core::translation.title_m_create', ['model' => __('gingerminds-core::translation.contributors.name_s')])
-                </a>
+        <td colspan="4" class="text-center py-5">
+            <div class="avatar-md mx-auto mb-4">
+                <div class="avatar-title bg-light text-primary rounded-circle display-4">
+                    <i class="bi bi-people"></i>
+                </div>
             </div>
+            <div class="fs-14 fw-semibold mt-2">@lang('gingerminds-core::translation.message.no_contributors')</div>
+            <p class="text-muted mb-4">@lang('gingerminds-core::translation.message.no_result')</p>
+            <a href="{{ route('gingerminds-core.contributors.create') }}" class="btn btn-success">
+                <i class="bi bi-plus-lg me-1"></i>
+                @lang('gingerminds-core::translation.title_m_create', ['model' => __('gingerminds-core::translation.contributors.name_s')])
+            </a>
         </td>
     </tr>
 @endforelse
