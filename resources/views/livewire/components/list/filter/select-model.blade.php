@@ -35,7 +35,7 @@
 
         const select2Options = {
             width: '100%',
-            placeholder: '{{ __('translation.form.placeholder.select') }}',
+            placeholder: '{{ __('gingerminds-core::translation.form.placeholder.select') }}',
             allowClear: isMultiple,
             dropdownParent: $select.parent(),
         };

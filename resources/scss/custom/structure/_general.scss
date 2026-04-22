@@ -1,1 +1,8 @@
-.w-fit-content { width: fit-content; }
+html,
+body {
+  height: 100%;
+}
+
+body {
+  min-height: 100vh;
+}

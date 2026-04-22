@@ -2,8 +2,6 @@
 @extends('gingerminds-core::layouts.master')
 
 @section('content')
-    @yield('breadcrumb')
-
     @hasSection('back-btn')
         <div class="row">
             <div class="col-3 mb-3">
@@ -14,54 +12,52 @@
 
     <div class="row">
         <div class="col-lg-12">
-            @hasSection('actions')
-                <div class="row">
-                    <div class="col-sm-12 mb-3 mt-3">
-                        <div class="text-sm-end">
-                            @yield('actions')
-                        </div>
-                    </div>
-                </div>
-            @endif
             @php
                 $isSearchable = in_array(SearchableModelInterface::class, class_implements($resource));
                 $isFilterable = in_array(FilterableModelInterface::class, class_implements($resource));
                 $isFiltered = request()->has('filters')
             @endphp
             @if(isset($indexRoute) && ($isSearchable || $isFilterable))
-                <div class="card">
-                    <div class="card-body">
-                        <div class="accordion" id="filtersAccordion">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body p-0">
+                        <div class="accordion accordion-flush" id="filtersAccordion">
                             <div class="accordion-item">
                                 <h2 class="accordion-header">
-                                    <button class="accordion-button @if(!$isFiltered) collapsed @endif"
+                                    <button class="accordion-button fw-medium @if(!$isFiltered) collapsed @endif"
                                             type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
                                             aria-expanded="true" aria-controls="collapseOne">
+                                        <i class="bi bi-funnel me-2 text-primary"></i>
                                         @lang('gingerminds-core::translation.action.filters')
+                                        @if($isFiltered)
+                                            <span class="badge rounded-pill bg-primary ms-2">@lang('gingerminds-core::translation.action.active')</span>
+                                        @endif
                                     </button>
                                 </h2>
                                 <div id="collapseOne"
-                                     class="accordion-collapse collapse @if($isFiltered) show @endif p-3"
+                                     class="accordion-collapse collapse @if($isFiltered) show @endif"
                                      data-bs-parent="#filtersAccordion">
-                                    <div class="col-md-12">
+                                    <div class="p-4 border-top">
                                         <form method="get" action="{{ route($indexRoute) }}"
                                               class="row g-3 align-items-end">
                                             @if($isSearchable)
                                                 @include('gingerminds-core::components.list.filters.text', [
                                                 'property' => 'search',
-                                                'label' => __('translation.action.search'),
-                                                'placeholder' => __('translation.form.placeholder.search'),
+                                                'label' => __('gingerminds-core::translation.action.search'),
+                                                'placeholder' => __('gingerminds-core::translation.form.placeholder.search'),
                                                 'filters' => $filters
                                             ])
                                             @endif
                                             @if($isFilterable)
                                                 @include('gingerminds-core::components.list.filters_collection', ['filtersConfigs' => $resource::getFilters(), 'filters' => $filters])
                                             @endif
-                                            <div class="col-md-12 d-flex justify-content-end gap-2">
+                                            <div class="col-md-12 d-flex justify-content-end gap-2 mt-4">
                                                 <a href="{{ route($indexRoute, request()->only(['itemsPerPage', 'sort', 'sortBy'])) }}"
-                                                   class="btn btn-outline-secondary">@lang('gingerminds-core::translation.action.clear_filters')</a>
-                                                <button class="btn btn-primary"
-                                                        type="submit">@lang('gingerminds-core::translation.action.filter')</button>
+                                                   class="btn btn-light px-4">@lang('gingerminds-core::translation.action.clear_filters')</a>
+                                                <button class="btn btn-primary px-4"
+                                                        type="submit">
+                                                    <i class="bi bi-search me-1"></i>
+                                                    @lang('gingerminds-core::translation.action.filter')
+                                                </button>
                                             </div>
                                         </form>
                                     </div>
@@ -71,21 +67,33 @@
                     </div>
                 </div>
             @endif
-            <div class="card">
-                <div class="card-body">
-                    <div class="row mb-3 justify-content-end">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light py-3">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-3">
+                            <h5 class="card-title mb-0">
+                                <i class="bi bi-list-check me-1 text-primary"></i>
+                                @yield('title')
+                            </h5>
+                            @hasSection('actions')
+                                @yield('actions')
+                            @endif
+                        </div>
                         @if(!isset($isPaginationDisabled) || !$isPaginationDisabled)
-                            @include('gingerminds-core::components.list.items_per_page_selector')
+                            <div style="width: 150px;">
+                                @include('gingerminds-core::components.list.items_per_page_selector')
+                            </div>
                         @endif
                     </div>
-
+                </div>
+                <div class="card-body p-0">
                     <div class="table-responsive">
                         @hasSection('table')
                             @yield('table')
                         @else
-                            <table class="table align-middle table-hover text-nowrap"
+                            <table class="table align-middle table-hover mb-0 fs-13"
                                    id="list-table">
-                                <thead class="table-light">
+                                <thead class="table-light text-muted uppercase fs-11">
                                 <tr>
                                     @foreach($columns as $col)
                                         @include('gingerminds-core::components.list.table_row_header', array_merge($col, [

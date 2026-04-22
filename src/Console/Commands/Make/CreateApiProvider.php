@@ -1,32 +1,50 @@
 <?php
 
-namespace Gingerminds\LaravelCore\Console\Commands;
+namespace Gingerminds\LaravelCore\Console\Commands\Make;
 
 use Illuminate\Console\Command;
 
 class CreateApiProvider extends Command
 {
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
     protected $signature = 'make:api-provider {name}';
 
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
     protected $description = 'Artisan make command to create Api Provider';
 
+    /**
+     * Execute the console command.
+     */
     public function handle(): void
     {
         $providerName = $this->argument('name');
+
         $providerPathParts = explode('/', $providerName);
+
         $modelClass = array_pop($providerPathParts);
+
         $namespace = 'App\\ApiProvider';
 
         if ($providerPathParts !== []) {
             $namespace .= '\\' . implode('\\', $providerPathParts);
         }
 
-        $stubPath = base_path('stubs/vendor/gingerminds-core/api-provider.stub');
+        $stubPath = base_path('stubs/api-provider.stub');
         if (!file_exists($stubPath)) {
-            $stubPath = __DIR__ . '/../../../stubs/api-provider.stub';
+            $this->error("Stub file not found: {$stubPath}");
+            return;
         }
 
         $stub = file_get_contents($stubPath);
+
         if ($stub === false) {
             $this->error("Failed to read stub file: {$stubPath}");
             return;

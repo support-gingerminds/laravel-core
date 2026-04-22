@@ -1,0 +1,110 @@
+<?php
+
+namespace Gingerminds\LaravelCore\Http\Controllers\Role;
+
+use Gingerminds\LaravelCore\Http\Controllers\AbstractController as Controller;
+use Gingerminds\LaravelCore\Http\Requests\Role\RoleRequest;
+use Gingerminds\LaravelCore\Models\Permission\Permission;
+use Gingerminds\LaravelCore\Models\Role\Role;
+use Gingerminds\LaravelCore\Repositories\Role\RoleRepository;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+
+class RoleController extends Controller
+{
+    private RoleRepository $roleRepository;
+
+    public function __construct()
+    {
+        $this->roleRepository = new RoleRepository();
+    }
+
+    public function index(Request $request): View
+    {
+        $this->authorize('viewAny');
+
+        $roles = $this->roleRepository->get($request);
+
+        return view('gingerminds-core::pages.roles.index', [
+            'resource' => Role::class,
+            'items'    => $roles,
+        ]);
+    }
+
+    public function create(): View
+    {
+        $permissions = Permission::all()->groupBy(function ($permission) {
+            $parts = explode(' ', $permission->name);
+            return count($parts) > 1 ? $parts[1] : 'other';
+        });
+
+        return view('gingerminds-core::pages.roles.create', [
+            'permissionsGrouped' => $permissions,
+        ]);
+    }
+
+    public function edit(Role $role): View
+    {
+        $permissions = Permission::all()->groupBy(function ($permission) {
+            $parts = explode(' ', $permission->name);
+            return count($parts) > 1 ? $parts[1] : 'other';
+        });
+
+        return view('gingerminds-core::pages.roles.edit', [
+            'role'               => $role,
+            'permissionsGrouped' => $permissions,
+        ]);
+    }
+
+    public function store(RoleRequest $request): RedirectResponse
+    {
+        $this->authorize('create', Role::class);
+
+        $request->validated();
+
+        $role = new Role();
+        $this->roleRepository->update($request, $role);
+
+        return redirect()
+            ->route('gingerminds-core.roles.index')
+            ->with(
+                'success',
+                __(
+                    'gingerminds-core::translation.successfully_created',
+                    ['model' => __('gingerminds-core::translation.roles.name_s') . ' ' . $role->name]
+                )
+            );
+    }
+
+    public function update(RoleRequest $request, Role $role): RedirectResponse
+    {
+        $this->authorize('update', $role);
+
+        $request->validated();
+
+        $this->roleRepository->update($request, $role);
+
+        return redirect()
+            ->route('gingerminds-core.roles.edit', $role->id)
+            ->with('success', __('gingerminds-core::translation.successfully_updated', [
+                'model' => __('gingerminds-core::translation.roles.name_s') . ' ' . $role->name,
+            ]));
+    }
+
+    public function destroy(Role $role): RedirectResponse
+    {
+        $this->authorize('delete', $role);
+
+        if ($role->name === 'Super-Admin') {
+            return redirect()->back()->with('error', __('gingerminds-core::validation.superadmin_delete'));
+        }
+        $role->delete();
+
+        return redirect()
+            ->route('gingerminds-core.roles.index')
+            ->with('success', __('gingerminds-core::translation.successfully_deleted', [
+                'model' => __('gingerminds-core::translation.roles.name_s') . ' ' . $role->name,
+            ]));
+    }
+}

@@ -4,9 +4,6 @@
   "type": "module",
   "dependencies": {
     "jquery": "^3.7.1",
-    "select2": "^4.0.13",
-    "simplebar": "^6.2.8",
-    "node-waves": "^0.7.6",
-    "metismenu": "^3.0.7"
+    "select2": "^4.0.13"
   }
 }

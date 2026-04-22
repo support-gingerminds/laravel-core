@@ -6,7 +6,7 @@
     <select id="filter-{{ $property }}" class="form-select select2"
             name="filters[{{ $property }}]{{ $isMultiple ? '[]' : '' }}" @if($isMultiple) multiple @endif>
         @if(!$isMultiple)
-            <option value="all">@lang('translation.all')</option>
+            <option value="all">@lang('gingerminds-core::translation.all')</option>
         @endif
         @foreach($options['choices'] as $key => $label)
             @php

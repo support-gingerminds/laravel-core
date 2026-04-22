@@ -10,25 +10,18 @@
 @endsection
 
 @section('breadcrumb')
-    @component('gingerminds-core::components.navigation.breadcrumb')
-        @slot('li_1_link')
-            {{ route('{{ resource }}.index') }}
-        @endslot
-        @slot('li_1')
-            @lang('translation.{{ tradBase }}.name_p')
-        @endslot
-        @slot('title')
-            @lang('gingerminds-core::translation.title_list', ['model' => __('translation.{{ tradBase }}.name_p')])
-        @endslot
-        @slot('current')
-            @lang('translation.{{ tradBase }}.manage')
-        @endslot
-    @endcomponent
+    <x-gingerminds-core::navigation.breadcrumb
+        :title="__('gingerminds-core::translation.title_list', ['model' => __('translation.{{ tradBase }}.name_p')])"
+        :items="[
+            ['label' => __('translation.{{ tradBase }}.name_p'), 'url' => route('{{ resource }}.index')],
+            ['label' => __('translation.{{ tradBase }}.manage'), 'active' => true],
+        ]"
+    />
 @endsection
 
 @section('actions')
-    <a href="{{ route('{{ resource }}.create') }}" class="btn btn-success btn-rounded waves-effect waves-light mb-2">
-        <i class="mdi mdi-plus me-1"></i> @lang('gingerminds-core::translation.title_m_create', ['model' => __('translation.{{ tradBase }}.name_s')])
+    <a href="{{ route('{{ resource }}.create') }}" class="btn btn-sm btn-success">
+        <i class="bi bi-plus-lg me-1"></i> @lang('gingerminds-core::translation.title_m_create', ['model' => __('translation.{{ tradBase }}.name_s')])
     </a>
 @endsection
 

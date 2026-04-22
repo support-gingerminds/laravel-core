@@ -3,7 +3,7 @@
     $selectedOption = (int) request()->query('itemsPerPage', $itemsPerPage ?? 10);
 @endphp
 
-<div class="col-md-2 d-flex justify-content-end">
+<div class="col-md-12 d-flex justify-content-end">
     <select id="items_per_page" name="items_per_page" class="form-select w-fit-content">
         @foreach($availableOptions as $option)
             <option value="{{ $option }}" {{ $option === $selectedOption ? 'selected' : '' }}>

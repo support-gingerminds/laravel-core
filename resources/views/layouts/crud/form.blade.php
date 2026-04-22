@@ -10,7 +10,6 @@
 ])
 
 @section('content')
-    @yield('breadcrumb')
     @hasSection('subheader')
         <div class="mb-3">
             @yield('subheader')
