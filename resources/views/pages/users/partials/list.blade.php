@@ -4,13 +4,6 @@
         <td class="text-center text-muted small">{{ $loop->iteration + ($items instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($items->currentPage() - 1) * $items->perPage() : 0) }}</td>
         <td>
             <div class="d-flex align-items-center">
-                <div class="flex-shrink-0 me-2">
-                    <div class="avatar-xs">
-                        <span class="avatar-title rounded-circle bg-primary-subtle text-primary fw-bold">
-                            {{ strtoupper(substr($user->email, 0, 1)) }}
-                        </span>
-                    </div>
-                </div>
                 <div class="flex-grow-1">
                     <div class="fs-13 mb-0">
                         <a href="{{ route('gingerminds-core.users.edit', $user->id) }}" class="text-body fw-medium">

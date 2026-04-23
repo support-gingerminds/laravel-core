@@ -1,19 +1,14 @@
+@php use Illuminate\Pagination\LengthAwarePaginator; @endphp
 
 @forelse($items as $contributor)
     <tr>
-        <td class="text-center text-muted small">{{ $loop->iteration + ($items instanceof \Illuminate\Pagination\LengthAwarePaginator ? ($items->currentPage() - 1) * $items->perPage() : 0) }}</td>
+        <td class="text-center text-muted small">{{ $loop->iteration + ($items instanceof LengthAwarePaginator ? ($items->currentPage() - 1) * $items->perPage() : 0) }}</td>
         <td>
             <div class="d-flex align-items-center">
-                <div class="flex-shrink-0 me-2">
-                    <div class="avatar-xs">
-                        <span class="avatar-title rounded-circle bg-info-subtle text-info fw-bold">
-                            {{ strtoupper(substr($contributor->lastname, 0, 1)) }}
-                        </span>
-                    </div>
-                </div>
                 <div class="flex-grow-1">
                     <div class="fs-13 mb-0">
-                        <a href="{{ route('gingerminds-core.contributors.edit', $contributor->id) }}" class="text-body fw-medium">
+                        <a href="{{ route('gingerminds-core.contributors.edit', $contributor->id) }}"
+                           class="text-body fw-medium">
                             {{ $contributor->firstname }} {{ $contributor->lastname }}
                         </a>
                     </div>
@@ -26,8 +21,8 @@
         <td>
             @if($contributor->user)
                 <div class="d-flex align-items-center">
-                    <i class="bi bi-person-check me-1 text-success fs-13"></i>
-                    <span class="text-muted small fs-12">{{ $contributor->user->email }}</span>
+                    <i class="bi bi-person-check me-1 text-success"></i>
+                    <span class="text-muted">{{ $contributor->user->email }}</span>
                 </div>
             @else
                 <span class="badge bg-warning-subtle text-warning fs-11">@lang('gingerminds-core::translation.none')</span>

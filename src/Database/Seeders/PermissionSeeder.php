@@ -29,6 +29,8 @@ class PermissionSeeder extends Seeder
         Permission::updateOrCreate(['name' => 'edit permissions']);
         Permission::updateOrCreate(['name' => 'delete permissions']);
 
+        Permission::updateOrCreate(['name' => 'view settings']);
+
         Permission::updateOrCreate(['name' => 'view contributors']);
         Permission::updateOrCreate(['name' => 'edit contributors']);
         Permission::updateOrCreate(['name' => 'delete contributors']);

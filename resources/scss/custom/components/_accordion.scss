@@ -3,6 +3,32 @@
 // accordion.scss
 //
 
+.accordion {
+  .accordion-item {
+    border: none;
+    margin-bottom: 0.5rem;
+    border-radius: $border-radius !important;
+    overflow: hidden;
+    box-shadow: $box-shadow-sm;
+  }
+
+  .accordion-button {
+    font-weight: $font-weight-semibold;
+    padding: 1rem 1.25rem;
+    
+    &:not(.collapsed) {
+      background-color: rgba($primary, 0.03);
+      color: $primary;
+      box-shadow: none;
+    }
+
+    &:focus {
+      box-shadow: none;
+      border-color: rgba($primary, 0.1);
+    }
+  }
+}
+
 .custom-accordion {
     .accordion-list {
         display: flex;

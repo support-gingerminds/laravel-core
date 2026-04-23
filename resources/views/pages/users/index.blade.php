@@ -27,7 +27,7 @@
 
 @php
     $columns = [
-        ['name' => '#', 'sortable' => false],
+        ['name' => '#', 'sortable' => false, 'align' => 'center'],
         ['name' => __('gingerminds-core::translation.form.email'), 'sortable' => true, 'property' => 'email'],
         ['name' => __('gingerminds-core::translation.roles.name_p'), 'sortable' => false],
         ['name' => __('gingerminds-core::translation.contributors.name_s'), 'sortable' => true, 'property' => 'contributor.lastname'],
