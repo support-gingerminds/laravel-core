@@ -36,7 +36,8 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Gingerminds\\LaravelCore\\Providers\\LaravelCoreServiceProvider"
+                "Gingerminds\\LaravelCore\\Providers\\LaravelCoreServiceProvider",
+                "Gingerminds\\LaravelCore\\Providers\\LaravelCoreAuthServiceProvider"
             ]
         }
     }

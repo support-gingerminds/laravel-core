@@ -21,6 +21,7 @@ class LaravelCoreServiceProvider extends ServiceProvider
     public function register(): void
     {
         // Enregistrement des configurations ou services si nécessaire
+        $this->app->register(LaravelCoreAuthServiceProvider::class);
     }
 
     public function boot(): void
