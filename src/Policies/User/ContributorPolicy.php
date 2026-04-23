@@ -18,17 +18,9 @@ class ContributorPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Contributor $contributor): bool
+    public function view(User $user): bool
     {
-        if (!$user->can('view contributors')) {
-            return false;
-        }
-
-        if (!$user->contributor) {
-            return false;
-        }
-
-        return $user->contributor->entity_id === $contributor->entity_id;
+        return $user->can('view contributors');
     }
 
     /**
@@ -44,37 +36,21 @@ class ContributorPolicy
      */
     public function update(User $user, Contributor $contributor): bool
     {
-        if (! $user->can('edit contributors')) {
-            return false;
-        }
-
-        if (! $user->contributor) {
-            return false;
-        }
-
-        return $user->contributor->entity_id === $contributor->entity_id;
+        return $user->can('edit contributors') || $user->id === $contributor->user_id;
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Contributor $contributor): bool
+    public function delete(User $user): bool
     {
-        if (! $user->can('delete contributors')) {
-            return false;
-        }
-
-        if (! $user->contributor) {
-            return false;
-        }
-
-        return $user->contributor->entity_id === $contributor->entity_id;
+        return $user->can('delete contributors');
     }
 
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, Contributor $contributor): bool
+    public function restore(User $user): bool
     {
         return false;
     }
@@ -82,7 +58,7 @@ class ContributorPolicy
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, Contributor $contributor): bool
+    public function forceDelete(User $user): bool
     {
         return false;
     }

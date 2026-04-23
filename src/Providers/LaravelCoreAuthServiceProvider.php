@@ -17,10 +17,10 @@ use Spatie\Permission\PermissionRegistrar;
 class LaravelCoreAuthServiceProvider extends ServiceProvider
 {
     protected $policies = [
-        Contributor::class   => ContributorPolicy::class,
-        User::class   => UserPolicy::class,
-        Role::class   => RolePolicy::class,
-        Permission::class   => PermissionPolicy::class,
+        Contributor::class => ContributorPolicy::class,
+        User::class        => UserPolicy::class,
+        Role::class        => RolePolicy::class,
+        Permission::class  => PermissionPolicy::class,
     ];
 
     /**
@@ -35,19 +35,7 @@ class LaravelCoreAuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        \Illuminate\Support\Facades\Log::info('LaravelCoreAuthServiceProvider booted');
-
         Gate::before(function ($user, $ability) {
-            return $user->hasRole('Super-Admin') ? true : null;
-        });
-
-        Gate::before(function ($user, $ability) {
-            \Illuminate\Support\Facades\Log::info('Gate::before', [
-                'user_id' => $user->id,
-                'user_class' => get_class($user),
-                'ability' => $ability,
-                'hasRole' => $user->hasRole('Super-Admin'),
-            ]);
             return $user->hasRole('Super-Admin') ? true : null;
         });
 

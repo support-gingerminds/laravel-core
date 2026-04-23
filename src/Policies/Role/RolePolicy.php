@@ -20,15 +20,7 @@ class RolePolicy
      */
     public function view(User $user, Role $role): bool
     {
-        if (! $user->can('manage roles')) {
-            return false;
-        }
-
-        if (! $user->contributor) {
-            return false;
-        }
-
-        return $user->contributor->entity_id === $role->entity_id;
+        return $user->can('manage roles');
     }
 
     /**
@@ -44,15 +36,7 @@ class RolePolicy
      */
     public function update(User $user, Role $role): bool
     {
-        if (! $user->can('manage roles')) {
-            return false;
-        }
-
-        if (! $user->contributor) {
-            return false;
-        }
-
-        return $user->contributor->entity_id === $role->entity_id;
+        return $user->can('manage roles');
     }
 
     /**
@@ -60,15 +44,7 @@ class RolePolicy
      */
     public function delete(User $user, Role $role): bool
     {
-        if (! $user->can('manage roles')) {
-            return false;
-        }
-
-        if (! $user->contributor) {
-            return false;
-        }
-
-        return $user->contributor->entity_id === $role->entity_id;
+        return $user->can('manage roles');
     }
 
     /**
