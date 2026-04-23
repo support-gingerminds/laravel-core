@@ -8,6 +8,7 @@ return [
     'settings' => 'Settings',
     'previous' => 'Previous',
     'next' => 'Next',
+    'nb_results' => 'Results :current of :total',
 
     'successfully_created' => ':model successfully created.',
     'successfully_updated' => ':model updated successfully.',
