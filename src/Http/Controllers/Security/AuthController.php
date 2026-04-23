@@ -19,7 +19,10 @@ class AuthController extends Controller
 
     public function login(): Factory|View
     {
-        return view('gingerminds-core::auth.login');
+        /** @var view-string $view */
+        $view = 'gingerminds-core::auth.login';
+
+        return view($view);
     }
 
     public function authenticate(LoginRequest $request): RedirectResponse

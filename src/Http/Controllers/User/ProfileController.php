@@ -25,7 +25,10 @@ class ProfileController extends Controller
         /** @var User $user */
         $user = Auth::user();
 
-        return view('gingerminds-core::pages.profile.edit', [
+        /** @var view-string $view */
+        $view = 'gingerminds-core::pages.profile.edit';
+
+        return view($view, [
             'user' => $user->load('contributor'),
         ]);
     }

@@ -89,7 +89,7 @@ class UserRepository extends AbstractRepository implements RepositoryInterface
                 }
 
                 $contributor->fill($payload);
-                $contributor->user_id   = $resourceModel->id;
+                $contributor->user_id = $resourceModel->id;
                 $contributor->save();
             }
         }

@@ -32,7 +32,9 @@ class CreateResource extends Command
      */
     public function handle(): int
     {
-        $name     = trim((string) $this->argument('name'));
+        /** @var string $name */
+        $name     = $this->argument('name');
+        $name     = trim($name);
         $tradBase = $this->option('trad-base');
 
         if ($name === '') {

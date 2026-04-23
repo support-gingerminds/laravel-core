@@ -25,6 +25,7 @@ class CreateRepository extends Command
      */
     public function handle(): void
     {
+        /** @var string $repositoryName */
         $repositoryName = $this->argument('name');
 
         $repositoryPathParts = explode('/', $repositoryName);

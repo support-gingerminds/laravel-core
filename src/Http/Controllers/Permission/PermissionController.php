@@ -26,7 +26,10 @@ class PermissionController extends Controller
 
         $permissions = $this->permissionRepository->get($request);
 
-        return view('gingerminds-core::pages.permissions.index', [
+        /** @var view-string $view */
+        $view = 'gingerminds-core::pages.permissions.index';
+
+        return view($view, [
             'resource' => Permission::class,
             'items'    => $permissions,
         ]);
@@ -34,12 +37,18 @@ class PermissionController extends Controller
 
     public function create(): View
     {
-        return view('gingerminds-core::pages.permissions.create');
+        /** @var view-string $view */
+        $view = 'gingerminds-core::pages.permissions.create';
+
+        return view($view);
     }
 
     public function edit(Permission $permission): View
     {
-        return view('gingerminds-core::pages.permissions.edit', ['permission' => $permission]);
+        /** @var view-string $view */
+        $view = 'gingerminds-core::pages.permissions.edit';
+
+        return view($view, ['permission' => $permission]);
     }
 
     public function store(PermissionRequest $request): RedirectResponse

@@ -91,7 +91,6 @@ class Role extends SpatieRole implements
     SortableModelInterface,
     SearchableModelInterface
 {
-
     protected $fillable = [
         'name',
         'is_external',
@@ -126,28 +125,10 @@ class Role extends SpatieRole implements
 
     /**
      * @param Permission|string ...$permissions
-     * @return \App\Models\Role\Role
      */
-    public function syncPermissions(...$permissions)
+    public function syncPermissions(...$permissions): Role
     {
-        $old = $this->permissions->pluck('name')->toArray();
-
-        $result = parent::syncPermissions($permissions);
-
-        $new = $this->permissions->pluck('name')->toArray();
-
-        activity()
-            ->causedBy(auth()->user())
-            ->performedOn($this)
-            ->withProperties([
-                'attributes' => $new,
-                'old'        => $old,
-            ])
-            ->event('updated permissions')
-            ->useLog('system')
-            ->log('role permissions updated');
-
-        return $result;
+        return parent::syncPermissions($permissions);
     }
 
     public function getPermissionsCountAttribute(): int

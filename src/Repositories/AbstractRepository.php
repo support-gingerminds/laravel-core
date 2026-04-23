@@ -2,11 +2,11 @@
 
 namespace Gingerminds\LaravelCore\Repositories;
 
+use Carbon\Carbon;
 use Gingerminds\LaravelCore\Models\CacheableResourceInterface;
 use Gingerminds\LaravelCore\Models\FilterableModelInterface;
 use Gingerminds\LaravelCore\Models\SearchableModelInterface;
 use Gingerminds\LaravelCore\Models\SortableModelInterface;
-use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;

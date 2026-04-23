@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Gingerminds\LaravelCore\Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;

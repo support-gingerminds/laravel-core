@@ -2,9 +2,9 @@
 
 namespace Gingerminds\LaravelCore\Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use Gingerminds\LaravelCore\Models\Permission\Permission;
 use Gingerminds\LaravelCore\Models\Role\Role;
+use Illuminate\Database\Seeder;
 use Spatie\Permission\PermissionRegistrar;
 
 class PermissionSeeder extends Seeder

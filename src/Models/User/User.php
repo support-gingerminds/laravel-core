@@ -10,11 +10,11 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use Gingerminds\LaravelCore\ApiProvider\User\UserProvider;
+use Gingerminds\LaravelCore\Database\Factories\User\UserFactory;
 use Gingerminds\LaravelCore\Models\ResourceModelInterface;
 use Gingerminds\LaravelCore\Models\SearchableModelInterface;
 use Gingerminds\LaravelCore\Models\SortableModelInterface;
 use Gingerminds\LaravelCore\StateProcessor\User\UserStateProcessor;
-use Gingerminds\LaravelCore\Database\Factories\User\UserFactory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -25,6 +25,8 @@ use Spatie\Permission\Traits\HasRoles;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 /**
+ * @property string $password
+ * @property string $email
  * @property-read Contributor|null $contributor Relation to the contributor profile
  * @property-read int<0, max> $id
  */
@@ -93,9 +95,9 @@ use Symfony\Component\Serializer\Attribute\Groups;
     'user:edit',
 ]))]
 class User extends Authenticatable implements
-  ResourceModelInterface,
-  SortableModelInterface,
-  SearchableModelInterface
+    ResourceModelInterface,
+    SortableModelInterface,
+    SearchableModelInterface
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory;
@@ -160,9 +162,9 @@ class User extends Authenticatable implements
     /**
      * Create a new factory instance for the model.
      *
-     * @return Factory
+     * @return Factory<User>
      */
-    protected static function newFactory()
+    protected static function newFactory(): Factory
     {
         return UserFactory::new();
     }

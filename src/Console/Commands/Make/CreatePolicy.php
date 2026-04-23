@@ -26,7 +26,9 @@ class CreatePolicy extends Command
      */
     public function handle(): int
     {
-        $name = trim((string) $this->argument('name'));
+        /** @var string $name */
+        $name = $this->argument('name');
+        $name = trim($name);
 
         if ($name === '') {
             $this->error('Name is required');

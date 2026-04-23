@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Gingerminds\LaravelCore\Http\Middelware;
 
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
