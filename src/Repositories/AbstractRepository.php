@@ -374,9 +374,11 @@ abstract class AbstractRepository implements RepositoryInterface
         $tableProperty = str_contains($property, '.') ? $property : "$table.$property";
 
         if ('yes' === $value) {
-            $query->where($tableProperty, '=', true);
+            $query->where($tableProperty, true);
         } elseif ('no' === $value) {
-            $query->whereNull($tableProperty);
+            $query->where(function (Builder $query) use ($tableProperty) {
+                $query->where($tableProperty, false)->orWhereNull($tableProperty);
+            });
         }
     }
 }
