@@ -2,11 +2,11 @@
 
 namespace Gingerminds\LaravelCore\Console\Commands\Security;
 
+use Exception;
+use Gingerminds\LaravelCore\Models\Role\Role;
 use Gingerminds\LaravelCore\Models\User\Contributor;
 use Gingerminds\LaravelCore\Models\User\User;
-use Exception;
 use Illuminate\Console\Command;
-use Gingerminds\LaravelCore\Models\Role\Role;
 
 class CreateUser extends Command
 {

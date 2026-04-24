@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Gingerminds\LaravelCore\Http\Requests\Security;
 
 use Gingerminds\LaravelCore\Http\Requests\FormRequestInterface;

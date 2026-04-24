@@ -27,7 +27,10 @@ class ContributorController extends Controller
 
         $contributors = $this->contributorRepository->get($request);
 
-        return view('gingerminds-core::pages.contributors.index', [
+        /** @var view-string $view */
+        $view = 'gingerminds-core::pages.contributors.index';
+
+        return view($view, [
             'resource' => Contributor::class,
             'items'    => $contributors,
         ]);
@@ -44,7 +47,10 @@ class ContributorController extends Controller
             ->orderBy('email')
             ->get();
 
-        return view('gingerminds-core::pages.contributors.create', [
+        /** @var view-string $view */
+        $view = 'gingerminds-core::pages.contributors.create';
+
+        return view($view, [
             'users' => $users,
         ]);
     }
@@ -86,9 +92,12 @@ class ContributorController extends Controller
             ->orderBy('email')
             ->get();
 
-        return view('gingerminds-core::pages.contributors.edit', [
-            'contributor'       => $contributor,
-            'users'             => $users,
+        /** @var view-string $view */
+        $view = 'gingerminds-core::pages.contributors.edit';
+
+        return view($view, [
+            'contributor' => $contributor,
+            'users'       => $users,
         ]);
     }
 

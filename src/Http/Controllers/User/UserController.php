@@ -4,6 +4,7 @@ namespace Gingerminds\LaravelCore\Http\Controllers\User;
 
 use Gingerminds\LaravelCore\Http\Controllers\AbstractController as Controller;
 use Gingerminds\LaravelCore\Http\Requests\User\UserRequest;
+use Gingerminds\LaravelCore\Models\Role\Role;
 use Gingerminds\LaravelCore\Models\User\Contributor;
 use Gingerminds\LaravelCore\Models\User\User;
 use Gingerminds\LaravelCore\Repositories\User\UserRepository;
@@ -11,7 +12,6 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Gingerminds\LaravelCore\Models\Role\Role;
 
 class UserController extends Controller
 {
@@ -29,7 +29,10 @@ class UserController extends Controller
         $users = $this->userRepository->get($request);
         $roles = Role::query()->orderBy('name')->get();
 
-        return view('gingerminds-core::pages.users.index', [
+        /** @var view-string $view */
+        $view = 'gingerminds-core::pages.users.index';
+
+        return view($view, [
             'resource' => User::class,
             'items'    => $users,
             'roles'    => $roles,
@@ -46,7 +49,10 @@ class UserController extends Controller
             ->orderBy('firstname')
             ->get();
 
-        return view('gingerminds-core::pages.users.create', [
+        /** @var view-string $view */
+        $view = 'gingerminds-core::pages.users.create';
+
+        return view($view, [
             'roles'        => $roles,
             'contributors' => $contributors,
         ]);
@@ -96,7 +102,10 @@ class UserController extends Controller
             ->orderBy('firstname')
             ->get();
 
-        return view('gingerminds-core::pages.users.edit', [
+        /** @var view-string $view */
+        $view = 'gingerminds-core::pages.users.edit';
+
+        return view($view, [
             'user'         => $user->load(['roles', 'contributor']),
             'roles'        => $roles,
             'contributors' => $contributors,

@@ -36,7 +36,9 @@
 
             <div class="col-lg-12">
                 <div class="text-end">
-                    <a href="{{ $indexRoute }}" class="btn btn-secondary me-2">@lang('gingerminds-core::translation.action.cancel')</a>
+                    @if(null != $indexRoute)
+                        <a href="{{ $indexRoute }}" class="btn btn-secondary me-2">@lang('gingerminds-core::translation.action.cancel')</a>
+                    @endif
                     <button type="submit" class="btn btn-primary" @if(isset($isDisabled) && $isDisabled) disabled @endif>@lang('gingerminds-core::translation.action.save')</button>
                 </div>
             </div>

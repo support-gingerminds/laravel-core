@@ -1,45 +1,39 @@
-
-
 <ul class="list-unstyled ps-0">
-    <li class="mb-1">
-        <a href="{{ route('dashboard') }}" class="btn btn-single rounded border-0 d-inline-flex align-items-center">
-            <i class="bi bi-speedometer2 me-2"></i>
-            @lang('gingerminds-core::translation.dashboard')
-        </a>
-    </li>
-    <li class="mb-1">
-        <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0" data-bs-toggle="collapse"
-                data-bs-target="#settings-collapse" aria-expanded="true">
-            <i class="bi bi-gear me-2"></i>
-            @lang('gingerminds-core::translation.settings')
-        </button>
-        <div class="collapse show" id="settings-collapse">
-            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                <li>
-                    <a href="{{ route('gingerminds-core.users.index') }}" class="d-inline-flex text-decoration-none rounded align-items-center">
-                        <i class="bi bi-people me-2"></i>
-                        @lang('gingerminds-core::translation.users.name_p')
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('gingerminds-core.contributors.index') }}" class="d-inline-flex text-decoration-none rounded align-items-center">
-                        <i class="bi bi-person-badge me-2"></i>
-                        @lang('gingerminds-core::translation.contributors.name_p')
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('gingerminds-core.roles.index') }}" class="d-inline-flex text-decoration-none rounded align-items-center">
-                        <i class="bi bi-shield-check me-2"></i>
-                        @lang('gingerminds-core::translation.roles.name_p')
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('gingerminds-core.permissions.index') }}" class="d-inline-flex text-decoration-none rounded align-items-center">
-                        <i class="bi bi-key me-2"></i>
-                        @lang('gingerminds-core::translation.permissions.name_p')
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </li>
+    <x-gingerminds-core::navigation.partial.nav_item
+        :route="route('dashboard')"
+        :icon="'bi bi-speedometer2'"
+        :name="__('gingerminds-core::translation.dashboard')"
+    />
+    <x-gingerminds-core::navigation.partial.nav_item
+        :id="'settings'"
+        :icon="'bi bi-gear'"
+        :label="__('gingerminds-core::translation.settings')"
+        :permission="'view settings'"
+        :items="[
+            [
+                'route' => route('gingerminds-core.users.index'),
+                'icon' => 'bi bi-people',
+                'label' => __('gingerminds-core::translation.users.name_p'),
+                'permission' => 'view users',
+            ],
+            [
+                'route' => route('gingerminds-core.contributors.index'),
+                'icon' => 'bi bi-person-badge',
+                'label' => __('gingerminds-core::translation.contributors.name_p'),
+                'permission' => 'view contributors',
+            ],
+            [
+                'route' => route('gingerminds-core.roles.index'),
+                'icon' => 'bi bi-shield-check',
+                'label' => __('gingerminds-core::translation.roles.name_p'),
+                'permission' => 'manage roles',
+            ],
+            [
+                'route' => route('gingerminds-core.permissions.index'),
+                'icon' => 'bi bi-key',
+                'label' => __('gingerminds-core::translation.permissions.name_p'),
+                'permission' => 'view permissions',
+            ],
+        ]"
+    />
 </ul>

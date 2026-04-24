@@ -1,0 +1,16 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+    - vendor/nesbot/carbon/extension.neon
+
+parameters:
+    paths:
+        - src/
+        - database/
+    excludePaths:
+        - src/Http/Requests/FormRequestInterface.php
+        - src/Http/Requests/ValueConverter/DateConverterTrait.php
+        - src/Http/Requests/ValueConverter/DecimalConverterTrait.php
+
+    # Level 10 is the highest level
+    level: 8
+

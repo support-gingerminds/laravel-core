@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Gingerminds\LaravelCore\Http\Requests\User;
 
 use Gingerminds\LaravelCore\Http\Requests\FormRequestInterface;
@@ -24,11 +26,11 @@ class ContributorRequest extends FormRequest implements FormRequestInterface
     public function rules(): array
     {
         return [
-            'firstname'           => 'nullable|string|max:255',
-            'lastname'            => 'nullable|string|max:255',
-            'trigram'             => 'nullable|string|max:50',
-            'civility'            => 'nullable|in:mr,mrs',
-            'user_id'             => 'nullable|integer|exists:users,id',
+            'firstname' => 'nullable|string|max:255',
+            'lastname'  => 'nullable|string|max:255',
+            'trigram'   => 'nullable|string|max:50',
+            'civility'  => 'nullable|in:mr,mrs',
+            'user_id'   => 'nullable|integer|exists:users,id',
         ];
     }
 }

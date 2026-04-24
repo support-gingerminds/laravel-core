@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Gingerminds\LaravelCore\Repositories;
 
-use  Gingerminds\LaravelCore\Http\Requests\FormRequestInterface;
-use  Gingerminds\LaravelCore\Models\ResourceModelInterface;
+use Gingerminds\LaravelCore\Http\Requests\FormRequestInterface;
+use Gingerminds\LaravelCore\Models\ResourceModelInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;

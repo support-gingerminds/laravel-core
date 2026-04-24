@@ -5,13 +5,23 @@
 // Pagination rounded (Custom)
 .pagination-rounded {
     .page-link {
-        border-radius: 30px !important;
+        border-radius: $border-radius !important;
         margin: 0 3px !important;
         border: none;
-        width: 32px;
+        min-width: 32px;
         height: 32px;
-        padding: 0;
+        padding: 0 6px;
         text-align: center;
         line-height: 32px;
+        transition: all 0.2s ease-in-out;
+
+        &:hover {
+            background-color: var(--bs-tertiary-bg);
+            transform: translateY(-1px);
+        }
+
+        &.active {
+            box-shadow: $box-shadow-sm;
+        }
     }
-  }
+}

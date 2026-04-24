@@ -4,6 +4,9 @@
 
 
 .badge {
+  padding: 0.45em 0.7em;
+  font-weight: $font-weight-medium;
+  
   &[href] {
     &:hover,
     &:focus {

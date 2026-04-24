@@ -25,6 +25,7 @@ class CreateFormRequest extends Command
      */
     public function handle(): void
     {
+        /** @var string $requestName */
         $requestName = $this->argument('name');
 
         $repositoryPathParts = explode('/', $requestName);

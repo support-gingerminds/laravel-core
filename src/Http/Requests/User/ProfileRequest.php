@@ -34,7 +34,7 @@ class ProfileRequest extends FormRequest implements FormRequestInterface
                 'max:255',
                 Rule::unique('users')->ignore($user ? $user->id : null),
             ],
-            'password' => 'nullable|string|min:8|confirmed',
+            'password'              => 'nullable|string|min:8|confirmed',
             'contributor_firstname' => 'nullable|string|max:255',
             'contributor_lastname'  => 'nullable|string|max:255',
             'contributor_trigram'   => 'nullable|string|max:50',

@@ -24,6 +24,8 @@ abstract class AbstractApiProvider
     /**
      * @param array<string, mixed> $uriVariables
      * @param array<string, mixed> $context
+     *
+     * @return object|array<mixed>|null
      */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
     {

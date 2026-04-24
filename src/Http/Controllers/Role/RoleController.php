@@ -26,7 +26,10 @@ class RoleController extends Controller
 
         $roles = $this->roleRepository->get($request);
 
-        return view('gingerminds-core::pages.roles.index', [
+        /** @var view-string $view */
+        $view = 'gingerminds-core::pages.roles.index';
+
+        return view($view, [
             'resource' => Role::class,
             'items'    => $roles,
         ]);
@@ -39,7 +42,10 @@ class RoleController extends Controller
             return count($parts) > 1 ? $parts[1] : 'other';
         });
 
-        return view('gingerminds-core::pages.roles.create', [
+        /** @var view-string $view */
+        $view = 'gingerminds-core::pages.roles.create';
+
+        return view($view, [
             'permissionsGrouped' => $permissions,
         ]);
     }
@@ -51,7 +57,10 @@ class RoleController extends Controller
             return count($parts) > 1 ? $parts[1] : 'other';
         });
 
-        return view('gingerminds-core::pages.roles.edit', [
+        /** @var view-string $view */
+        $view = 'gingerminds-core::pages.roles.edit';
+
+        return view($view, [
             'role'               => $role,
             'permissionsGrouped' => $permissions,
         ]);

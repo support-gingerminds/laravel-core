@@ -8,7 +8,10 @@
             "Gingerminds\\LaravelCore\\": "src/",
             "Gingerminds\\LaravelCore\\Database\\Factories\\": "src/Database/Factories/",
             "Gingerminds\\LaravelCore\\Database\\Seeders\\": "database/seeders/"
-        }
+        },
+        "files": [
+            "src/helpers.php"
+        ]
     },
     "authors": [
         {
@@ -24,10 +27,20 @@
         "livewire/livewire": "^3.5",
         "spatie/laravel-permission": "^6.23"
     },
+    "require-dev": {
+        "larastan/larastan": "^3.8",
+        "orchestra/testbench": "^10.0",
+        "phpstan/phpstan": "^2.0",
+        "squizlabs/php_codesniffer": "^3.0",
+        "friendsofphp/php-cs-fixer": "^3.0",
+        "rector/rector": "^2.0",
+        "phpdocumentor/type-resolver": "^1.8"
+    },
     "extra": {
         "laravel": {
             "providers": [
-                "Gingerminds\\LaravelCore\\Providers\\LaravelCoreServiceProvider"
+                "Gingerminds\\LaravelCore\\Providers\\LaravelCoreServiceProvider",
+                "Gingerminds\\LaravelCore\\Providers\\LaravelCoreAuthServiceProvider"
             ]
         }
     }

@@ -25,6 +25,7 @@ class CreateStateProcessor extends Command
      */
     public function handle(): void
     {
+        /** @var string $stateProcessorName */
         $stateProcessorName = $this->argument('name');
 
         $stateProcessorPathParts = explode('/', $stateProcessorName);

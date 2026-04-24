@@ -28,9 +28,6 @@
                                             aria-expanded="true" aria-controls="collapseOne">
                                         <i class="bi bi-funnel me-2 text-primary"></i>
                                         @lang('gingerminds-core::translation.action.filters')
-                                        @if($isFiltered)
-                                            <span class="badge rounded-pill bg-primary ms-2">@lang('gingerminds-core::translation.action.active')</span>
-                                        @endif
                                     </button>
                                 </h2>
                                 <div id="collapseOne"
@@ -117,7 +114,10 @@
                         @endif
                     </div>
 
-                    <div class="row mb-3">
+                    <div class="row mt-3">
+                        <div class="col-md-12 d-flex justify-content-end pr-6 mr-3">
+                            <p>@lang('gingerminds-core::translation.nb_results', ['current' => $items->count(), 'total' => $items->total()])</p>
+                        </div>
                         @if(!isset($isPaginationDisabled) || !$isPaginationDisabled)
                             @include('gingerminds-core::components.list.pagination')
                         @endif

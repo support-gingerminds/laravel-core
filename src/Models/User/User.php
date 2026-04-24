@@ -10,11 +10,11 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use Gingerminds\LaravelCore\ApiProvider\User\UserProvider;
+use Gingerminds\LaravelCore\Database\Factories\User\UserFactory;
 use Gingerminds\LaravelCore\Models\ResourceModelInterface;
 use Gingerminds\LaravelCore\Models\SearchableModelInterface;
 use Gingerminds\LaravelCore\Models\SortableModelInterface;
 use Gingerminds\LaravelCore\StateProcessor\User\UserStateProcessor;
-use Gingerminds\LaravelCore\Database\Factories\User\UserFactory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -25,6 +25,8 @@ use Spatie\Permission\Traits\HasRoles;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 /**
+ * @property string $password
+ * @property string $email
  * @property-read Contributor|null $contributor Relation to the contributor profile
  * @property-read int<0, max> $id
  */
@@ -93,9 +95,9 @@ use Symfony\Component\Serializer\Attribute\Groups;
     'user:edit',
 ]))]
 class User extends Authenticatable implements
-  ResourceModelInterface,
-  SortableModelInterface,
-  SearchableModelInterface
+    ResourceModelInterface,
+    SortableModelInterface,
+    SearchableModelInterface
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory;
@@ -104,41 +106,40 @@ class User extends Authenticatable implements
     use HasRoles;
 
     /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
+     * @return string[]
      */
-    protected $fillable = [
-        'email',
-        'email_verified_at',
-        'password',
-    ];
-
-    protected $casts = [
-        'contributor_id'                  => 'integer',
-        'contributor_show_personal_phone' => 'boolean',
-    ];
-
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
+    public function getFillable(): array
+    {
+        return [
+            'email',
+            'email_verified_at',
+            'password',
+        ];
+    }
 
     /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
      */
-    protected function casts(): array
+    public function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
-            'password'          => 'hashed',
+            'contributor_id'                  => 'integer',
+            'contributor_show_personal_phone' => 'boolean',
+            'email_verified_at'               => 'datetime',
+            'password'                        => 'hashed',
+        ];
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getHidden(): array
+    {
+        return [
+            'password',
+            'remember_token',
         ];
     }
 
@@ -160,9 +161,9 @@ class User extends Authenticatable implements
     /**
      * Create a new factory instance for the model.
      *
-     * @return Factory
+     * @return Factory<User>
      */
-    protected static function newFactory()
+    protected static function newFactory(): Factory
     {
         return UserFactory::new();
     }
