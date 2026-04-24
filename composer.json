@@ -8,7 +8,10 @@
             "Gingerminds\\LaravelCore\\": "src/",
             "Gingerminds\\LaravelCore\\Database\\Factories\\": "src/Database/Factories/",
             "Gingerminds\\LaravelCore\\Database\\Seeders\\": "database/seeders/"
-        }
+        },
+        "files": [
+            "src/helpers.php"
+        ]
     },
     "authors": [
         {

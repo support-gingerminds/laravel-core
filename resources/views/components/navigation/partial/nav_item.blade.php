@@ -24,18 +24,8 @@
 
     // Check if current item or any sub-item is active
     $isActive = false;
-    
-    // Function to check if a URL matches current request (including patterns)
-    $isUrlActive = function($url) {
-        if (!$url) return false;
-        $path = parse_url($url, PHP_URL_PATH);
-        if (!$path) return false;
-        // Trim leading slash for request()->is()
-        $pattern = ltrim($path, '/') . '*';
-        return request()->is($pattern);
-    };
 
-    if ($route && $isUrlActive($route)) {
+    if ($route && is_url_active($route)) {
         $isActive = true;
     } elseif ($filteredItems) {
         foreach ($filteredItems as $item) {
