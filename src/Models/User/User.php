@@ -106,41 +106,40 @@ class User extends Authenticatable implements
     use HasRoles;
 
     /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
+     * @return string[]
      */
-    protected $fillable = [
-        'email',
-        'email_verified_at',
-        'password',
-    ];
-
-    protected $casts = [
-        'contributor_id'                  => 'integer',
-        'contributor_show_personal_phone' => 'boolean',
-    ];
-
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
+    public function getFillable(): array
+    {
+        return [
+            'email',
+            'email_verified_at',
+            'password',
+        ];
+    }
 
     /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
      */
-    protected function casts(): array
+    public function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
-            'password'          => 'hashed',
+            'contributor_id'                  => 'integer',
+            'contributor_show_personal_phone' => 'boolean',
+            'email_verified_at'               => 'datetime',
+            'password'                        => 'hashed',
+        ];
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getHidden(): array
+    {
+        return [
+            'password',
+            'remember_token',
         ];
     }
 

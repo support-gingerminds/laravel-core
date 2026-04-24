@@ -91,17 +91,29 @@ class Role extends SpatieRole implements
     SortableModelInterface,
     SearchableModelInterface
 {
-    protected $fillable = [
-        'name',
-        'is_external',
-        'is_default',
-        'guard_name',
-    ];
+    /**
+     * @return string[]
+     */
+    public function getFillable(): array
+    {
+        return [
+            'name',
+            'is_external',
+            'is_default',
+            'guard_name',
+        ];
+    }
 
-    protected $casts = [
-        'is_external' => 'boolean',
-        'is_default'  => 'boolean',
-    ];
+    /**
+     * @return string[]
+     */
+    public function getCasts(): array
+    {
+        return [
+            'is_external' => 'boolean',
+            'is_default'  => 'boolean',
+        ];
+    }
 
     protected static function booted(): void
     {

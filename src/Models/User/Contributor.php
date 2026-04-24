@@ -106,18 +106,30 @@ class Contributor extends Model implements
     use HasFactory;
     use SoftDeletes;
 
-    protected $fillable = [
-        'firstname',
-        'lastname',
-        'trigram',
-        'civility',
-        'avatar',
-        'user_id',
-    ];
+    /**
+     * @return string[]
+     */
+    public function getFillable(): array
+    {
+        return [
+            'firstname',
+            'lastname',
+            'trigram',
+            'civility',
+            'avatar',
+            'user_id',
+        ];
+    }
 
-    protected $casts = [
-        'user_id' => 'integer',
-    ];
+    /**
+     * @return string[]
+     */
+    public function getCasts(): array
+    {
+        return [
+            'user_id' => 'integer',
+        ];
+    }
 
     /**
      * Get the user that owns the Contributor
