@@ -8,34 +8,29 @@
                 </h5>
             </div>
             <div class="card-body">
-                <div class="row g-3">
-                    <div class="col-md-12">
-                        <x-gingerminds-core::form.inputs.basic
-                           id="email"
-                           type="email"
-                           :label="__('gingerminds-core::translation.form.email')"
-                           :value="old('email', isset($user) ? $user->email : null)"
-                           placeholder="example@domain.com"
-                       />
-                    </div>
-
-                    <div class="col-md-6">
-                        <x-gingerminds-core::form.inputs.basic
-                           id="password"
-                           type="password"
-                           :label="__('gingerminds-core::translation.users.form.password')"
-                           :helper="__('gingerminds-core::translation.form.helpers.no_change_if_kept_empty')"
-                           :required="!isset($user)"
-                       />
-                    </div>
-                    <div class="col-md-6">
-                        <x-gingerminds-core::form.inputs.basic
-                           id="password_confirmation"
-                           type="password"
-                           :label="__('gingerminds-core::translation.users.form.password_confirmation')"
-                           :required="!isset($user)"
-                       />
-                    </div>
+                <div class="row mb-3">
+                    <x-gingerminds-core::form.inputs.basic
+                            id="email"
+                            type="email"
+                            :label="__('gingerminds-core::translation.form.email')"
+                            :value="old('email', isset($user) ? $user->email : null)"
+                            placeholder="example@domain.com"
+                    />
+                </div>
+                <div class="row">
+                    <x-gingerminds-core::form.inputs.basic
+                            id="password"
+                            type="password"
+                            :label="__('gingerminds-core::translation.users.form.password')"
+                            :helper="__('gingerminds-core::translation.form.helpers.no_change_if_kept_empty')"
+                            :required="!isset($user)"
+                    />
+                    <x-gingerminds-core::form.inputs.basic
+                            id="password_confirmation"
+                            type="password"
+                            :label="__('gingerminds-core::translation.users.form.password_confirmation')"
+                            :required="!isset($user)"
+                    />
                 </div>
             </div>
         </div>

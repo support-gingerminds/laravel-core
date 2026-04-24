@@ -16,24 +16,6 @@
                         placeholder="{{ __('gingerminds-core::translation.roles.form.name_placeholder') }}"
                     />
                 </div>
-                <div class="col-md-3">
-                    <div class="mt-4 pt-2">
-                        <x-gingerminds-core::form.inputs.toggle
-                            id="is_external"
-                            :label="__('gingerminds-core::translation.roles.form.is_external')"
-                            :checked="old('is_external', isset($role) ? $role->is_external : false)"
-                        />
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="mt-4 pt-2">
-                        <x-gingerminds-core::form.inputs.toggle
-                            id="is_default"
-                            :label="__('gingerminds-core::translation.roles.form.is_default')"
-                            :checked="old('is_default', isset($role) ? $role->is_default : false)"
-                        />
-                    </div>
-                </div>
             </div>
         </div>
     </div>

@@ -1,11 +1,13 @@
 <?php
 
-use Gingerminds\LaravelCore\Http\Controllers\Security\AuthController;
-use Gingerminds\LaravelCore\Http\Controllers\User\ContributorController;
+declare(strict_types=1);
+
 use Gingerminds\LaravelCore\Http\Controllers\Permission\PermissionController;
 use Gingerminds\LaravelCore\Http\Controllers\Role\RoleController;
-use Gingerminds\LaravelCore\Http\Controllers\User\UserController;
+use Gingerminds\LaravelCore\Http\Controllers\Security\AuthController;
+use Gingerminds\LaravelCore\Http\Controllers\User\ContributorController;
 use Gingerminds\LaravelCore\Http\Controllers\User\ProfileController;
+use Gingerminds\LaravelCore\Http\Controllers\User\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('web')
@@ -33,5 +35,4 @@ Route::middleware('web')
           Route::resource('roles', RoleController::class);
           Route::resource('permissions', PermissionController::class);
       });
-
   });

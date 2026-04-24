@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Gingerminds\LaravelCore\Http\Requests\User;
 
 use Gingerminds\LaravelCore\Http\Requests\FormRequestInterface;
@@ -31,10 +33,10 @@ class UserRequest extends FormRequest implements FormRequestInterface
             // Permet soit un id existant, soit la valeur spéciale "__new__" pour créer un nouveau contributeur côté dépôt
             'contributor_id' => 'nullable',
             // Champs d'édition du contributeur associé
-            'contributor_firstname'           => 'nullable|string|max:255',
-            'contributor_lastname'            => 'nullable|string|max:255',
-            'contributor_trigram'             => 'nullable|string|max:50',
-            'contributor_civility'            => 'nullable|in:mr,mrs',
+            'contributor_firstname' => 'nullable|string|max:255',
+            'contributor_lastname'  => 'nullable|string|max:255',
+            'contributor_trigram'   => 'nullable|string|max:50',
+            'contributor_civility'  => 'nullable|in:mr,mrs',
         ];
     }
 }

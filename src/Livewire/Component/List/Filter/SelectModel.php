@@ -2,7 +2,6 @@
 
 namespace Gingerminds\LaravelCore\Livewire\Component\List\Filter;
 
-use Gingerminds\LaravelCore\Models\EntityContextedModelInterface;
 use Gingerminds\LaravelCore\Models\SearchableModelInterface;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
@@ -36,10 +35,6 @@ class SelectModel extends Component
     {
         $modelClass = $this->options['model'];
         $query      = $modelClass::query();
-
-        if (is_subclass_of($modelClass, EntityContextedModelInterface::class)) {
-            $query->forEntity();
-        }
 
         // Déterminer le champ d'ordre
         $orderField = 'id';
@@ -82,10 +77,7 @@ class SelectModel extends Component
 
         if (!$this->isMultiple) {
             // Mode single : on charge tous les items pour les afficher comme <option>
-            $query = $modelClass::query();
-            if (is_subclass_of($modelClass, EntityContextedModelInterface::class)) {
-                $query->forEntity();
-            }
+            $query    = $modelClass::query();
             $allItems = $query->limit(100)->get();
         }
 
@@ -95,7 +87,10 @@ class SelectModel extends Component
             $selectedItems = $modelClass::whereIn('id', $ids)->get();
         }
 
-        return view('gingerminds-core::livewire.components.list.filter.select-model', [
+        /** @var view-string $view */
+        $view = 'gingerminds-core::livewire.components.list.filter.select-model';
+
+        return view($view, [
             'selectedItems' => $selectedItems,
             'allItems'      => $allItems ?? new Collection(),
         ]);

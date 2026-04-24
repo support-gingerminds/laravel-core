@@ -3,6 +3,7 @@
   width: $sidebar-width;
   flex-shrink: 0;
   overflow-y: auto;
+  background-color: $white;
 }
 
 .dropdown-toggle { outline: 0; }
@@ -45,19 +46,53 @@
   content: "";
 }
 .btn-toggle::before {
-  width: 1.25em;
-  line-height: 0;
-  color: $sidebar-menu-item-icon-color;
-  content: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='rgba%280,0,0,.5%29' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M5 14l6-6-6-6'/%3e%3c/svg%3e");
+  display: inline-block;
+  width: 0.875em;
+  height: 0.875em;
+  line-height: 1;
+  background-color: $sidebar-menu-item-icon-color;
+  -webkit-mask-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23000' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M5 14l6-6-6-6'/%3e%3c/svg%3e");
+  mask-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23000' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M5 14l6-6-6-6'/%3e%3c/svg%3e");
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  content: "";
   transition: transform .35s ease;
-  transform-origin: .5em 50%;
+  transform-origin: center;
+  margin-right: .25rem;
 }
 
 [data-bs-theme="dark"] .btn-toggle::before {
-  color: $sidebar-dark-menu-item-icon-color;
-  content: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='rgba%28255,255,255,.5%29' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M5 14l6-6-6-6'/%3e%3c/svg%3e");
+  background-color: $sidebar-dark-menu-item-icon-color;
+}
+
+.btn-toggle[aria-expanded="false"]::before {
+  background-color: $white !important;
 }
 
 .btn-toggle[aria-expanded="true"]::before {
   transform: rotate(90deg);
+  background-color: $gray-600!important;
+}
+
+.bi::before {
+  vertical-align: 0!important;
+}
+
+ul .bi::before {
+  vertical-align: .125em!important;
+}
+
+.btn-toggle-nav li a {
+  width: 100%;
+  margin-left: 0!important;
+  padding-left: 2.25rem!important;
+}
+
+.sidebar .btn-toggle-nav li a.active, .sidebar a.btn.active {
+  color: #1a2c3d;
+  background-color: $gray-500
 }

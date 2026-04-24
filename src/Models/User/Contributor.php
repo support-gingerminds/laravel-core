@@ -9,22 +9,25 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
-use ApiPlatform\Metadata\QueryParameter;
 use Gingerminds\LaravelCore\ApiProvider\User\ContributorProvider;
 use Gingerminds\LaravelCore\Database\Factories\User\ContributorFactory;
 use Gingerminds\LaravelCore\Models\ResourceModelInterface;
 use Gingerminds\LaravelCore\Models\SearchableModelInterface;
 use Gingerminds\LaravelCore\Models\SortableModelInterface;
 use Gingerminds\LaravelCore\StateProcessor\User\ContributorStateProcessor;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 /**
+ * @property int|null $user_id
+ * @property string $firstname
+ * @property string $lastname
+ * @property string $trigram
+ * @property string $civility
  */
 #[ApiResource(
     operations: [
@@ -103,18 +106,30 @@ class Contributor extends Model implements
     use HasFactory;
     use SoftDeletes;
 
-    protected $fillable = [
-        'firstname',
-        'lastname',
-        'trigram',
-        'civility',
-        'avatar',
-        'user_id',
-    ];
+    /**
+     * @return string[]
+     */
+    public function getFillable(): array
+    {
+        return [
+            'firstname',
+            'lastname',
+            'trigram',
+            'civility',
+            'avatar',
+            'user_id',
+        ];
+    }
 
-    protected $casts = [
-        'user_id'             => 'integer',
-    ];
+    /**
+     * @return string[]
+     */
+    public function getCasts(): array
+    {
+        return [
+            'user_id' => 'integer',
+        ];
+    }
 
     /**
      * Get the user that owns the Contributor
@@ -134,9 +149,9 @@ class Contributor extends Model implements
     /**
      * Create a new factory instance for the model.
      *
-     * @return Factory
+     * @return Factory<Contributor>
      */
-    protected static function newFactory()
+    protected static function newFactory(): Factory
     {
         return ContributorFactory::new();
     }

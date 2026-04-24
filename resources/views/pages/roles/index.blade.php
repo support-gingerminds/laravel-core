@@ -27,9 +27,9 @@
 
 @php
     $columns = [
-        ['name' => '#', 'sortable' => false],
+        ['name' => '#', 'sortable' => false, 'align' => 'center'],
         ['name' => __('gingerminds-core::translation.roles.name_s'), 'sortable' => true, 'property' => 'name'],
-        ['name' => __('gingerminds-core::translation.permissions.name_p'), 'sortable' => false],
+        ['name' => __('gingerminds-core::translation.permissions.name_p'), 'sortable' => false, 'align' => 'center'],
         ['name' => __('gingerminds-core::translation.actions'), 'sortable' => false],
     ];
     $sortBy = request()->query('sortBy');

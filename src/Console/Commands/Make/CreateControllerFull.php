@@ -28,7 +28,10 @@ class CreateControllerFull extends Command
 
     public function handle(): int
     {
-        $name = trim((string) $this->argument('name'));
+        /** @var string $name */
+        $name = $this->argument('name');
+        $name = trim($name);
+
         if ($name === '') {
             $this->error('Name is required');
             return CommandAlias::FAILURE;
@@ -60,6 +63,7 @@ class CreateControllerFull extends Command
         $viewsDir        = resource_path('views/pages/' . $resourceSegment);
         $modelVariable   = Str::camel($model);
 
+        /** @var string $tradBase */
         $tradBase = $this->option('trad-base');
         if (!$tradBase) {
             // Try to infer from resource segment (snake with underscores)

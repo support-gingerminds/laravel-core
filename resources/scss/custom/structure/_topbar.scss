@@ -58,7 +58,13 @@
         padding-right: 20px;
         background-color: var(--#{$prefix}topbar-search-bg);
         box-shadow: none;
-        border-radius: 30px;
+        border-radius: $border-radius-lg;
+        transition: all 0.2s ease-in-out;
+
+        &:focus {
+            background-color: var(--#{$prefix}tertiary-bg);
+            box-shadow: $box-shadow-sm;
+        }
     }
     span {
         position: absolute;
@@ -102,6 +108,10 @@
 
 .page-content {
     padding: calc(#{$header-height} + #{$grid-gutter-width}) calc(#{$grid-gutter-width} * 0.75) $footer-height calc(#{$grid-gutter-width} * 0.75);
+    background-color: $sage;
+    border-radius: 2rem 0 0 0;
+    margin-top: 1.5rem;
+    min-height: calc(100vh - 1.5rem);
 }
 
 .header-item {
@@ -121,6 +131,7 @@
     width: 36px;
     background-color: var(--#{$prefix}tertiary-bg);
     padding: 3px;
+    border-radius: $border-radius;
 }
 
 .noti-icon {

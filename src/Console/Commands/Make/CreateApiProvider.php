@@ -25,6 +25,7 @@ class CreateApiProvider extends Command
      */
     public function handle(): void
     {
+        /** @var string $providerName */
         $providerName = $this->argument('name');
 
         $providerPathParts = explode('/', $providerName);

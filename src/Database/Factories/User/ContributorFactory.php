@@ -2,7 +2,6 @@
 
 namespace Gingerminds\LaravelCore\Database\Factories\User;
 
-use Gingerminds\LaravelCore\Models\Entity\Entity;
 use Gingerminds\LaravelCore\Models\User\Contributor;
 use Gingerminds\LaravelCore\Models\User\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -26,14 +25,14 @@ class ContributorFactory extends Factory
      */
     public function definition(): array
     {
-        $user   = User::inRandomOrder()->firstOrFail();
+        $user = User::inRandomOrder()->firstOrFail();
 
         return [
-            'civility'            => fake()->randomElement(['mr', 'mrs']),
-            'lastname'            => fake()->lastName(),
-            'firstname'           => fake()->firstName(),
-            'trigram'             => fake()->unique()->lexify(str_repeat('?', fake()->numberBetween(2, 3))),
-            'user_id'             => $user->id,
+            'civility'  => fake()->randomElement(['mr', 'mrs']),
+            'lastname'  => fake()->lastName(),
+            'firstname' => fake()->firstName(),
+            'trigram'   => fake()->unique()->lexify(str_repeat('?', fake()->numberBetween(2, 3))),
+            'user_id'   => $user->id,
         ];
     }
 }

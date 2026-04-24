@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Gingerminds\LaravelCore\Models\Permission;
 
 use ApiPlatform\Metadata\ApiProperty;
@@ -64,7 +66,6 @@ class Permission extends SpatiePermission implements
     SortableModelInterface,
     SearchableModelInterface
 {
-
     public static function getSearchableFields(): array
     {
         return ['name'];
