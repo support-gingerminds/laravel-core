@@ -26,7 +26,7 @@ class CreateResource extends Command
      *
      * @var string
      */
-    protected $description = 'Create a full resource: Model, Repository, FormRequest, 
+    protected $description = 'Create a full resource: Model, Repository, FormRequest,
     and Controller with blades, routes, and translations';
 
     /**
