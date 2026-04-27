@@ -2,6 +2,7 @@
 
 namespace Gingerminds\LaravelCore\Providers;
 
+use ApiPlatform\State\ProviderInterface;
 use Gingerminds\LaravelCore\Console\Commands\Make\CreateApiProvider;
 use Gingerminds\LaravelCore\Console\Commands\Make\CreateControllerFull;
 use Gingerminds\LaravelCore\Console\Commands\Make\CreateFormRequest;
@@ -15,6 +16,8 @@ use Gingerminds\LaravelCore\Livewire\Component\List\Filter\SelectModel;
 use Illuminate\Foundation\Console\ModelMakeCommand as BaseModelMakeCommand;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 
 class LaravelCoreServiceProvider extends ServiceProvider
 {
@@ -22,6 +25,35 @@ class LaravelCoreServiceProvider extends ServiceProvider
     {
         // Enregistrement des configurations ou services si nécessaire
         $this->app->register(LaravelCoreAuthServiceProvider::class);
+
+        $this->app->resolving('config', function ($config) {
+            $resources = $config->get('api-platform.resources', []);
+            $corePath  = realpath(__DIR__ . '/../Models');
+            if ($corePath && !in_array($corePath, $resources, true)) {
+                $config->set('api-platform.resources', array_merge($resources, [$corePath]));
+            }
+        });
+
+        $providerPath = __DIR__ . '/../ApiProvider';
+        $iterator     = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($providerPath)
+        );
+        $toTag = [];
+        foreach ($iterator as $file) {
+            if (!$file->isFile() || $file->getExtension() !== 'php') {
+                continue;
+            }
+            $relativePath = $file->getPathname();
+            $relativePath = substr($relativePath, strlen($providerPath) + 1, -4); // retire le préfixe et .php
+            $class        = 'Gingerminds\\LaravelCore\\ApiProvider\\'
+                . str_replace(DIRECTORY_SEPARATOR, '\\', $relativePath);
+            if (class_exists($class) && is_subclass_of($class, ProviderInterface::class)) {
+                $toTag[] = $class;
+            }
+        }
+        if ($toTag !== []) {
+            $this->app->tag($toTag, ProviderInterface::class);
+        }
     }
 
     public function boot(): void

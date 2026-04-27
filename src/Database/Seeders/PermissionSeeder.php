@@ -18,33 +18,33 @@ class PermissionSeeder extends Seeder
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
         // updateOrCreate permissions
-        Permission::updateOrCreate(['name' => 'access admin']);
-        Permission::updateOrCreate(['name' => 'view dashboard']);
+        Permission::updateOrCreate(['name' => 'access admin', 'guard_name' => 'web']);
+        Permission::updateOrCreate(['name' => 'view dashboard', 'guard_name' => 'web']);
 
-        Permission::updateOrCreate(['name' => 'view users']);
-        Permission::updateOrCreate(['name' => 'edit users']);
-        Permission::updateOrCreate(['name' => 'delete users']);
+        Permission::updateOrCreate(['name' => 'view users', 'guard_name' => 'web']);
+        Permission::updateOrCreate(['name' => 'edit users', 'guard_name' => 'web']);
+        Permission::updateOrCreate(['name' => 'delete users', 'guard_name' => 'web']);
 
-        Permission::updateOrCreate(['name' => 'view permissions']);
-        Permission::updateOrCreate(['name' => 'edit permissions']);
-        Permission::updateOrCreate(['name' => 'delete permissions']);
+        Permission::updateOrCreate(['name' => 'view permissions', 'guard_name' => 'web']);
+        Permission::updateOrCreate(['name' => 'edit permissions', 'guard_name' => 'web']);
+        Permission::updateOrCreate(['name' => 'delete permissions', 'guard_name' => 'web']);
 
-        Permission::updateOrCreate(['name' => 'view settings']);
+        Permission::updateOrCreate(['name' => 'view settings', 'guard_name' => 'web']);
 
-        Permission::updateOrCreate(['name' => 'view contributors']);
-        Permission::updateOrCreate(['name' => 'edit contributors']);
-        Permission::updateOrCreate(['name' => 'delete contributors']);
+        Permission::updateOrCreate(['name' => 'view contributors', 'guard_name' => 'web']);
+        Permission::updateOrCreate(['name' => 'edit contributors', 'guard_name' => 'web']);
+        Permission::updateOrCreate(['name' => 'delete contributors', 'guard_name' => 'web']);
 
-        Permission::updateOrCreate(['name' => 'manage roles']);
+        Permission::updateOrCreate(['name' => 'manage roles', 'guard_name' => 'web']);
 
         $this->command->info('Permissions table seeded!');
         // updateOrCreate roles and assign existing permissions
 
-        Role::updateOrCreate(['name' => 'Super-Admin']);
+        Role::updateOrCreate(['name' => 'Super-Admin', 'guard_name' => 'web']);
         // gets all permissions via Gate::before rule; see AuthServiceProvider
         $this->command->info('Role Super-Admin seeded!');
 
-        $role2 = Role::updateOrCreate(['name' => 'Admin']);
+        $role2 = Role::updateOrCreate(['name' => 'Admin', 'guard_name' => 'web']);
         $role2->givePermissionTo('access admin');
         $role2->givePermissionTo('view dashboard');
         $this->command->info('Role Admin seeded!');

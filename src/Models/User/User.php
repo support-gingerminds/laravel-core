@@ -105,6 +105,8 @@ class User extends Authenticatable implements
     use Notifiable;
     use HasRoles;
 
+    protected string $guard_name = 'web';
+
     /**
      * @return string[]
      */
