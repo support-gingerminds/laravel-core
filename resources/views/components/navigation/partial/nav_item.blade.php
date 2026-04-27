@@ -29,7 +29,7 @@
         $isActive = true;
     } elseif ($filteredItems) {
         foreach ($filteredItems as $item) {
-            if (isset($item['route']) && $isUrlActive($item['route'])) {
+            if (isset($item['route']) && is_url_active($item['route'])) {
                 $isActive = true;
                 $expanded = true; // Auto-expand if a sub-item is active
                 break;
@@ -56,7 +56,7 @@
                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1">
                     @foreach($filteredItems as $item)
                         <li>
-                            <a href="{{ $item['route'] }}" class="d-inline-flex text-decoration-none rounded align-items-center {{ $isUrlActive($item['route']) ? 'active' : '' }}">
+                            <a href="{{ $item['route'] }}" class="d-inline-flex text-decoration-none rounded align-items-center {{ is_url_active($item['route']) ? 'active' : '' }}">
                                 @if(isset($item['icon']))
                                     <i class="{{ $item['icon'] }} me-2"></i>
                                 @endif
