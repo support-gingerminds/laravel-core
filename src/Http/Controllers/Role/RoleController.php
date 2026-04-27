@@ -13,6 +13,8 @@ use Illuminate\Http\Request;
 
 class RoleController extends Controller
 {
+    public const string LABEL_S = 'gingerminds-core::translation.roles.name_s';
+
     private RoleRepository $roleRepository;
 
     public function __construct()
@@ -81,7 +83,7 @@ class RoleController extends Controller
                 'success',
                 __(
                     'gingerminds-core::translation.successfully_created',
-                    ['model' => __('gingerminds-core::translation.roles.name_s') . ' ' . $role->name]
+                    ['model' => __(self::LABEL_S) . ' ' . $role->name]
                 )
             );
     }
@@ -97,7 +99,7 @@ class RoleController extends Controller
         return redirect()
             ->route('gingerminds-core.roles.edit', $role->id)
             ->with('success', __('gingerminds-core::translation.successfully_updated', [
-                'model' => __('gingerminds-core::translation.roles.name_s') . ' ' . $role->name,
+                'model' => __(self::LABEL_S) . ' ' . $role->name,
             ]));
     }
 
@@ -113,7 +115,7 @@ class RoleController extends Controller
         return redirect()
             ->route('gingerminds-core.roles.index')
             ->with('success', __('gingerminds-core::translation.successfully_deleted', [
-                'model' => __('gingerminds-core::translation.roles.name_s') . ' ' . $role->name,
+                'model' => __(self::LABEL_S) . ' ' . $role->name,
             ]));
     }
 }

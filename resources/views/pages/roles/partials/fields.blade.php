@@ -80,8 +80,8 @@
                                 </td>
                                 <td class="text-end">
                                     <div class="form-check form-switch form-check-right d-inline-block mb-0">
-                                        <input class="form-check-input check-resource-all" 
-                                               type="checkbox" 
+                                        <input class="form-check-input check-resource-all"
+                                               type="checkbox"
                                                data-resource="{{ $resource }}"
                                                id="check-{{ Str::slug($resource) }}"
                                                style="cursor: pointer;">

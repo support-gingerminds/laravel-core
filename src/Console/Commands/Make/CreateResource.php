@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Gingerminds\LaravelCore\Console\Commands\Make;
 
 use Illuminate\Console\Command;
@@ -24,8 +26,8 @@ class CreateResource extends Command
      *
      * @var string
      */
-    protected $description = 'Create a full resource: Model, Repository, FormRequest, '
-        . 'and Controller with blades, routes, and translations';
+    protected $description = 'Create a full resource: Model, Repository, FormRequest, 
+    and Controller with blades, routes, and translations';
 
     /**
      * Execute the console command.
@@ -33,19 +35,29 @@ class CreateResource extends Command
     public function handle(): int
     {
         /** @var string $name */
-        $name     = $this->argument('name');
-        $name     = trim($name);
-        $tradBase = $this->option('trad-base');
+        $name   = $this->argument('name');
+        $name   = trim($name);
+        $status = Command::SUCCESS;
 
         if ($name === '') {
             $this->error('Name is required');
-            return Command::FAILURE;
+            $status = Command::FAILURE;
         }
 
-        $this->info("Creating resource for: {$name}");
+        if ($status === Command::SUCCESS) {
+            $this->info("Creating resource for: {$name}");
+            $this->executeSteps($name);
+        }
 
-        // 0. Create Model
-        $this->info('Step 0: Creating Model...');
+        return $status;
+    }
+
+    /**
+     * Centralise l'exécution des différentes commandes de création.
+     */
+    protected function executeSteps(string $name): void
+    {
+        // Step 0: Model, Migration, Factory
         $modelOptions = ['name' => $name];
         if ($this->option('migration')) {
             $modelOptions['--migration'] = true;
@@ -53,33 +65,24 @@ class CreateResource extends Command
         if ($this->option('factory')) {
             $modelOptions['--factory'] = true;
         }
+
         $this->call('make:model', $modelOptions);
-
-        $this->info('Step 1: Creating Repository...');
         $this->call('make:repository', ['name' => $name]);
+        $this->call('make:form-request', ['name' => $name]);
 
-        $this->info('Step 2: Creating FormRequest...');
-        $requestName = $name;
-        $this->call('make:form-request', ['name' => $requestName]);
-
-        $this->info('Step 3: Creating Controller, Blades, Routes and Translations...');
+        // Step 3: Controller Full (Blades, Routes, Trad)
         $controllerOptions = ['name' => $name];
-        if ($tradBase) {
-            $controllerOptions['--trad-base'] = $tradBase;
+        if ($this->option('trad-base')) {
+            $controllerOptions['--trad-base'] = $this->option('trad-base');
         }
         $this->call('make:controller-full', $controllerOptions);
-
-        $this->info('Step 4: Creating Policy...');
         $this->call('make:policy', ['name' => $name]);
 
         if ($this->option('api')) {
-            $this->info('Step 5: Setting up API Resource in Model...');
             $this->setupApi($name);
         }
 
         $this->info('Resource created successfully.');
-
-        return Command::SUCCESS;
     }
 
     /**
@@ -88,30 +91,68 @@ class CreateResource extends Command
     protected function setupApi(string $name): void
     {
         $modelPath = app_path('Models/' . str_replace('\\', '/', $name) . '.php');
+        $stubPath  = base_path('stubs/api-resource.stub');
+        $error     = null;
+
         if (!file_exists($modelPath)) {
-            $this->error("Model not found at: {$modelPath}");
-            return;
+            $error = "Model not found at: {$modelPath}";
+        } elseif (!file_exists($stubPath)) {
+            $error = "Stub not found at: {$stubPath}";
         }
 
-        $this->call('make:state-processor', ['name' => $name]);
-        $this->call('make:api-provider', ['name' => $name]);
+        if (!$error) {
+            $modelContent = file_get_contents($modelPath);
+            $stubContent  = file_get_contents($stubPath);
 
-        $fileContent = file_get_contents($modelPath);
-        if ($fileContent === false) {
-            $this->error("Could not read model file: {$modelPath}");
-            return;
+            if ($modelContent === false || $stubContent === false) {
+                $error = 'Could not read source files.';
+            } else {
+                $this->processApiGeneration($name, $modelPath, $modelContent, $stubContent);
+            }
         }
-        $content             = $fileContent;
-        $modelBasename       = class_basename($name);
-        $snakeModel          = Str::snake($modelBasename);
-        $stateProcessorClass = "{$modelBasename}StateProcessor";
-        $stateProcessorFqcn  = 'App\\StateProcessor\\' . str_replace('/', '\\', $name) . 'StateProcessor';
-        $stateProviderClass  = "{$modelBasename}Provider";
-        $stateProviderFqcn   = 'App\\ApiProvider\\' . str_replace('/', '\\', $name) . 'Provider';
 
-        $uses = [
-            $stateProcessorFqcn,
-            $stateProviderFqcn,
+        if ($error) {
+            $this->error($error);
+        }
+    }
+
+    /**
+     * Manipule le contenu du modèle pour injecter l'API Platform.
+     */
+    protected function processApiGeneration(string $name, string $path, string $content, string $stub): void
+    {
+        $baseName       = class_basename($name);
+        $processorClass = "{$baseName}StateProcessor";
+        $providerClass  = "{$baseName}Provider";
+
+        // Injection des namespaces
+        $content = $this->injectNamespaces($content, $name, $processorClass, $providerClass);
+
+        // Préparation de l'attribut
+        $attr = str_replace(
+            ['{{snakeModel}}', '{{stateProcessorClass}}', '{{stateProviderClass}}'],
+            [Str::snake($baseName), $processorClass, $providerClass],
+            $stub
+        );
+
+        // Injection de l'attribut au-dessus de la classe
+        if (!str_contains($content, '#[ApiResource')) {
+            $content = (string) preg_replace('/class ' . $baseName . '/', "{$attr}class {$baseName}", $content);
+        }
+
+        file_put_contents($path, $content);
+        $this->info("API Resource added to Model: {$baseName}");
+    }
+
+    /**
+     * Ajoute proprement les imports 'use' en haut du fichier.
+     */
+    protected function injectNamespaces(string $content, string $name, string $processor, string $provider): string
+    {
+        $namespacePath = str_replace('/', '\\', $name);
+        $uses          = [
+            "App\\StateProcessor\\{$namespacePath}StateProcessor",
+            "App\\ApiProvider\\{$namespacePath}Provider",
             'ApiPlatform\Metadata\ApiProperty',
             'ApiPlatform\Metadata\ApiResource',
             'ApiPlatform\Metadata\Delete',
@@ -122,44 +163,13 @@ class CreateResource extends Command
             'Symfony\Component\Serializer\Attribute\Groups',
         ];
 
-        $usesContent = '';
+        $newUses = '';
         foreach ($uses as $use) {
             if (!str_contains($content, "use {$use};")) {
-                $usesContent .= "use {$use};\n";
+                $newUses .= "use {$use};\n";
             }
         }
 
-        if ($usesContent !== '') {
-            $content = (string) preg_replace('/namespace .*;/', "$0\n\n" . rtrim($usesContent), $content);
-        }
-
-        $stubPath = base_path('stubs/api-resource.stub');
-        if (!file_exists($stubPath)) {
-            $this->error("Stub not found at: {$stubPath}");
-            return;
-        }
-
-        $stubContent = file_get_contents($stubPath);
-        if ($stubContent === false) {
-            $this->error("Could not read stub file: {$stubPath}");
-            return;
-        }
-        $apiResourceAttr = $stubContent;
-        $apiResourceAttr = str_replace(
-            ['{{snakeModel}}', '{{stateProcessorClass}}', '{{stateProviderClass}}'],
-            [$snakeModel, $stateProcessorClass, $stateProviderClass],
-            $apiResourceAttr
-        );
-
-        if (!str_contains($content, '#[ApiResource')) {
-            $content = (string) preg_replace(
-                '/class ' . $modelBasename . '/',
-                "{$apiResourceAttr}class {$modelBasename}",
-                $content
-            );
-        }
-
-        file_put_contents($modelPath, $content);
-        $this->info("API Resource added to Model: {$modelBasename}");
+        return (string) preg_replace('/namespace .*;/', "$0\n\n" . rtrim($newUses), $content);
     }
 }

@@ -8,6 +8,10 @@ use Gingerminds\LaravelCore\Models\ResourceModelInterface;
 
 class {{ class }} extends Model implements ResourceModelInterface
 {
+    public const string GROUP_LIST = '{{ snakeModel }}:list';
+    public const string GROUP_READ = '{{ snakeModel }}:read';
+    public const string GROUP_EDIT = '{{ snakeModel }}:edit';
+
     {{ factory }}
 
     protected $fillable = [];

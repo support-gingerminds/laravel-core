@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Gingerminds\LaravelCore\Models\Role;
 
 use ApiPlatform\Metadata\ApiProperty;
@@ -10,10 +12,10 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use Gingerminds\LaravelCore\ApiProvider\Role\RoleProvider;
-use Gingerminds\LaravelCore\Models\Permission\Permission;
 use Gingerminds\LaravelCore\Models\ResourceModelInterface;
 use Gingerminds\LaravelCore\Models\SearchableModelInterface;
 use Gingerminds\LaravelCore\Models\SortableModelInterface;
+use Gingerminds\LaravelCore\Models\User\User;
 use Gingerminds\LaravelCore\StateProcessor\Role\RoleStateProcessor;
 use Spatie\Permission\Models\Role as SpatieRole;
 use Symfony\Component\Serializer\Attribute\Groups;
@@ -28,24 +30,24 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[ApiResource(
     operations: [
         new GetCollection(
-            normalizationContext: ['groups' => ['role:list']],
+            normalizationContext: ['groups' => [Role::GROUP_LIST]],
             provider: RoleProvider::class
         ),
         new Get(
-            normalizationContext: ['groups' => ['role:read']],
+            normalizationContext: ['groups' => [Role::GROUP_READ]],
             provider: RoleProvider::class
         ),
         new Post(
-            normalizationContext: ['groups' => ['role:read']],
-            denormalizationContext: ['groups' => ['role:edit']],
+            normalizationContext: ['groups' => [Role::GROUP_READ]],
+            denormalizationContext: ['groups' => [Role::GROUP_EDIT]],
             deserialize: false,
             provider: RoleProvider::class,
             processor: RoleStateProcessor::class
         ),
         new Delete(),
         new Patch(
-            normalizationContext: ['groups' => ['role:read']],
-            denormalizationContext: ['groups' => ['role:edit']],
+            normalizationContext: ['groups' => [Role::GROUP_READ]],
+            denormalizationContext: ['groups' => [Role::GROUP_EDIT]],
             deserialize: false,
             provider: RoleProvider::class,
             processor: RoleStateProcessor::class
@@ -56,41 +58,45 @@ use Symfony\Component\Serializer\Attribute\Groups;
     identifier: true,
     property: 'id',
     serialize: new Groups([
-        'role:list',
-        'role:read',
-        'user:list',
-        'user:read',
+        Role::GROUP_LIST,
+        Role::GROUP_READ,
+        User::GROUP_LIST,
+        User::GROUP_READ,
     ])
 )]
 #[ApiProperty(property: 'name', serialize: new Groups([
-    'role:list',
-    'role:read',
-    'role:edit',
-    'user:list',
-    'user:read',
+    Role::GROUP_LIST,
+    Role::GROUP_READ,
+    Role::GROUP_EDIT,
+    User::GROUP_LIST,
+    User::GROUP_READ,
 ]))]
 #[ApiProperty(property: 'permissions', serialize: new Groups([
-    'role:read',
-    'role:edit',
+    Role::GROUP_READ,
+    Role::GROUP_EDIT,
 ]))]
 #[ApiProperty(property: 'permissions_count', serialize: new Groups([
-    'role:list',
+    Role::GROUP_LIST,
 ]))]
 #[ApiProperty(property: 'is_external', serialize: new Groups([
-    'role:list',
-    'role:read',
-    'role:edit',
+    Role::GROUP_LIST,
+    Role::GROUP_READ,
+    Role::GROUP_EDIT,
 ]))]
 #[ApiProperty(property: 'is_default', serialize: new Groups([
-    'role:list',
-    'role:read',
-    'role:edit',
+    Role::GROUP_LIST,
+    Role::GROUP_READ,
+    Role::GROUP_EDIT,
 ]))]
 class Role extends SpatieRole implements
     ResourceModelInterface,
     SortableModelInterface,
     SearchableModelInterface
 {
+    public const string GROUP_LIST = 'role:list';
+    public const string GROUP_READ = 'role:read';
+    public const string GROUP_EDIT = 'role:edit';
+
     /**
      * @return string[]
      */
@@ -117,15 +123,15 @@ class Role extends SpatieRole implements
 
     protected static function booted(): void
     {
-        static::creating(function (Role $role): void {
+        static::creating(static function (Role $role): void {
             if (empty($role->guard_name)) {
                 $role->guard_name = config('auth.defaults.guard');
             }
         });
 
-        static::saving(function (Role $role): void {
+        static::saving(static function (Role $role): void {
             if ($role->is_default) {
-                Role::query()
+                static::query()
                     ->where('id', '!=', $role->id)
                     ->where('is_external', $role->is_external)
                     ->update(['is_default' => null]);
@@ -133,14 +139,6 @@ class Role extends SpatieRole implements
                 $role->is_default = null;
             }
         });
-    }
-
-    /**
-     * @param Permission|string ...$permissions
-     */
-    public function syncPermissions(...$permissions): Role
-    {
-        return parent::syncPermissions($permissions);
     }
 
     public function getPermissionsCountAttribute(): int

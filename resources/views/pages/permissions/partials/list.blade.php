@@ -9,7 +9,7 @@
         </td>
         <td class="text-end">
             <div class="d-flex justify-content-end gap-2">
-                <a class="btn btn-sm btn-primary fs-12" 
+                <a class="btn btn-sm btn-primary fs-12"
                    href="{{ route('gingerminds-core.permissions.edit', $permission->id) }}"
                    data-bs-toggle="tooltip"
                    title="@lang('gingerminds-core::translation.action.edit')"

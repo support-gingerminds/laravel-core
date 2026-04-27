@@ -2,8 +2,8 @@
 
 namespace Gingerminds\LaravelCore\Services\Security;
 
+use Exception;
 use Gingerminds\LaravelCore\Http\Requests\Security\LoginRequest;
-use Gingerminds\LaravelCore\Models\User\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
@@ -15,63 +15,77 @@ class AuthService
      */
     public function login(LoginRequest $request): array
     {
-        $credentials = $request->validate([
-            'username' => 'required|email',
-            'password' => 'required',
-            'remember' => 'boolean',
-        ]);
-        $throttleKey = Str::lower($request->input('login')) . '|' . $request->ip();
+        try {
+            $credentials = $request->validate([
+                'username' => 'required|email',
+                'password' => 'required',
+                'remember' => 'boolean',
+            ]);
 
-        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
-            return [
-                'success' => false,
-                'error'   => 'USER_BLOCKED',
-                'message' => 'Trop de tentatives. Réessayez dans 5 minutes.',
-                'status'  => 403,
-            ];
-        }
-        $loginCredentials = [
-            'email'    => $credentials['username'],
-            'password' => $credentials['password'],
-        ];
-        if (Auth::attempt($loginCredentials, $request->input('remember', false))) {
-            //$request->session()->regenerate();
-            /** @var User $user */
-            $user = Auth::user();
+            $throttleKey = Str::lower($credentials['username']) . '|' . $request->ip();
 
-            $host = (string) $request->header('origin');
-
-            /** @var array<int, string> $domains */
-            $domains = [];
-            if (config('app.env') == 'local') {
-                $domains[] = config('app.url');
+            // 1. Vérification Rate Limit
+            if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+                throw new Exception('USER_BLOCKED', 403);
             }
 
-            if ($domains === [] || ! in_array($host, $domains, true)) {
-                return [
-                    'success' => false,
-                    'error'   => 'USER_NOT_AUTHORIZED',
-                    'message' => 'Domaine non autorisé.',
-                    'status'  => 401,
-                ];
+            // 2. Tentative d'authentification
+            if (
+                !Auth::attempt([
+                'email'    => $credentials['username'],
+                'password' => $credentials['password'],
+                ], $request->boolean('remember'))
+            ) {
+                RateLimiter::hit($throttleKey);
+                throw new Exception('CREDENTIALS_NOT_VALID', 401);
+            }
+
+            // 3. Vérification du Domaine
+            if (!$this->isDomainAuthorized($request)) {
+                throw new Exception('USER_NOT_AUTHORIZED', 401);
             }
 
             RateLimiter::clear($throttleKey);
 
             return [
                 'success' => true,
-                'data'    => [
-                    //'token' => $token,
-                    'user' => $user,
-                ],
+                'data'    => ['user' => Auth::user()],
+            ];
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'error'   => $e->getMessage(),
+                'message' => $this->getFriendlyMessage($e->getMessage()),
+                'status'  => (int) $e->getCode(),
             ];
         }
+    }
 
-        return [
-            'success' => false,
-            'error'   => 'CREDENTIALS_NOT_VALID',
-            'message' => 'Identifiants incorrects.',
-            'status'  => 401,
-        ];
+    /**
+     * Extrait la logique de domaine pour réduire la complexité
+     */
+    protected function isDomainAuthorized(LoginRequest $request): bool
+    {
+        if (config('app.env') === 'local') {
+            return true;
+        }
+
+        $host              = (string) $request->header('origin');
+        $authorizedDomains = config('app.authorized_domains', []); // Mieux vaut utiliser le config
+
+        return in_array($host, $authorizedDomains, true);
+    }
+
+    /**
+     * Centralise les messages d'erreur
+     */
+    protected function getFriendlyMessage(string $errorCode): string
+    {
+        return match ($errorCode) {
+            'USER_BLOCKED'          => 'Trop de tentatives. Réessayez dans 5 minutes.',
+            'USER_NOT_AUTHORIZED'   => 'Domaine non autorisé.',
+            'CREDENTIALS_NOT_VALID' => 'Identifiants incorrects.',
+            default                 => 'Une erreur est survenue.',
+        };
     }
 }

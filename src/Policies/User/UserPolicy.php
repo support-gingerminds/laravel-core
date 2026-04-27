@@ -17,7 +17,7 @@ class UserPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, User $userEditable): bool
+    public function view(User $user): bool
     {
         return $user->can('view users');
     }
@@ -41,7 +41,7 @@ class UserPolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, User $userEditable): bool
+    public function delete(User $user): bool
     {
         return $user->can('delete users');
     }
@@ -49,7 +49,7 @@ class UserPolicy
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, User $userEditable): bool
+    public function restore(): bool
     {
         return false;
     }
@@ -57,7 +57,7 @@ class UserPolicy
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, User $userEditable): bool
+    public function forceDelete(): bool
     {
         return false;
     }
