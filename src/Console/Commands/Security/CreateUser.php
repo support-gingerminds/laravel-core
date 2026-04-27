@@ -29,7 +29,11 @@ class CreateUser extends Command
      */
     public function handle(): int
     {
-        $roles = Role::query()->pluck('name', 'id')->toArray();
+        /**
+         * @var User $userModel
+         */
+        $userModel = config('auth.providers.users.model');
+        $roles     = Role::query()->pluck('name', 'id')->toArray();
         if (empty($roles)) {
             $this->error("Aucun rôle n'est défini. Exécutez les seeders de permissions/roles avant.");
             return self::FAILURE;
@@ -40,7 +44,7 @@ class CreateUser extends Command
             $roles,
         );
         $email = $this->ask("Email de l'utilisateur ?");
-        if (User::where('email', $email)->exists()) {
+        if ($userModel::where('email', $email)->exists()) {
             $this->error('Un utilisateur avec cet email existe déjà.');
             return self::FAILURE;
         }
@@ -49,7 +53,7 @@ class CreateUser extends Command
         $password  = $this->secret('Mot de passe ?');
 
         try {
-            $user = User::create([
+            $user = $userModel::create([
                 'email'             => $email,
                 'password'          => bcrypt($password),
                 'email_verified_at' => now(),

@@ -14,10 +14,14 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        $roles = Role::pluck('name')->toArray();
+        /**
+         * @var User $userModel
+         */
+        $userModel = config('auth.providers.users.model');
+        $roles     = Role::pluck('name')->toArray();
 
         // Créer 5 utilisateurs et leur assigner un rôle aléatoire
-        User::factory(5)->create()->each(function ($user) use ($roles) {
+        $userModel::factory(5)->create()->each(function ($user) use ($roles) {
             $user->assignRole(fake()->randomElement($roles));
         });
 
