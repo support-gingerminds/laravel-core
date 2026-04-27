@@ -20,7 +20,7 @@ class {{ class }} extends AbstractController
 
     public function index(Request $request): Factory|View
     {
-        $this->authorize('viewAny');
+        $this->authorize('viewAny', {{ model }}::class);
 
         $items = $this->repository->get($request);
 
