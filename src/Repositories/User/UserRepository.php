@@ -33,67 +33,68 @@ class UserRepository extends AbstractRepository implements RepositoryInterface
             return $resourceModel;
         }
 
-        // Mise à jour des champs basiques
+        // Mise à jour des champs basiques et password
         $resourceModel->fill($request->only(['email']));
-
-        // Mot de passe optionnel: on ne met à jour que s'il est fourni
         if ($request->filled('password')) {
             $resourceModel->password = $request->input('password');
         }
-
         $resourceModel->save();
 
-        // Synchronisation des rôles s'ils sont fournis
+        // Synchronisation des rôles
         if (is_array($request->input('roles'))) {
-            $resourceModel->syncRoles($request->input('roles', []));
+            $resourceModel->syncRoles($request->input('roles'));
         }
 
-        // Gestion de l'association du contributor s'il est fourni
+        // Extraction de la logique complexe
         if ($request->has('contributor_id')) {
-            $contributorSelector = $request->input('contributor_id');
-
-            $contributor = null;
-
-            // Création d'un nouveau contributor si demandé
-            if ($contributorSelector === '__new__') {
-                // Nettoyer tout lien existant sur ce user
-                Contributor::query()->where('user_id', $resourceModel->id)->update(['user_id' => null]);
-                $contributor = new Contributor();
-            } elseif ($contributorSelector) {
-                // Lier un contributor existant
-                // S'assurer qu'aucun autre contributor n'est relié à ce user
-                Contributor::query()
-                    ->where('user_id', $resourceModel->id)
-                    ->whereKeyNot($contributorSelector)
-                    ->update(['user_id' => null]);
-                $contributor = Contributor::query()->find($contributorSelector);
-            }
-
-            if ($contributor instanceof Contributor) {
-                $payload = [
-                    // Les champs lastname/firstname ne sont pas nullable en DB; valeurs vides acceptées
-                    'firstname' => (string) $request->input(
-                        'contributor_firstname',
-                        ''
-                    ),
-                    'lastname' => (string) $request->input(
-                        'contributor_lastname',
-                        ''
-                    ),
-                ];
-                if ($request->filled('contributor_trigram')) {
-                    $payload['trigram'] = (string) $request->input('contributor_trigram');
-                }
-                if ($request->filled('contributor_civility')) {
-                    $payload['civility'] = (string) $request->input('contributor_civility');
-                }
-
-                $contributor->fill($payload);
-                $contributor->user_id = $resourceModel->id;
-                $contributor->save();
-            }
+            $this->handleContributorUpdate($request, $resourceModel);
         }
 
         return $resourceModel;
+    }
+
+    /**
+     * Gère spécifiquement la logique liée au contributeur (Sépare la complexité)
+     */
+    protected function handleContributorUpdate(FormRequestInterface $request, User $user): void
+    {
+        $selector    = $request->input('contributor_id');
+        $contributor = null;
+
+        if ($selector === '__new__') {
+            Contributor::query()->where('user_id', $user->id)->update(['user_id' => null]);
+            $contributor = new Contributor();
+        } elseif ($selector) {
+            Contributor::query()
+                ->where('user_id', $user->id)
+                ->whereKeyNot($selector)
+                ->update(['user_id' => null]);
+            $contributor = Contributor::query()->find($selector);
+        }
+
+        if ($contributor instanceof Contributor) {
+            $this->persistContributor($request, $contributor, $user->id);
+        }
+    }
+
+    /**
+     * Remplit et sauvegarde les données du contributeur
+     */
+    protected function persistContributor(FormRequestInterface $request, Contributor $contributor, int $userId): void
+    {
+        $payload = [
+            'firstname' => (string) $request->input('contributor_firstname', ''),
+            'lastname'  => (string) $request->input('contributor_lastname', ''),
+        ];
+
+        foreach (['trigram', 'civility'] as $field) {
+            if ($request->filled("contributor_{$field}")) {
+                $payload[$field] = (string) $request->input("contributor_{$field}");
+            }
+        }
+
+        $contributor->fill($payload);
+        $contributor->user_id = $userId;
+        $contributor->save();
     }
 }

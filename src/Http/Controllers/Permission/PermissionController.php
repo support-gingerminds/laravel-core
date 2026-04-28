@@ -13,6 +13,8 @@ use Illuminate\Http\Request;
 
 class PermissionController extends Controller
 {
+    public const string LABEL_S = 'gingerminds-core::translation.permissions.name_s';
+
     private PermissionRepository $permissionRepository;
 
     public function __construct()
@@ -66,7 +68,7 @@ class PermissionController extends Controller
                 'success',
                 __(
                     'gingerminds-core::translation.successfully_created',
-                    ['model' => __('gingerminds-core::translation.permissions.name_s') . ' ' . $permission->name]
+                    ['model' => __(self::LABEL_S) . ' ' . $permission->name]
                 )
             );
     }
@@ -84,7 +86,7 @@ class PermissionController extends Controller
             ->with('success', __(
                 'gingerminds-core::translation.successfully_updated',
                 [
-                    'model' => __('gingerminds-core::translation.permissions.name_s') . ' ' . $permission->name,
+                    'model' => __(self::LABEL_S) . ' ' . $permission->name,
                 ]
             ));
     }
@@ -101,7 +103,7 @@ class PermissionController extends Controller
                 'success',
                 __(
                     'gingerminds-core::translation.successfully_deleted',
-                    ['model' => __('gingerminds-core::translation.permissions.name_s') . ' ' . $permission->name]
+                    ['model' => __(self::LABEL_S) . ' ' . $permission->name]
                 )
             );
     }

@@ -13,6 +13,7 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use Gingerminds\LaravelCore\ApiProvider\Permission\PermissionProvider;
 use Gingerminds\LaravelCore\Models\ResourceModelInterface;
+use Gingerminds\LaravelCore\Models\Role\Role;
 use Gingerminds\LaravelCore\Models\SearchableModelInterface;
 use Gingerminds\LaravelCore\Models\SortableModelInterface;
 use Gingerminds\LaravelCore\StateProcessor\Permission\PermissionStateProcessor;
@@ -22,24 +23,24 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[ApiResource(
     operations: [
         new GetCollection(
-            normalizationContext: ['groups' => ['permission:list']],
+            normalizationContext: ['groups' => [Permission::GROUP_LIST]],
             provider: PermissionProvider::class
         ),
         new Get(
-            normalizationContext: ['groups' => ['permission:read']],
+            normalizationContext: ['groups' => [Permission::GROUP_READ]],
             provider: PermissionProvider::class
         ),
         new Post(
-            normalizationContext: ['groups' => ['permission:read']],
-            denormalizationContext: ['groups' => ['permission:edit']],
+            normalizationContext: ['groups' => [Permission::GROUP_READ]],
+            denormalizationContext: ['groups' => [Permission::GROUP_EDIT]],
             deserialize: false,
             provider: PermissionProvider::class,
             processor: PermissionStateProcessor::class
         ),
         new Delete(),
         new Patch(
-            normalizationContext: ['groups' => ['permission:read']],
-            denormalizationContext: ['groups' => ['permission:edit']],
+            normalizationContext: ['groups' => [Permission::GROUP_READ]],
+            denormalizationContext: ['groups' => [Permission::GROUP_EDIT]],
             deserialize: false,
             provider: PermissionProvider::class,
             processor: PermissionStateProcessor::class
@@ -50,22 +51,26 @@ use Symfony\Component\Serializer\Attribute\Groups;
     identifier: true,
     property: 'id',
     serialize: new Groups([
-        'permission:list',
-        'permission:read',
-        'role:read',
+        Permission::GROUP_LIST,
+        Permission::GROUP_READ,
+        Role::GROUP_READ,
     ])
 )]
 #[ApiProperty(property: 'name', serialize: new Groups([
-    'permission:list',
-    'permission:read',
-    'permission:edit',
-    'role:read',
+    Permission::GROUP_LIST,
+    Permission::GROUP_READ,
+    Permission::GROUP_EDIT,
+    Role::GROUP_READ,
 ]))]
 class Permission extends SpatiePermission implements
     ResourceModelInterface,
     SortableModelInterface,
     SearchableModelInterface
 {
+    public const string GROUP_LIST = 'permission:list';
+    public const string GROUP_READ = 'permission:read';
+    public const string GROUP_EDIT = 'permission:edit';
+
     public static function getSearchableFields(): array
     {
         return ['name'];

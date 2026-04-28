@@ -26,7 +26,3 @@
 @section('fields')
     @include('gingerminds-core::pages.contributors.partials.fields')
 @endsection
-
-@push('scripts')
-    @include('gingerminds-core::pages.contributors.partials.form_script')
-@endpush

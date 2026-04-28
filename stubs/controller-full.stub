@@ -13,6 +13,8 @@ use {{ repositoryNamespace }}\{{ model }}Repository;
 
 class {{ class }} extends AbstractController
 {
+    const string LABEL_S = ''translation.{{ tradBase }}.name_s'';
+
     public function __construct(
         private readonly {{ model }}Repository $repository
     ) {
@@ -20,7 +22,7 @@ class {{ class }} extends AbstractController
 
     public function index(Request $request): Factory|View
     {
-        $this->authorize('viewAny');
+        $this->authorize('viewAny', {{ model }}::class);
 
         $items = $this->repository->get($request);
 
@@ -49,7 +51,7 @@ class {{ class }} extends AbstractController
 
         return redirect()->route('{{ resource }}.index')
             ->with('success', __('gingerminds-core::translation.successfully_created', [
-                'model' => __('translation.{{ tradBase }}.name_s')
+                'model' => __(self::LABEL_S)
                     . ' '
                     . (${{ modelVariable }}->name ?? ${{ modelVariable }}->id),
             ]));
@@ -63,7 +65,7 @@ class {{ class }} extends AbstractController
 
         return redirect()->route('{{ resource }}.edit', ${{ modelVariable }}->id)
             ->with('success', __('gingerminds-core::translation.successfully_updated', [
-                'model' => __('translation.{{ tradBase }}.name_s')
+                'model' => __(self::LABEL_S)
                     . ' '
                     . (${{ modelVariable }}->name ?? ${{ modelVariable }}->id),
             ]));
@@ -76,7 +78,7 @@ class {{ class }} extends AbstractController
 
         return redirect()->route('{{ resource }}.index')
             ->with('success', __('gingerminds-core::translation.successfully_deleted', [
-                'model' => __('translation.{{ tradBase }}.name_s')
+                'model' => __(self::LABEL_S)
                     . ' '
                     . (${{ modelVariable }}->name ?? ${{ modelVariable }}->id),
             ]));

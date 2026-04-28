@@ -1,21 +1,21 @@
 #[ApiResource(
     operations: [
         new GetCollection(
-            normalizationContext: ['groups' => ['{{snakeModel}}:list']],
+            normalizationContext: ['groups' => [{{model}}::GROUP_LIST]],
         ),
         new Get(
-            normalizationContext: ['groups' => ['{{snakeModel}}:read']],
+            normalizationContext: ['groups' => [{{model}}::GROUP_READ]],
         ),
         new Post(
-            normalizationContext: ['groups' => ['{{snakeModel}}:read']],
-            denormalizationContext: ['groups' => ['{{snakeModel}}:edit']],
+            normalizationContext: ['groups' => [{{model}}::GROUP_READ]],
+            denormalizationContext: ['groups' => [{{model}}::GROUP_EDIT]],
             deserialize: false,
             processor: {{stateProcessorClass}}::class
         ),
         new Delete(),
         new Patch(
-            normalizationContext: ['groups' => ['{{snakeModel}}:read']],
-            denormalizationContext: ['groups' => ['{{snakeModel}}:edit']],
+            normalizationContext: ['groups' => [{{model}}::GROUP_READ]],
+            denormalizationContext: ['groups' => [{{model}}::GROUP_EDIT]],
             deserialize: false,
             processor: {{stateProcessorClass}}::class
         ),
@@ -25,7 +25,7 @@
     identifier: true,
     property: 'id',
     serialize: new Groups([
-        '{{snakeModel}}:list',
-        '{{snakeModel}}:read',
+        {{model}}::GROUP_LIST,
+        {{model}}::GROUP_READ,
     ])
 )]

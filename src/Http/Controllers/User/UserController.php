@@ -15,6 +15,8 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
+    public const string LABEL_S = 'gingerminds-core::translation.users.name_s';
+
     private UserRepository $userRepository;
 
     public function __construct()
@@ -70,7 +72,7 @@ class UserController extends Controller
         return redirect()
             ->route('gingerminds-core.users.index')
             ->with('success', __('gingerminds-core::translation.successfully_created', [
-                'model' => __('gingerminds-core::translation.users.name_s') . ' ' . $user->email,
+                'model' => __(self::LABEL_S) . ' ' . $user->email,
             ]));
     }
 
@@ -87,7 +89,7 @@ class UserController extends Controller
         return redirect()
             ->route('gingerminds-core.users.edit', $user->id)
             ->with('success', __('gingerminds-core::translation.successfully_updated', [
-                'model' => __('gingerminds-core::translation.users.name_s') . ' ' . $user->email,
+                'model' => __(self::LABEL_S) . ' ' . $user->email,
             ]));
     }
 
@@ -119,7 +121,7 @@ class UserController extends Controller
         return redirect()
             ->route('gingerminds-core.users.index')
             ->with('success', __('gingerminds-core::translation.successfully_deleted', [
-                'model' => __('gingerminds-core::translation.users.name_s') . ' ' . $user->email,
+                'model' => __(self::LABEL_S) . ' ' . $user->email,
             ]));
     }
 }

@@ -14,6 +14,8 @@ use Illuminate\Http\Request;
 
 class ContributorController extends Controller
 {
+    public const string LABEL_S = 'gingerminds-core::translation.contributor.name_s';
+
     private ContributorRepository $contributorRepository;
 
     public function __construct()
@@ -71,7 +73,7 @@ class ContributorController extends Controller
                 __(
                     'gingerminds-core::translation.successfully_created',
                     [
-                        'model' => __('gingerminds-core::translation.contributors.name_s')
+                        'model' => __(self::LABEL_S)
                             . ' '
                             . $contributor->firstname
                             . ' '
@@ -118,7 +120,7 @@ class ContributorController extends Controller
                 __(
                     'gingerminds-core::translation.successfully_updated',
                     [
-                        'model' => __('gingerminds-core::translation.contributors.name_s')
+                        'model' => __(self::LABEL_S)
                             . ' '
                             . $contributor->firstname
                             . ' '
@@ -139,7 +141,7 @@ class ContributorController extends Controller
                 __(
                     'gingerminds-core::translation.successfully_deleted',
                     [
-                        'model' => __('gingerminds-core::translation.profils.name_s')
+                        'model' => __(self::LABEL_S)
                             . ' '
                             . $contributor->firstname
                             . ' '
