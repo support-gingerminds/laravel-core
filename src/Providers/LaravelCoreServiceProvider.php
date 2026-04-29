@@ -116,9 +116,9 @@ class LaravelCoreServiceProvider extends ServiceProvider
 
             $this->app->extend(
                 BaseModelMakeCommand::class,
-                function ($app, $container) {
+                function ($container) {
                     return new class ($container->make('files')) extends BaseModelMakeCommand {
-                        protected function getStub()
+                        protected function getStub(): string
                         {
                             return __DIR__ . '/../../stubs/model.stub';
                         }

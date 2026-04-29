@@ -10,24 +10,23 @@ use Gingerminds\LaravelCore\Http\Controllers\User\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('web')
-  ->name('gingerminds-core.')
-  ->group(function () {
+    ->name('gingerminds-core.')
+    ->group(function () {
+        Route::controller(AuthController::class)->group(function () {
+            Route::get('login', 'login')->name('login');
+            Route::post('login', 'authenticate')->name('authenticate');
+            Route::get('reset-password', 'reset')->name('reset-password');
+        });
 
-      Route::controller(AuthController::class)->group(function () {
-          Route::get('login', 'login')->name('login');
-          Route::post('login', 'authenticate')->name('authenticate');
-          Route::get('reset-password', 'reset')->name('reset-password');
-      });
+        Route::middleware(['gingerminds-core.auth'])->group(function () {
+            Route::controller(AuthController::class)->group(function () {
+                Route::post('logout', 'logout')->name('logout');
+            });
 
-      Route::middleware(['gingerminds-core.auth'])->group(function () {
-          Route::controller(AuthController::class)->group(function () {
-              Route::post('logout', 'logout')->name('logout');
-          });
-
-          Route::controller(UserController::class)->name('profile.')->group(function () {
-              Route::get('profile', 'editProfile')->name('edit-profile');
-              Route::post('profile', 'updateProfile')->name('update-profile');
-          });
+            Route::controller(UserController::class)->name('profile.')->group(function () {
+                Route::get('profile', 'editProfile')->name('edit-profile');
+                Route::post('profile', 'updateProfile')->name('update-profile');
+            });
 
             Route::resource('users', UserController::class);
             Route::resource('contributors', ContributorController::class);
