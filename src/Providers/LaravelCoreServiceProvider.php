@@ -59,7 +59,9 @@ class LaravelCoreServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // Chargement des routes du package
-        $this->loadRoutesFrom(__DIR__ . '/../../routes/web.php');
+        if (! $this->app->routesAreCached()) {
+            $this->loadRoutesFrom(__DIR__ . '/../../routes/web.php');
+        }
 
         // Chargement des migrations
         $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations');
@@ -114,8 +116,8 @@ class LaravelCoreServiceProvider extends ServiceProvider
 
             $this->app->extend(
                 BaseModelMakeCommand::class,
-                function ($app) {
-                    return new class ($app->make('files')) extends BaseModelMakeCommand {
+                function ($app, $container) {
+                    return new class ($container->make('files')) extends BaseModelMakeCommand {
                         protected function getStub()
                         {
                             return __DIR__ . '/../../stubs/model.stub';

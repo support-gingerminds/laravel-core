@@ -23,6 +23,6 @@
 @endphp
 
 @section('fields')
-    @include('gingerminds-core::pages.profile.partials.fields')
+    @include('gingerminds-core::pages.users.partials.fields-profile')
 @endsection
 

@@ -77,6 +77,20 @@ use Symfony\Component\Serializer\Attribute\Groups;
     Contributor::GROUP_LIST,
     Contributor::GROUP_READ,
 ]))]
+#[ApiProperty(property: 'roles', serialize: new Groups([
+    User::GROUP_LIST,
+    User::GROUP_READ,
+    User::GROUP_CREATE,
+    User::GROUP_EDIT,
+]))]
+#[ApiProperty(property: 'password', serialize: new Groups([
+    User::GROUP_CREATE,
+    User::GROUP_EDIT,
+]))]
+#[ApiProperty(property: 'password_confirmation', serialize: new Groups([
+    User::GROUP_CREATE,
+    User::GROUP_EDIT,
+]))]
 #[ApiProperty(property: 'contributor', serialize: new Groups([
     User::GROUP_LIST,
     User::GROUP_READ,
@@ -113,6 +127,11 @@ class User extends Authenticatable implements
     public const string GROUP_EDIT   = 'user:edit';
 
     protected string $guardName = 'web';
+
+    public function guardName(): string
+    {
+        return 'web';
+    }
 
     /**
      * @return string[]
