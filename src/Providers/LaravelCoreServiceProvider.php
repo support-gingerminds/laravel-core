@@ -152,7 +152,7 @@ class LaravelCoreServiceProvider extends ServiceProvider
 
     private function listenAndFlushCacheFor(string $eventName): void
     {
-        Event::listen($eventName, function (string $firedEventName, array $payload): void {
+        Event::listen($eventName, function (array $payload): void {
             $model = $payload[0] ?? null;
             if (! $model instanceof Model) {
                 return;
