@@ -55,7 +55,7 @@ abstract class AbstractRepository implements RepositoryInterface
      * @param array<mixed> $with
      * @return LengthAwarePaginator<int,TModel>
      */
-    private function runGetQuery(Request $request, array $with = []): LengthAwarePaginator
+    protected function runGetQuery(Request $request, array $with = []): LengthAwarePaginator
     {
         $page  = $request->query('page', 1);
         $query = $this->getModelClass()::query();
@@ -69,7 +69,7 @@ abstract class AbstractRepository implements RepositoryInterface
             ->withQueryString();
     }
 
-    private function getCacheTag(string $modelClass): ?string
+    protected function getCacheTag(string $modelClass): ?string
     {
         if (!is_subclass_of($modelClass, CacheableResourceInterface::class)) {
             return null;
@@ -79,7 +79,7 @@ abstract class AbstractRepository implements RepositoryInterface
         return $modelClass::getCacheKey();
     }
 
-    private function resolveCacheTtlSeconds(string $modelClass): int
+    protected function resolveCacheTtlSeconds(string $modelClass): int
     {
         if (!is_subclass_of($modelClass, CacheableResourceInterface::class)) {
             return (int)config('cache.resource_ttl_seconds', 3600);
@@ -97,13 +97,13 @@ abstract class AbstractRepository implements RepositoryInterface
     /**
      * @param array<mixed> $with
      */
-    private function buildCacheKey(string $tag, Request $request, array $with): string
+    protected function buildCacheKey(string $tag, Request $request, array $with): string
     {
         $cacheType = $this->resolveCacheType($request);
         return "{$tag}_{$cacheType}_" . md5(serialize($request->all()) . serialize($with));
     }
 
-    private function resolveCacheType(Request $request): string
+    protected function resolveCacheType(Request $request): string
     {
         return $request->input('filters.id') !== null ? 'item' : 'list';
     }
@@ -131,7 +131,7 @@ abstract class AbstractRepository implements RepositoryInterface
      *
      * @param Builder<TModel> $query
      */
-    public function applySort(Builder $query, string $sortBy, string $sortOrder = 'desc'): void
+    protected function applySort(Builder $query, string $sortBy, string $sortOrder = 'desc'): void
     {
         $model = $query->getModel();
         $table = $model->getTable();
@@ -187,7 +187,7 @@ abstract class AbstractRepository implements RepositoryInterface
     /**
      * @param Builder<TModel> $query
      */
-    public function applyAllFilters(Builder $query, Request $request): void
+    protected function applyAllFilters(Builder $query, Request $request): void
     {
         if ($request->query->has('filters')) {
             $filters = $request->all()['filters'];
@@ -202,7 +202,7 @@ abstract class AbstractRepository implements RepositoryInterface
      * @param Builder<TModel> $query
      * @param array<mixed> $filters
      */
-    private function getItem(Builder $query, array $filters): void
+    protected function getItem(Builder $query, array $filters): void
     {
         if (array_key_exists('id', $filters)) {
             $query->where('id', $filters['id']);
@@ -213,7 +213,7 @@ abstract class AbstractRepository implements RepositoryInterface
      * @param Builder<TModel> $query
      * @param array<mixed> $filters
      */
-    private function applySearch(Builder $query, array $filters): void
+    protected function applySearch(Builder $query, array $filters): void
     {
         $model = $query->getModel();
         if ($model instanceof SearchableModelInterface && array_key_exists('search', $filters)) {
@@ -229,7 +229,7 @@ abstract class AbstractRepository implements RepositoryInterface
      * @param Builder<TModel> $query
      * @param array<mixed> $filters
      */
-    public function applyFilters(Builder $query, array $filters): void
+    protected function applyFilters(Builder $query, array $filters): void
     {
         $model = $query->getModel();
 
@@ -257,7 +257,7 @@ abstract class AbstractRepository implements RepositoryInterface
      * @param Builder<TModel> $query
      * @param string|array<string> $value
      */
-    private function applySelectModelFilter(Builder $query, string $property, string|array|null $value): void
+    protected function applySelectModelFilter(Builder $query, string $property, string|array|null $value): void
     {
         if ($value === 'all' || $value === null) {
             if ($value === null) {
@@ -295,7 +295,7 @@ abstract class AbstractRepository implements RepositoryInterface
      * @param Builder<TModel> $query
      * @param array<mixed> $value
      */
-    private function applyDateFilter(Builder $query, string $property, array $value): void
+    protected function applyDateFilter(Builder $query, string $property, array $value): void
     {
         $from = empty($value['from']) ? null : Carbon::createFromFormat('Y-m-d', $value['from']);
         $to   = empty($value['to']) ? null : Carbon::createFromFormat('Y-m-d', $value['to']);
@@ -324,7 +324,7 @@ abstract class AbstractRepository implements RepositoryInterface
      * @param Builder<TModel> $query
      * @param array<mixed> $value
      */
-    private function applyNumberFilter(Builder $query, string $property, array $value): void
+    protected function applyNumberFilter(Builder $query, string $property, array $value): void
     {
         $from = empty($value['from']) ? null : floatval($value['from']);
         $to   = empty($value['to']) ? null : floatval($value['to']);
@@ -345,7 +345,7 @@ abstract class AbstractRepository implements RepositoryInterface
      * @param Builder<TModel> $query
      * @param string|array<string> $value
      */
-    private function applySelectFilter(Builder $query, string $property, string|array $value): void
+    protected function applySelectFilter(Builder $query, string $property, string|array $value): void
     {
         if (is_array($value)) {
             $query->whereIn($property, $value);
@@ -364,7 +364,7 @@ abstract class AbstractRepository implements RepositoryInterface
     /**
      * @param Builder<TModel> $query
      */
-    private function applyBooleanFilter(Builder $query, string $property, ?string $value): void
+    protected function applyBooleanFilter(Builder $query, string $property, ?string $value): void
     {
         if ($value === 'all') {
             return;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Gingerminds\LaravelCore\Models\User;
 
 use ApiPlatform\Metadata\ApiProperty;
@@ -27,30 +29,31 @@ use Symfony\Component\Serializer\Attribute\Groups;
 /**
  * @property string $password
  * @property string $email
+ * @property string|null $email_verified_at
  * @property-read Contributor|null $contributor Relation to the contributor profile
  * @property-read int<0, max> $id
  */
 #[ApiResource(
     operations: [
         new GetCollection(
-            normalizationContext: ['groups' => ['user:list']],
+            normalizationContext: ['groups' => [User::GROUP_LIST]],
             provider: UserProvider::class,
         ),
         new Get(
-            normalizationContext: ['groups' => ['user:read']],
+            normalizationContext: ['groups' => [User::GROUP_READ]],
             provider: UserProvider::class,
         ),
         new Post(
-            normalizationContext: ['groups' => ['user:read']],
-            denormalizationContext: ['groups' => ['user:create']],
+            normalizationContext: ['groups' => [User::GROUP_READ]],
+            denormalizationContext: ['groups' => [User::GROUP_CREATE]],
             deserialize: false,
             provider: UserProvider::class,
             processor: UserStateProcessor::class
         ),
         new Delete(),
         new Patch(
-            normalizationContext: ['groups' => ['user:read']],
-            denormalizationContext: ['groups' => ['user:edit']],
+            normalizationContext: ['groups' => [User::GROUP_READ]],
+            denormalizationContext: ['groups' => [User::GROUP_EDIT]],
             deserialize: false,
             provider: UserProvider::class,
             processor: UserStateProcessor::class
@@ -61,38 +64,52 @@ use Symfony\Component\Serializer\Attribute\Groups;
     identifier: true,
     property: 'id',
     serialize: new Groups([
-        'user:list',
-        'user:read',
-        'contributor:list',
-        'contributor:read',
+        User::GROUP_LIST,
+        User::GROUP_READ,
+        Contributor::GROUP_LIST,
+        Contributor::GROUP_READ,
     ])
 )]
 #[ApiProperty(property: 'email', serialize: new Groups([
-    'user:list',
-    'user:read',
-    'user:create',
-    'user:edit',
-    'contributor:list',
-    'contributor:read',
+    User::GROUP_LIST,
+    User::GROUP_READ,
+    User::GROUP_CREATE,
+    User::GROUP_EDIT,
+    Contributor::GROUP_LIST,
+    Contributor::GROUP_READ,
+]))]
+#[ApiProperty(property: 'roles', serialize: new Groups([
+    User::GROUP_LIST,
+    User::GROUP_READ,
+    User::GROUP_CREATE,
+    User::GROUP_EDIT,
+]))]
+#[ApiProperty(property: 'password', serialize: new Groups([
+    User::GROUP_CREATE,
+    User::GROUP_EDIT,
+]))]
+#[ApiProperty(property: 'password_confirmation', serialize: new Groups([
+    User::GROUP_CREATE,
+    User::GROUP_EDIT,
 ]))]
 #[ApiProperty(property: 'contributor', serialize: new Groups([
-    'user:list',
-    'user:read',
+    User::GROUP_LIST,
+    User::GROUP_READ,
 ]))]
 #[ApiProperty(property: 'contributor_id', serialize: new Groups([
-    'user:edit',
+    User::GROUP_EDIT,
 ]))]
 #[ApiProperty(property: 'contributor_firstname', serialize: new Groups([
-    'user:edit',
+    User::GROUP_EDIT,
 ]))]
 #[ApiProperty(property: 'contributor_lastname', serialize: new Groups([
-    'user:edit',
+    User::GROUP_EDIT,
 ]))]
 #[ApiProperty(property: 'contributor_trigram', serialize: new Groups([
-    'user:edit',
+    User::GROUP_EDIT,
 ]))]
 #[ApiProperty(property: 'contributor_civility', serialize: new Groups([
-    'user:edit',
+    User::GROUP_EDIT,
 ]))]
 class User extends Authenticatable implements
     ResourceModelInterface,
@@ -105,7 +122,17 @@ class User extends Authenticatable implements
     use Notifiable;
     use HasRoles;
 
-    protected string $guard_name = 'web';
+    public const string GROUP_LIST   = 'user:list';
+    public const string GROUP_READ   = 'user:read';
+    public const string GROUP_CREATE = 'user:create';
+    public const string GROUP_EDIT   = 'user:edit';
+
+    protected string $guardName = 'web';
+
+    public function guardName(): string
+    {
+        return 'web';
+    }
 
     /**
      * @return string[]

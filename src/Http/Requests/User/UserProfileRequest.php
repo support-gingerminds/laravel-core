@@ -8,7 +8,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
-class ProfileRequest extends FormRequest implements FormRequestInterface
+class UserProfileRequest extends FormRequest implements FormRequestInterface
 {
     /**
      * Determine if the user is authorized to make this request.

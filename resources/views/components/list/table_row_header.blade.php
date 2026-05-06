@@ -1,7 +1,7 @@
 <th
-    scope="col"
-    class="@if($sortable) sortable @endif @if(isset($align) && 'center' === $align) text-center @endif @if(isset($property) && $sortBy === $property) {{ $sortOrder }}@endif"
-    @if(isset($property)) data-sort="{{$property}}" @endif>
+        scope="col"
+        class="@if($sortable) sortable @endif @if(isset($align)) text-{{$align}} @endif @if(isset($property) && $sortBy === $property) {{ $sortOrder }}@endif"
+        @if(isset($property)) data-sort="{{$property}}" @endif>
     {{ $name }}@if(isset($property) && $sortBy === $property && in_array($sortOrder, ['desc', 'asc']))
         @if('desc' === $sortOrder)
             <i class="bi bi-chevron-down ms-1"></i>
@@ -14,3 +14,4 @@
         @endif
     @endif
 </th>
+

@@ -15,17 +15,16 @@
 @section('body')
     <body>
     @show
-
+    <!-- Begin page -->
     <div class="container-fluid vh-100 d-flex flex-column p-0">
         <div class="d-flex flex-grow-1">
             @include('gingerminds-core::layouts.sidebar.sidebar')
 
             <main class="flex-grow-1 d-flex flex-column" style="min-width: 0;">
 
-                @include('gingerminds-core::components.alert.alert')
-
                 <div class="flex-grow-1 p-4 overflow-auto">
                     @yield('breadcrumb')
+                    @include('gingerminds-core::components.alert.alert')
                     @yield('content')
                 </div>
 

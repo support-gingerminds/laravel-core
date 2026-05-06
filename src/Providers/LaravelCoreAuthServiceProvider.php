@@ -35,7 +35,7 @@ class LaravelCoreAuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Gate::before(function ($user, $ability) {
+        Gate::before(function ($user) {
             return $user->hasRole('Super-Admin') ? true : null;
         });
 

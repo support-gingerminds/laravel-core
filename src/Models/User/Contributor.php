@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Gingerminds\LaravelCore\Models\User;
 
 use ApiPlatform\Metadata\ApiProperty;
@@ -32,24 +34,24 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[ApiResource(
     operations: [
         new GetCollection(
-            normalizationContext: ['groups' => ['contributor:list']],
+            normalizationContext: ['groups' => [Contributor::GROUP_LIST]],
             provider: ContributorProvider::class,
         ),
         new Get(
-            normalizationContext: ['groups' => ['contributor:read']],
+            normalizationContext: ['groups' => [Contributor::GROUP_READ]],
             provider: ContributorProvider::class,
         ),
         new Post(
-            normalizationContext: ['groups' => ['contributor:read']],
-            denormalizationContext: ['groups' => ['contributor:edit']],
+            normalizationContext: ['groups' => [Contributor::GROUP_READ]],
+            denormalizationContext: ['groups' => [Contributor::GROUP_EDIT]],
             deserialize: false,
             provider: ContributorProvider::class,
             processor: ContributorStateProcessor::class
         ),
         new Delete(),
         new Patch(
-            normalizationContext: ['groups' => ['contributor:read']],
-            denormalizationContext: ['groups' => ['contributor:edit']],
+            normalizationContext: ['groups' => [Contributor::GROUP_READ]],
+            denormalizationContext: ['groups' => [Contributor::GROUP_EDIT]],
             deserialize: false,
             provider: ContributorProvider::class,
             processor: ContributorStateProcessor::class
@@ -57,45 +59,45 @@ use Symfony\Component\Serializer\Attribute\Groups;
     ],
 )]
 #[ApiProperty(property: 'id', serialize: new Groups([
-    'contributor:list',
-    'contributor:read',
-    'user:read',
-    'user:list',
+    Contributor::GROUP_LIST,
+    Contributor::GROUP_READ,
+    User::GROUP_READ,
+    User::GROUP_LIST,
 ]))]
 #[ApiProperty(property: 'firstname', serialize: new Groups([
-    'contributor:list',
-    'contributor:read',
-    'contributor:edit',
-    'user:read',
-    'user:list',
+    Contributor::GROUP_LIST,
+    Contributor::GROUP_READ,
+    Contributor::GROUP_EDIT,
+    User::GROUP_READ,
+    User::GROUP_LIST,
 ]))]
 #[ApiProperty(property: 'lastname', serialize: new Groups([
-    'contributor:list',
-    'contributor:read',
-    'contributor:edit',
-    'user:read',
-    'user:list',
+    Contributor::GROUP_LIST,
+    Contributor::GROUP_READ,
+    Contributor::GROUP_EDIT,
+    User::GROUP_READ,
+    User::GROUP_LIST,
 ]))]
 #[ApiProperty(property: 'trigram', serialize: new Groups([
-    'contributor:list',
-    'contributor:read',
-    'contributor:edit',
-    'user:read',
-    'user:list',
+    Contributor::GROUP_LIST,
+    Contributor::GROUP_READ,
+    Contributor::GROUP_EDIT,
+    User::GROUP_READ,
+    User::GROUP_LIST,
 ]))]
 #[ApiProperty(property: 'civility', serialize: new Groups([
-    'contributor:list',
-    'contributor:read',
-    'contributor:edit',
-    'user:read',
-    'user:list',
+    Contributor::GROUP_LIST,
+    Contributor::GROUP_READ,
+    Contributor::GROUP_EDIT,
+    User::GROUP_READ,
+    User::GROUP_LIST,
 ]))]
 #[ApiProperty(property: 'user', serialize: new Groups([
-    'contributor:list',
-    'contributor:read',
+    Contributor::GROUP_LIST,
+    Contributor::GROUP_READ,
 ]))]
 #[ApiProperty(property: 'user_id', serialize: new Groups([
-    'contributor:edit',
+    Contributor::GROUP_EDIT,
 ]))]
 class Contributor extends Model implements
     ResourceModelInterface,
@@ -105,6 +107,10 @@ class Contributor extends Model implements
     /** @use HasFactory<ContributorFactory> */
     use HasFactory;
     use SoftDeletes;
+
+    public const string GROUP_LIST = 'contributor:list';
+    public const string GROUP_READ = 'contributor:read';
+    public const string GROUP_EDIT = 'contributor:edit';
 
     /**
      * @return string[]
