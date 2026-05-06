@@ -20,7 +20,7 @@
             <strong>{{ $user ? ($user->contributor ? $user->contributor->firstname . ' ' . $user->contributor->lastname : $user->email) : 'Guest' }}</strong>
         </a>
         <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
-            <li><a class="dropdown-item" href="{{ route('gingerminds-core.profile.edit') }}">@lang('gingerminds-core::translation.profile.settings')</a></li>
+            <li><a class="dropdown-item" href="{{ route('gingerminds-core.profile.edit-profile') }}">@lang('gingerminds-core::translation.profile.settings')</a></li>
             <li>
                 <hr class="dropdown-divider">
             </li>

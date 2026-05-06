@@ -15,7 +15,7 @@
 @endsection
 
 @php
-    $action = route('gingerminds-core.profile.update');
+    $action = route('gingerminds-core.profile.update-profile');
     $indexRoute = null;
     $method = 'PUT';
     $id = 'edit-profile-form';

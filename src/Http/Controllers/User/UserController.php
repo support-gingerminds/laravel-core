@@ -144,7 +144,7 @@ class UserController extends Controller
         $this->userRepository->update($request, $user);
 
         return redirect()
-            ->route('gingerminds-core.profile.edit')
+            ->route('gingerminds-core.profile.edit-profile')
             ->with('success', __('gingerminds-core::translation.successfully_updated', [
                 'model' => __('gingerminds-core::translation.profile.name'),
             ]));
