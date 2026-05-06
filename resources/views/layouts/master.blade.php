@@ -22,10 +22,9 @@
 
             <main class="flex-grow-1 d-flex flex-column" style="min-width: 0;">
 
-                @include('gingerminds-core::components.alert.alert')
-
                 <div class="flex-grow-1 p-4 overflow-auto">
                     @yield('breadcrumb')
+                    @include('gingerminds-core::components.alert.alert')
                     @yield('content')
                 </div>
 
