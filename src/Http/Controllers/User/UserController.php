@@ -3,6 +3,7 @@
 namespace Gingerminds\LaravelCore\Http\Controllers\User;
 
 use Gingerminds\LaravelCore\Http\Controllers\AbstractController as Controller;
+use Gingerminds\LaravelCore\Http\Requests\User\UserProfileRequest;
 use Gingerminds\LaravelCore\Http\Requests\User\UserRequest;
 use Gingerminds\LaravelCore\Models\Role\Role;
 use Gingerminds\LaravelCore\Models\User\Contributor;
@@ -12,6 +13,7 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -112,6 +114,40 @@ class UserController extends Controller
             'roles'        => $roles,
             'contributors' => $contributors,
         ]);
+    }
+
+    public function editProfile(): Factory|View
+    {
+        /** @var User $user */
+        $user = Auth::user();
+
+        /** @var view-string $view */
+        $view = 'gingerminds-core::pages.users.edit-profile';
+
+        return view($view, [
+            'user' => $user->load('contributor'),
+        ]);
+    }
+
+    public function updateProfile(UserProfileRequest $request): RedirectResponse
+    {
+        /** @var User $user */
+        $user = Auth::user();
+
+        // On injecte un contributor_id virtuel pour la logique de UserRepository
+        if ($user->contributor) {
+            $request->merge(['contributor_id' => $user->contributor->id]);
+        } else {
+            $request->merge(['contributor_id' => '__new__']);
+        }
+
+        $this->userRepository->update($request, $user);
+
+        return redirect()
+            ->route('gingerminds-core.profile.edit')
+            ->with('success', __('gingerminds-core::translation.successfully_updated', [
+                'model' => __('gingerminds-core::translation.profile.name'),
+            ]));
     }
 
     public function destroy(User $user): RedirectResponse

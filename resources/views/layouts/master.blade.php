@@ -9,30 +9,55 @@
     <meta content="Gingerminds" name="author"/>
     <!-- App favicon -->
     <link rel="shortcut icon" href="{{ URL::asset('build/images/favicon.ico') }}">
-    @include('gingerminds-core::layouts.head-css')
+    @include('layouts.head-css')
 </head>
 
 @section('body')
-    <body>
+    <body data-sidebar="dark" data-layout-mode="light">
     @show
+    <!-- Begin page -->
+    <div id="layout-wrapper">
+        @include('gingerminds-core::layouts.header.topbar')
+        @include('gingerminds-core::layouts.sidebar.sidebar')
+        <!-- ============================================================== -->
+        <!-- Start right Content here -->
+        <!-- ============================================================== -->
+        <div class="main-content">
+            <div class="page-content">
+                <div class="container-fluid">
+                    @if(session('success'))
+                        <div class="alert alert-success">
+                            {{ session('success') }}
+                        </div>
+                    @endif
 
-    <div class="container-fluid vh-100 d-flex flex-column p-0">
-        <div class="d-flex flex-grow-1">
-            @include('gingerminds-core::layouts.sidebar.sidebar')
+                    @if(session('error'))
+                        <div class="alert alert-danger">
+                            {{ session('error') }}
+                        </div>
+                    @endif
 
-            <main class="flex-grow-1 d-flex flex-column" style="min-width: 0;">
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul class="mb-0">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
 
-                @include('gingerminds-core::components.alert.alert')
 
-                <div class="flex-grow-1 p-4 overflow-auto">
-                    @yield('breadcrumb')
                     @yield('content')
                 </div>
-
-                @include('gingerminds-core::layouts.footer.footer')
-            </main>
+                <!-- container-fluid -->
+            </div>
+            <!-- End Page-content -->
+            @include('gingerminds-core::layouts.footer.footer')
         </div>
+        <!-- end main content-->
     </div>
+    <!-- END layout-wrapper -->
 
     @stack('modals')
 

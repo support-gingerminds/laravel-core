@@ -88,7 +88,7 @@ class SelectModel extends Component
         }
 
         /** @var view-string $view */
-        $view = 'gingerminds-core::livewire.components.list.filter.select-model';
+        $view = 'livewire.components.list.filter.select-model';
 
         return view($view, [
             'selectedItems' => $selectedItems,
