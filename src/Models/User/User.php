@@ -29,6 +29,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
 /**
  * @property string $password
  * @property string $email
+ * @property string|null $email_verified_at
  * @property-read Contributor|null $contributor Relation to the contributor profile
  * @property-read int<0, max> $id
  */

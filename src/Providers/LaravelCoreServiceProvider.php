@@ -13,7 +13,12 @@ use Gingerminds\LaravelCore\Console\Commands\Make\CreateStateProcessor;
 use Gingerminds\LaravelCore\Console\Commands\Security\CreateUser;
 use Gingerminds\LaravelCore\Http\Middelware\Authenticate;
 use Gingerminds\LaravelCore\Livewire\Component\List\Filter\SelectModel;
+use Gingerminds\LaravelCore\Models\CacheableResourceInterface;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Console\ModelMakeCommand as BaseModelMakeCommand;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 use RecursiveDirectoryIterator;
@@ -114,22 +119,55 @@ class LaravelCoreServiceProvider extends ServiceProvider
               CreateUser::class,
             ]);
 
-            $this->app->extend(
-                BaseModelMakeCommand::class,
-                function ($container) {
-                    return new class ($container->make('files')) extends BaseModelMakeCommand {
-                        protected function getStub(): string
-                        {
-                            return __DIR__ . '/../../stubs/model.stub';
-                        }
-                    };
-                }
-            );
+            if (!$this->app->bound('phpstan.booted')) {
+                $this->app->extend(
+                    BaseModelMakeCommand::class,
+                    function ($container) {
+                        return new class ($container->make('files')) extends BaseModelMakeCommand {
+                            protected function getStub(): string
+                            {
+                                return __DIR__ . '/../../stubs/model.stub';
+                            }
+                        };
+                    }
+                );
+            }
         }
 
         $this->app->make('router')->aliasMiddleware(
             'gingerminds-core.auth',
             Authenticate::class
         );
+
+        // Avoid web server static-file rules intercepting "/livewire/livewire.js" with a 404.
+        Livewire::setScriptRoute(function ($handle) {
+            return Route::get('/livewire/script', $handle);
+        });
+
+        $this->listenAndFlushCacheFor('eloquent.saved: *');
+        $this->listenAndFlushCacheFor('eloquent.deleted: *');
+        $this->listenAndFlushCacheFor('eloquent.restored: *');
+        $this->listenAndFlushCacheFor('eloquent.forceDeleted: *');
+    }
+
+    private function listenAndFlushCacheFor(string $eventName): void
+    {
+        Event::listen($eventName, function (string $firedEventName, array $payload): void {
+            $model = $payload[0] ?? null;
+            if (! $model instanceof Model) {
+                return;
+            }
+
+            $this->flushResourceCache($model);
+        });
+    }
+
+    private function flushResourceCache(Model $model): void
+    {
+        if (! $model instanceof CacheableResourceInterface) {
+            return;
+        }
+
+        Cache::tags([$model::getCacheKey()])->flush();
     }
 }

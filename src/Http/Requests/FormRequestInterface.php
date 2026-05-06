@@ -19,6 +19,8 @@ interface FormRequestInterface
     public function only($keys);
     public function filled($key);
     public function has($key);
+    public function hasFile($key);
+    public function file($key);
     public function input($key = null, $default = null);
     public function boolean($key = null, $default = false);
     public function except($keys);
