@@ -110,7 +110,7 @@ $value in $theme-colors {
 
 .like-btn {
     &.active {
-        .bx-heart {
+        .bi-heart {
             color: $danger;
             &:before {
                 content: "\ec8f";

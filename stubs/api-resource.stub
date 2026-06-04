@@ -20,6 +20,7 @@
             processor: {{stateProcessorClass}}::class
         ),
     ],
+    provider: {{stateProviderClass}}::class
 )]
 #[ApiProperty(
     identifier: true,

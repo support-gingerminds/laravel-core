@@ -16,25 +16,25 @@
             <span class="badge bg-light text-body border fs-11">{{ $role->permissions_count ?? $role->permissions()->count() }}</span>
         </td>
         <td class="text-end">
-            <div class="d-flex justify-content-end gap-2">
-                <a class="btn btn-sm btn-primary fs-12"
+            <div class="btn-group" role="group">
+                <a class="btn btn-sm btn-outline-primary fs-12"
                    href="{{ route('gingerminds-core.roles.edit', $role->id) }}"
                    data-bs-toggle="tooltip"
                    title="@lang('gingerminds-core::translation.action.edit')"
                 >
-                    <i class="bi bi-pencil-square"></i> Edit
+                    <i class="bi bi-pencil-square"></i>
                 </a>
                 <button type="button"
-                    class="btn btn-sm btn-danger js-remove-item fs-12"
-                    data-bs-toggle="modal"
-                    data-bs-target="#removeModal"
-                    data-model="@lang('gingerminds-core::translation.roles.name_s')"
-                    data-remove-name="{{ $role->name }}"
-                    data-remove-id="{{ $role->id }}"
-                    data-destroy-url="{{ route('gingerminds-core.roles.destroy', $role->id) }}"
-                    title="@lang('gingerminds-core::translation.action.delete')"
+                        class="btn btn-sm btn-outline-danger js-remove-item fs-12"
+                        data-bs-toggle="modal"
+                        data-bs-target="#removeModal"
+                        data-model="@lang('gingerminds-core::translation.roles.name_s')"
+                        data-remove-name="{{ $role->name }}"
+                        data-remove-id="{{ $role->id }}"
+                        data-destroy-url="{{ route('gingerminds-core.roles.destroy', $role->id) }}"
+                        title="@lang('gingerminds-core::translation.action.delete')"
                 >
-                    <i class="bi bi-trash"></i> Delete
+                    <i class="bi bi-trash"></i>
                 </button>
             </div>
         </td>

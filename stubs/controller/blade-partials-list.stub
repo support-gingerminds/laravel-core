@@ -4,7 +4,7 @@
         <td class="text-end">
             <div class="btn-group" role="group">
                 <a class="btn btn-sm btn-outline-primary" href="{{ route('{{ resource }}.edit', ${{ modelVariable }}) }}">
-                    <i class="bx bx-edit"></i>
+                    <i class="bi bi-edit"></i>
                 </a>
                 <button type="button"
                         class="btn btn-outline-danger btn-sm js-remove-item"
@@ -14,7 +14,7 @@
                         data-remove-name="{{ ${{ modelVariable }}->name ?? ${{ modelVariable }}->id }}"
                         data-destroy-url="{{ route('{{ resource }}.destroy', ${{ modelVariable }}) }}"
                 >
-                    <i class="bx bx-trash"></i>
+                    <i class="bx-i bi-trash"></i>
                 </button>
             </div>
         </td>

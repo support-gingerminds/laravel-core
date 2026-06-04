@@ -79,6 +79,8 @@ class CreateResource extends Command
         $this->call('make:policy', ['name' => $name]);
 
         if ($this->option('api')) {
+            $this->call('make:state-processor', ['name' => $name]);
+            $this->call('make:api-provider', ['name' => $name]);
             $this->setupApi($name);
         }
 
@@ -91,8 +93,10 @@ class CreateResource extends Command
     protected function setupApi(string $name): void
     {
         $modelPath = app_path('Models/' . str_replace('\\', '/', $name) . '.php');
-        $stubPath  = base_path('stubs/api-resource.stub');
-        $error     = null;
+        $stubPath  = file_exists(base_path('stubs/vendor/gingerminds-core/api-resource.stub'))
+            ? base_path('stubs/vendor/gingerminds-core/api-resource.stub')
+            : __DIR__ . '/../../../../stubs/api-resource.stub';
+        $error = null;
 
         if (!file_exists($modelPath)) {
             $error = "Model not found at: {$modelPath}";
@@ -130,8 +134,26 @@ class CreateResource extends Command
 
         // Préparation de l'attribut
         $attr = str_replace(
-            ['{{snakeModel}}', '{{stateProcessorClass}}', '{{stateProviderClass}}'],
-            [Str::snake($baseName), $processorClass, $providerClass],
+            [
+                '{{model}}',
+                '{{ model }}',
+                '{{snakeModel}}',
+                '{{ snakeModel }}',
+                '{{stateProcessorClass}}',
+                '{{ stateProcessorClass }}',
+                '{{stateProviderClass}}',
+                '{{ stateProviderClass }}',
+            ],
+            [
+                $baseName,
+                $baseName,
+                Str::snake($baseName),
+                Str::snake($baseName),
+                $processorClass,
+                $processorClass,
+                $providerClass,
+                $providerClass,
+            ],
             $stub
         );
 
@@ -139,6 +161,13 @@ class CreateResource extends Command
         if (!str_contains($content, '#[ApiResource')) {
             $content = (string) preg_replace('/class ' . $baseName . '/', "{$attr}class {$baseName}", $content);
         }
+
+        // Remplacement des placeholders restants dans tout le modèle (ex: snakeModel dans les constantes)
+        $content = str_replace(
+            ['{{snakeModel}}', '{{ snakeModel }}'],
+            [Str::snake($baseName), Str::snake($baseName)],
+            $content
+        );
 
         file_put_contents($path, $content);
         $this->info("API Resource added to Model: {$baseName}");

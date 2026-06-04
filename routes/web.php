@@ -10,6 +10,7 @@ use Gingerminds\LaravelCore\Http\Controllers\User\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('web')
+    ->prefix('admin')
     ->name('gingerminds-core.')
     ->group(function () {
         Route::controller(AuthController::class)->group(function () {

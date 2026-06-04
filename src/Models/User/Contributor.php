@@ -57,6 +57,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
             processor: ContributorStateProcessor::class
         ),
     ],
+    middleware: ['auth:sanctum']
 )]
 #[ApiProperty(property: 'id', serialize: new Groups([
     Contributor::GROUP_LIST,

@@ -62,10 +62,12 @@ class CreatePolicy extends Command
      */
     protected function createPolicyFile(string $path, string $namespace, string $model): int
     {
-        $stubPath = base_path('stubs/policy.stub');
+        $stubPath = file_exists(base_path('stubs/vendor/gingerminds-core/policy.stub'))
+            ? base_path('stubs/vendor/gingerminds-core/policy.stub')
+            : __DIR__ . '/../../../../stubs/policy.stub';
 
         if (!file_exists($stubPath)) {
-            $this->error('Stub file not found');
+            $this->error("Stub file not found: {$stubPath}");
             return Command::FAILURE;
         }
 
@@ -96,6 +98,12 @@ class CreatePolicy extends Command
     protected function registerPolicy(string $namespace, string $model): void
     {
         $providerPath = app_path('Providers/AuthServiceProvider.php');
+
+        if (!file_exists($providerPath)) {
+            $providerPath = base_path(
+                'vendor/gingerminds/laravel-core/src/Providers/LaravelCoreAuthServiceProvider.php'
+            );
+        }
 
         if (!file_exists($providerPath)) {
             $this->warn('AuthServiceProvider not found. Registration skipped.');

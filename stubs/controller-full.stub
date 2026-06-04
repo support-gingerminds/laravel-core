@@ -13,7 +13,7 @@ use {{ repositoryNamespace }}\{{ model }}Repository;
 
 class {{ class }} extends AbstractController
 {
-    const string LABEL_S = ''translation.{{ tradBase }}.name_s'';
+    const string LABEL_S = 'translation.{{ tradBase }}.name_s';
 
     public function __construct(
         private readonly {{ model }}Repository $repository
@@ -26,7 +26,10 @@ class {{ class }} extends AbstractController
 
         $items = $this->repository->get($request);
 
-        return view('pages.{{ resource }}.index', [
+        /** @var view-string $view */
+        $view = 'pages.{{ resource }}.index';
+
+        return view($view, [
             'resource' => {{ model }}::class,
             'items'    => $items,
         ]);
@@ -34,12 +37,18 @@ class {{ class }} extends AbstractController
 
     public function create(): View
     {
-        return view('pages.{{ resource }}.create');
+        /** @var view-string $view */
+        $view = 'pages.{{ resource }}.create';
+
+        return view($view);
     }
 
     public function edit({{ model }} ${{ modelVariable }}): View
     {
-        return view('pages.{{ resource }}.edit', ['{{ modelVariable }}' => ${{ modelVariable }}]);
+        /** @var view-string $view */
+        $view = 'pages.{{ resource }}.edit';
+
+        return view($view, ['{{ modelVariable }}' => ${{ modelVariable }}]);
     }
 
     public function store({{ model }}Request $request): RedirectResponse

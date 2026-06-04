@@ -6,8 +6,6 @@ use Gingerminds\LaravelCore\Http\Requests\FormRequestInterface;
 use Gingerminds\LaravelCore\Models\ResourceModelInterface;
 use Gingerminds\LaravelCore\Repositories\RepositoryInterface;
 use Gingerminds\LaravelCore\Repositories\AbstractRepository;
-use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
 use InvalidArgumentException;
 use {{ resourceModelFqcn }};
 

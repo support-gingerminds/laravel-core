@@ -57,6 +57,7 @@ return [
         'firstname' => 'Prénom',
         'code' => 'Code',
         'email' => 'Email',
+        'label' => 'Libellé',
         'placeholder' => [
             'search' => 'Rechercher...',
         ],
@@ -70,6 +71,7 @@ return [
         'filters' => 'Filtres',
         'search' => 'Rechercher',
         'clear_filters' => 'Effacer les filtres',
+        'select' => 'Selectionner',
         'save' => 'Enregistrer',
         'cancel' => 'Annuler',
         'remove' => 'Supprimer',

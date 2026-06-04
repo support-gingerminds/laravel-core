@@ -59,6 +59,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
             processor: UserStateProcessor::class
         ),
     ],
+    middleware: ['auth:sanctum']
 )]
 #[ApiProperty(
     identifier: true,

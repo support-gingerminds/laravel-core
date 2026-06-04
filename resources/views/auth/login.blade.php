@@ -65,7 +65,7 @@
                                             <div class="input-group auth-pass-inputgroup">
                                                 <input type="password" name="password" class="form-control" id="password" placeholder="@lang('gingerminds-core::translation.auth.form.password_placeholder')" aria-label="Password" required>
                                                 <button class="btn btn-light " type="button" id="password-addon">
-                                                    <i class="mdi mdi-eye-outline"></i>
+                                                    <i class="bi bi-eye"></i>
                                                 </button>
                                             </div>
                                         </div>

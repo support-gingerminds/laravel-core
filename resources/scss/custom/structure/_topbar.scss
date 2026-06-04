@@ -187,7 +187,7 @@
 // Full Screen
 .fullscreen-enable {
     [data-bs-toggle="fullscreen"] {
-        .bx-fullscreen::before {
+        .bi-fullscreen::before {
             content: "\ea3f";
         }
     }

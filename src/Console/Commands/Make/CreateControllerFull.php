@@ -203,7 +203,10 @@ class CreateControllerFull extends Command
      */
     private function compileStub(string $name, array $data): string
     {
-        $path = base_path("stubs/{$name}.stub");
+        $path = file_exists(base_path("stubs/vendor/gingerminds-core/{$name}.stub"))
+            ? base_path("stubs/vendor/gingerminds-core/{$name}.stub")
+            : __DIR__ . "/../../../../stubs/{$name}.stub";
+
         if (!file_exists($path)) {
             throw new RuntimeException("Stub not found: {$path}");
         }
