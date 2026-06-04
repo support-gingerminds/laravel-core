@@ -28,6 +28,11 @@ class LaravelCoreServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+        $this->mergeConfigFrom(
+            __DIR__ . '/../../config/gingerminds-core.php',
+            'gingerminds-core'
+        );
+
         // Enregistrement des configurations ou services si nécessaire
         $this->app->register(LaravelCoreAuthServiceProvider::class);
 
@@ -92,6 +97,10 @@ class LaravelCoreServiceProvider extends ServiceProvider
 
         // Publication des ressources pour surcharge par le projet Skeleton
         if ($this->app->runningInConsole()) {
+            $this->publishes([
+                __DIR__ . '/../../config/gingerminds-core.php' => config_path('gingerminds-core.php'),
+            ], 'gingerminds-config');
+
             $this->publishes([
               __DIR__ . '/../../resources/views' => resource_path('views/vendor/gingerminds-core'),
             ], 'gingerminds-views');
