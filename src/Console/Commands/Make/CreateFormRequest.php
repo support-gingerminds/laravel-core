@@ -38,7 +38,10 @@ class CreateFormRequest extends Command
             $namespace .= '\\' . implode('\\', $repositoryPathParts);
         }
 
-        $stubPath = base_path('stubs/form-request.stub');
+        $stubPath = file_exists(base_path('stubs/vendor/gingerminds-core/form-request.stub'))
+            ? base_path('stubs/vendor/gingerminds-core/form-request.stub')
+            : __DIR__ . '/../../../../stubs/form-request.stub';
+
         if (!file_exists($stubPath)) {
             $this->error("Stub file not found: {$stubPath}");
             return;

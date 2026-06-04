@@ -51,6 +51,7 @@ return [
         'firstname' => 'Firstname',
         'code' => 'Code',
         'email' => 'Email',
+        'label' => 'Label',
         'placeholder' => [
             'search' => 'Search...',
         ],
@@ -64,6 +65,7 @@ return [
         'filters' => 'Filters',
         'search' => 'Search',
         'clear_filters' => 'Clear filters',
+        'select' => 'Select',
         'save' => 'Save',
         'cancel' => 'Cancel',
         'remove' => 'Remove',

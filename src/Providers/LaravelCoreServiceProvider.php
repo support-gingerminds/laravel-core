@@ -66,6 +66,7 @@ class LaravelCoreServiceProvider extends ServiceProvider
         // Chargement des routes du package
         if (! $this->app->routesAreCached()) {
             $this->loadRoutesFrom(__DIR__ . '/../../routes/web.php');
+            $this->loadRoutesFrom(__DIR__ . '/../../routes/api.php');
         }
 
         // Chargement des migrations
@@ -119,19 +120,18 @@ class LaravelCoreServiceProvider extends ServiceProvider
               CreateUser::class,
             ]);
 
-            if (!$this->app->bound('phpstan.booted')) {
-                $this->app->extend(
-                    BaseModelMakeCommand::class,
-                    function ($container) {
-                        return new class ($container->make('files')) extends BaseModelMakeCommand {
-                            protected function getStub(): string
-                            {
-                                return __DIR__ . '/../../stubs/model.stub';
-                            }
-                        };
-                    }
-                );
-            }
+            $this->app->extend(
+                BaseModelMakeCommand::class,
+                function ($command, $app) {
+                    // ← le 2ème argument est le container
+                    return new class ($app->make('files')) extends BaseModelMakeCommand {
+                        protected function getStub(): string
+                        {
+                            return __DIR__ . '/../../stubs/model.stub';
+                        }
+                    };
+                }
+            );
         }
 
         $this->app->make('router')->aliasMiddleware(
@@ -152,7 +152,7 @@ class LaravelCoreServiceProvider extends ServiceProvider
 
     private function listenAndFlushCacheFor(string $eventName): void
     {
-        Event::listen($eventName, function (array $payload): void {
+        Event::listen($eventName, function (string $eventName, array $payload): void {
             $model = $payload[0] ?? null;
             if (! $model instanceof Model) {
                 return;

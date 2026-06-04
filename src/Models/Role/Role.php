@@ -17,6 +17,8 @@ use Gingerminds\LaravelCore\Models\SearchableModelInterface;
 use Gingerminds\LaravelCore\Models\SortableModelInterface;
 use Gingerminds\LaravelCore\Models\User\User;
 use Gingerminds\LaravelCore\StateProcessor\Role\RoleStateProcessor;
+use Illuminate\Database\Eloquent\Relations\MorphPivot;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Spatie\Permission\Models\Role as SpatieRole;
 use Symfony\Component\Serializer\Attribute\Groups;
 
@@ -53,6 +55,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
             processor: RoleStateProcessor::class
         ),
     ],
+    middleware: ['auth:sanctum']
 )]
 #[ApiProperty(
     identifier: true,
@@ -96,6 +99,10 @@ class Role extends SpatieRole implements
     public const string GROUP_LIST = 'role:list';
     public const string GROUP_READ = 'role:read';
     public const string GROUP_EDIT = 'role:edit';
+
+    protected $attributes = [
+        'guard_name' => 'web',
+    ];
 
     /**
      * @return string[]
@@ -144,6 +151,20 @@ class Role extends SpatieRole implements
     public function getPermissionsCountAttribute(): int
     {
         return $this->permissions->count();
+    }
+
+    /**
+     * @return MorphToMany<User, $this, MorphPivot, 'pivot'>
+     */
+    public function users(): MorphToMany
+    {
+        return $this->morphedByMany(
+            User::class,
+            'model',
+            'model_has_roles',
+            'role_id',
+            'model_id'
+        );
     }
 
     public static function getSearchableFields(): array

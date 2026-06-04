@@ -38,7 +38,10 @@ class CreateApiProvider extends Command
             $namespace .= '\\' . implode('\\', $providerPathParts);
         }
 
-        $stubPath = base_path('stubs/api-provider.stub');
+        $stubPath = file_exists(base_path('stubs/vendor/gingerminds-core/api-provider.stub'))
+            ? base_path('stubs/vendor/gingerminds-core/api-provider.stub')
+            : __DIR__ . '/../../../../stubs/api-provider.stub';
+
         if (!file_exists($stubPath)) {
             $this->error("Stub file not found: {$stubPath}");
             return;

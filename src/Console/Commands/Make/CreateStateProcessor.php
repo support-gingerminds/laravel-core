@@ -38,7 +38,9 @@ class CreateStateProcessor extends Command
             $namespace .= '\\' . implode('\\', $stateProcessorPathParts);
         }
 
-        $stubPath = base_path('stubs/state-processor.stub');
+        $stubPath = file_exists(base_path('stubs/vendor/gingerminds-core/state-processor.stub'))
+            ? base_path('stubs/vendor/gingerminds-core/state-processor.stub')
+            : __DIR__ . '/../../../../stubs/state-processor.stub';
         if (!file_exists($stubPath)) {
             $this->error("Stub file not found: {$stubPath}");
             return;

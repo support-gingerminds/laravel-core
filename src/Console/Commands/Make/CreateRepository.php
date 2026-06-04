@@ -38,7 +38,10 @@ class CreateRepository extends Command
             $namespace .= '\\' . implode('\\', $repositoryPathParts);
         }
 
-        $stubPath = base_path('stubs/repository.stub');
+        $stubPath = file_exists(base_path('stubs/vendor/gingerminds-core/repository.stub'))
+            ? base_path('stubs/vendor/gingerminds-core/repository.stub')
+            : __DIR__ . '/../../../../stubs/repository.stub';
+
         if (!file_exists($stubPath)) {
             $this->error("Stub file not found: {$stubPath}");
             return;

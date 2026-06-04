@@ -18,9 +18,9 @@ class LaravelCoreAuthServiceProvider extends ServiceProvider
 {
     protected $policies = [
         Contributor::class => ContributorPolicy::class,
-        User::class        => UserPolicy::class,
-        Role::class        => RolePolicy::class,
         Permission::class  => PermissionPolicy::class,
+        Role::class        => RolePolicy::class,
+        User::class        => UserPolicy::class,
     ];
 
     /**
@@ -35,8 +35,8 @@ class LaravelCoreAuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Gate::before(function ($user) {
-            return $user->hasRole('Super-Admin') ? true : null;
+        Gate::before(function ($user = null) {
+            return $user?->hasRole('Super-Admin') ? true : null;
         });
 
         app(PermissionRegistrar::class)
