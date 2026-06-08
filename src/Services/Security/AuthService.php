@@ -70,8 +70,15 @@ class AuthService
             return true;
         }
 
-        $host              = (string) $request->header('origin');
-        $authorizedDomains = config('app.authorized_domains', []); // Mieux vaut utiliser le config
+        $origin = $request->header('origin');
+
+        if (!$origin) {
+            return false;
+        }
+
+        $host = parse_url($origin, PHP_URL_HOST);
+
+        $authorizedDomains = config('auth.authorized_domains', []);
 
         return in_array($host, $authorizedDomains, true);
     }
