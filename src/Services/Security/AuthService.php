@@ -71,7 +71,7 @@ class AuthService
         }
 
         $host              = (string) $request->header('origin');
-        $authorizedDomains = config('app.authorized_domains', []); // Mieux vaut utiliser le config
+        $authorizedDomains = config('auth.authorized_domains', []); // Mieux vaut utiliser le config
 
         return in_array($host, $authorizedDomains, true);
     }
