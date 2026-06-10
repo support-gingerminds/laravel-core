@@ -14,5 +14,8 @@ class {{ class }} extends Model implements ResourceModelInterface
 
     {{ factory }}
 
-    protected $fillable = [];
+    public function getFillable(): array
+    {
+        return [];
+    }
 }

@@ -2,10 +2,12 @@
 
 namespace Gingerminds\LaravelCore\ApiProvider;
 
+use ApiPlatform\Laravel\Eloquent\Paginator as ApiPlatformPaginator;
 use ApiPlatform\Metadata\CollectionOperationInterface;
 use ApiPlatform\Metadata\Operation;
 use Gingerminds\LaravelCore\Repositories\RepositoryInterface;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 abstract class AbstractApiProvider
 {
@@ -34,7 +36,13 @@ abstract class AbstractApiProvider
         $this->addFilters($request, $uriVariables, $context);
 
         if ($operation instanceof CollectionOperationInterface) {
-            return $this->repository->get($request);
+            $result = $this->repository->get($request);
+
+            if ($result instanceof LengthAwarePaginator) {
+                return new ApiPlatformPaginator($result);
+            }
+
+            return $result;
         }
 
         $id = $uriVariables['id'] ?? $request->route('id');

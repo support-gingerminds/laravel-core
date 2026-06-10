@@ -14,7 +14,7 @@
                         data-remove-name="{{ ${{ modelVariable }}->name ?? ${{ modelVariable }}->id }}"
                         data-destroy-url="{{ route('{{ resource }}.destroy', ${{ modelVariable }}) }}"
                 >
-                    <i class="bx-i bi-trash"></i>
+                    <i class="bi-i bi-trash"></i>
                 </button>
             </div>
         </td>
