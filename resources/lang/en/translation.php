@@ -9,6 +9,8 @@ return [
     'previous' => 'Previous',
     'next' => 'Next',
     'nb_results' => 'Results :current of :total',
+    'here' => 'here',
+    'all' => 'All',
 
     'successfully_created' => ':model successfully created.',
     'successfully_updated' => ':model updated successfully.',
@@ -71,6 +73,7 @@ return [
         'remove' => 'Remove',
         'remove_confirm' => 'Are you sure you want to remove this item?',
         'sign_out' => 'Sign out',
+        'see' => 'See',
     ],
 
     'users' => [

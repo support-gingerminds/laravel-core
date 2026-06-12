@@ -4,7 +4,7 @@
         <td class="text-end">
             <div class="btn-group" role="group">
                 <a class="btn btn-sm btn-outline-primary" href="{{ route('{{ resource }}.edit', ${{ modelVariable }}) }}">
-                    <i class="bi bi-edit"></i>
+                    <i class="bi bi-pencil-square"></i>
                 </a>
                 <button type="button"
                         class="btn btn-outline-danger btn-sm js-remove-item"
