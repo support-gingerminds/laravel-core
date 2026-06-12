@@ -15,6 +15,8 @@ return [
     'to' => 'Au',
     'number_from' => 'De',
     'number_to' => 'A',
+    'here' => 'ici',
+    'all' => 'Tous',
 
     'successfully_created' => ':model créé avec succès.',
     'successfully_updated' => ':model mis à jour avec succès.',
@@ -77,6 +79,7 @@ return [
         'remove' => 'Supprimer',
         'remove_confirm' => 'Êtes-vous sûr de vouloir supprimer cet élément ?',
         'sign_out' => 'Se déconnecter',
+        'see' => 'Voir',
     ],
 
     'users' => [
