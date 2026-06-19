@@ -2,6 +2,7 @@
 
 namespace Gingerminds\LaravelCore\Livewire\Component\List\Filter;
 
+use Gingerminds\LaravelCore\Models\ResourceModelInterface;
 use Gingerminds\LaravelCore\Models\SearchableModelInterface;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
@@ -64,9 +65,22 @@ class SelectModel extends Component
         $query->orderBy($orderField, 'asc');
 
         return $query->limit(10)->get()->map(function ($item) {
+
+            $display = $this->options['display'] ?? null;
+
             return [
                 'id'   => $item->id,
-                'text' => $item->name ?? $item->label ?? $item->title ?? $item->id,
+                'text' => match (true) {
+                    is_callable($display) => $display($item),
+
+                    is_string($display) && method_exists($item, $display)
+                    => $item->{$display}(),
+
+                    is_string($display) && isset($item->{$display})
+                    => $item->{$display},
+
+                    default => $item->name ?? $item->label ?? $item->title ?? $item->id,
+                },
             ];
         })->toArray();
     }
@@ -94,5 +108,29 @@ class SelectModel extends Component
             'selectedItems' => $selectedItems,
             'allItems'      => $allItems ?? new Collection(),
         ]);
+    }
+
+    protected function getDisplayValue(ResourceModelInterface $item): string
+    {
+        $display = $this->options['display'] ?? null;
+
+        if (is_callable($display)) {
+            return $display($item);
+        }
+
+        if (is_string($display)) {
+            if (method_exists($item, $display)) {
+                return $item->{$display}();
+            }
+
+            if (isset($item->{$display})) {
+                return $item->{$display};
+            }
+        }
+
+        return $item->name
+            ?? $item->label
+            ?? $item->title
+            ?? (string) $item->getKey();
     }
 }

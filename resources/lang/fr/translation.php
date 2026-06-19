@@ -53,6 +53,10 @@ return [
         ]
     ],
 
+    'menu' => [
+        'general' => 'Géneral',
+    ],
+
     'form' => [
         'name' => 'Nom',
         'lastname' => 'Nom',
