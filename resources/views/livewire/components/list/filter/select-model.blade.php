@@ -9,13 +9,13 @@
             <option value="all">@lang('gingerminds-core::translation.all')</option>
             @foreach($allItems as $item)
                 <option value="{{ $item->id }}" {{ (string)$value === (string)$item->id ? 'selected' : '' }}>
-                    {{ $item->name ?? $item->label ?? $item->title ?? $item->id }}
+                    {{ $this->getDisplayValue($item) }}
                 </option>
             @endforeach
         @else
             @foreach($selectedItems as $item)
                 <option value="{{ $item->id }}" selected>
-                    {{ $item->name ?? $item->label ?? $item->title ?? $item->id }}
+                    {{ $this->getDisplayValue($item) }}
                 </option>
             @endforeach
         @endif
