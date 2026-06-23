@@ -4,13 +4,18 @@ return [
     'dashboard' => 'Dashboard',
     'actions' => 'Actions',
     'display' => 'Display',
-    'none' => 'Aucun',
+    'none' => 'None',
     'settings' => 'Settings',
     'previous' => 'Previous',
     'next' => 'Next',
     'nb_results' => 'Results :current of :total',
     'here' => 'here',
     'all' => 'All',
+    'value' => 'Value',
+    'from' => 'From',
+    'to' => 'To',
+    'yes' => 'Yes',
+    'no' => 'No',
 
     'successfully_created' => ':model successfully created.',
     'successfully_updated' => ':model updated successfully.',
@@ -49,6 +54,7 @@ return [
 
     'menu' => [
         'general' => 'General',
+        'configuration' => 'Configuration',
     ],
 
     'form' => [
@@ -58,6 +64,7 @@ return [
         'code' => 'Code',
         'email' => 'Email',
         'label' => 'Label',
+        'title' => 'Title',
         'placeholder' => [
             'search' => 'Search...',
         ],
