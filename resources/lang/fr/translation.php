@@ -17,6 +17,7 @@ return [
     'number_to' => 'A',
     'here' => 'ici',
     'all' => 'Tous',
+    'value' => 'Valeur',
 
     'successfully_created' => ':model créé avec succès.',
     'successfully_updated' => ':model mis à jour avec succès.',
@@ -55,6 +56,7 @@ return [
 
     'menu' => [
         'general' => 'Géneral',
+        'configuration' => 'Configuration'
     ],
 
     'form' => [
@@ -64,6 +66,7 @@ return [
         'code' => 'Code',
         'email' => 'Email',
         'label' => 'Libellé',
+        'title' => 'Titre',
         'placeholder' => [
             'search' => 'Rechercher...',
         ],
