@@ -67,6 +67,11 @@ return [
         'email' => 'Email',
         'label' => 'Libellé',
         'title' => 'Titre',
+        'description' => 'Description',
+        'is_active' => 'Actif ?',
+        'active' => 'Actif',
+        'inactive' => 'Inactif',
+        'position' => 'Position',
         'placeholder' => [
             'search' => 'Rechercher...',
         ],
@@ -87,6 +92,8 @@ return [
         'remove_confirm' => 'Êtes-vous sûr de vouloir supprimer cet élément ?',
         'sign_out' => 'Se déconnecter',
         'see' => 'Voir',
+        'move_up' => 'Monter',
+        'move_down' => 'Descendre',
     ],
 
     'users' => [

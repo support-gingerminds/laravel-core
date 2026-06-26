@@ -65,6 +65,11 @@ return [
         'email' => 'Email',
         'label' => 'Label',
         'title' => 'Title',
+        'description' => 'Description',
+        'is_active' => 'Is active ?',
+        'active' => 'Active',
+        'inactive' => 'Inactive',
+        'position' => 'Position',
         'placeholder' => [
             'search' => 'Search...',
         ],
@@ -85,6 +90,8 @@ return [
         'remove_confirm' => 'Are you sure you want to remove this item?',
         'sign_out' => 'Sign out',
         'see' => 'See',
+        'move_up' => 'Move up',
+        'move_down' => 'Move down',
     ],
 
     'users' => [

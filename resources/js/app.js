@@ -1,6 +1,8 @@
 import $ from 'jquery';
 window.$ = $;
 window.jQuery = $;
+import Sortable from 'sortablejs';
+window.Sortable = Sortable;
 import 'bootstrap';
 import initSelect2 from 'select2';
 initSelect2(window, $);
