@@ -26,7 +26,7 @@ Route::middleware('web')
 
             Route::controller(UserController::class)->name('profile.')->group(function () {
                 Route::get('profile', 'editProfile')->name('edit-profile');
-                Route::post('profile', 'updateProfile')->name('update-profile');
+                Route::patch('profile', 'updateProfile')->name('update-profile');
             });
 
             Route::resource('users', UserController::class);
