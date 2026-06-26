@@ -1,0 +1,128 @@
+@php use Gingerminds\LaravelCore\Models\FilterableModelInterface;use Gingerminds\LaravelCore\Models\SearchableModelInterface; @endphp
+@extends('gingerminds-core::layouts.master')
+
+@section('content')
+    @hasSection('back-btn')
+        <div class="row">
+            <div class="col-3 mb-3">
+                @yield('back-btn')
+            </div>
+        </div>
+    @endif
+
+    <div class="row">
+        <div class="col-lg-12">
+            @php
+                $isSearchable = in_array(SearchableModelInterface::class, class_implements($resource));
+                $isFilterable = in_array(FilterableModelInterface::class, class_implements($resource));
+                $isFiltered = request()->has('filters')
+            @endphp
+            @if(isset($indexRoute) && ($isSearchable || $isFilterable))
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body p-0">
+                        <div class="accordion accordion-flush" id="filtersAccordion">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button fw-medium @if(!$isFiltered) collapsed @endif"
+                                            type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
+                                            aria-expanded="true" aria-controls="collapseOne">
+                                        <i class="bi bi-funnel me-2 text-primary"></i>
+                                        @lang('gingerminds-core::translation.action.filters')
+                                    </button>
+                                </h2>
+                                <div id="collapseOne"
+                                     class="accordion-collapse collapse @if($isFiltered) show @endif"
+                                     data-bs-parent="#filtersAccordion">
+                                    <div class="p-4 border-top">
+                                        <form method="get" action="{{ route($indexRoute) }}"
+                                              class="row g-3 align-items-end">
+                                            @if($isSearchable)
+                                                @include('gingerminds-core::components.list.filters.text', [
+                                                'property' => 'search',
+                                                'label' => __('gingerminds-core::translation.action.search'),
+                                                'placeholder' => __('gingerminds-core::translation.form.placeholder.search'),
+                                                'filters' => $filters
+                                            ])
+                                            @endif
+                                            @if($isFilterable)
+                                                @include('gingerminds-core::components.list.filters_collection', ['filtersConfigs' => $resource::getFilters(), 'filters' => $filters])
+                                            @endif
+                                            <div class="col-md-12 d-flex justify-content-end gap-2 mt-4">
+                                                <a href="{{ route($indexRoute, request()->only(['sort', 'sortBy'])) }}"
+                                                   class="btn btn-light px-4">@lang('gingerminds-core::translation.action.clear_filters')</a>
+                                                <button class="btn btn-primary px-4" type="submit">
+                                                    <i class="bi bi-search me-1"></i>
+                                                    @lang('gingerminds-core::translation.action.filter')
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-light py-3">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-3">
+                            <h5 class="card-title mb-0">
+                                <i class="bi bi-diagram-3 me-1 text-primary"></i>
+                                @yield('title')
+                            </h5>
+                            @hasSection('actions')
+                                @yield('actions')
+                            @endif
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    @yield('tree')
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection
+
+
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const reorderUrl = typeof window.treeReorderUrl !== 'undefined' ? window.treeReorderUrl : null;
+            if (!reorderUrl) return;
+
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+
+            function initSortable(container) {
+                new Sortable(container, {
+                    animation: 150,
+                    handle: '.drag-handle',
+                    ghostClass: 'sortable-ghost',
+                    chosenClass: 'sortable-chosen',
+                    onEnd: function () {
+                        const ids = [...container.querySelectorAll(':scope > .sortable-item')]
+                            .map(el => parseInt(el.dataset.itemId));
+
+                        const parentId = container.dataset.parentId !== ''
+                            ? parseInt(container.dataset.parentId)
+                            : null;
+
+                        fetch(reorderUrl, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': csrfToken,
+                                'Accept': 'application/json',
+                            },
+                            body: JSON.stringify({ ids: ids, parent_id: parentId }),
+                        });
+                    }
+                });
+            }
+
+            document.querySelectorAll('.sortable-level').forEach(initSortable);
+        });
+    </script>
+@endpush

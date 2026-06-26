@@ -4,6 +4,7 @@
   "type": "module",
   "dependencies": {
     "jquery": "^3.7.1",
-    "select2": "^4.0.13"
+    "select2": "^4.0.13",
+    "sortablejs": "^1.15.7"
   }
 }
