@@ -6,7 +6,6 @@ use ApiPlatform\Metadata\Resource\Factory\ResourceMetadataCollectionFactoryInter
 use ApiPlatform\Metadata\ResourceClassResolverInterface;
 use ApiPlatform\State\ProviderInterface;
 use Gingerminds\LaravelCore\Console\Commands\Make\CreateApiProvider;
-use Gingerminds\LaravelCore\Serializer\JsonCollectionNormalizer;
 use Gingerminds\LaravelCore\Console\Commands\Make\CreateControllerFull;
 use Gingerminds\LaravelCore\Console\Commands\Make\CreateFormRequest;
 use Gingerminds\LaravelCore\Console\Commands\Make\CreatePolicy;
@@ -17,6 +16,7 @@ use Gingerminds\LaravelCore\Console\Commands\Security\CreateUser;
 use Gingerminds\LaravelCore\Http\Middelware\Authenticate;
 use Gingerminds\LaravelCore\Livewire\Component\List\Filter\SelectModel;
 use Gingerminds\LaravelCore\Models\CacheableResourceInterface;
+use Gingerminds\LaravelCore\Serializer\JsonCollectionNormalizer;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Console\ModelMakeCommand as BaseModelMakeCommand;
 use Illuminate\Support\Facades\Cache;
@@ -26,6 +26,7 @@ use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use SplPriorityQueue;
 
 class LaravelCoreServiceProvider extends ServiceProvider
 {
@@ -39,7 +40,7 @@ class LaravelCoreServiceProvider extends ServiceProvider
             );
         });
 
-        $this->app->extend('api_platform_normalizer_list', function (\SplPriorityQueue $list) {
+        $this->app->extend('api_platform_normalizer_list', function (SplPriorityQueue $list) {
             $list->insert($this->app->make(JsonCollectionNormalizer::class), -800);
 
             return $list;
