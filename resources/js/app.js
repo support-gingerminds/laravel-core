@@ -1,6 +1,5 @@
-import $ from 'jquery';
+const $ = window.jQuery;
 window.$ = $;
-window.jQuery = $;
 import Sortable from 'sortablejs';
 window.Sortable = Sortable;
 import 'bootstrap';
