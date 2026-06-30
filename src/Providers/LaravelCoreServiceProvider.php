@@ -2,8 +2,11 @@
 
 namespace Gingerminds\LaravelCore\Providers;
 
+use ApiPlatform\Metadata\Resource\Factory\ResourceMetadataCollectionFactoryInterface;
+use ApiPlatform\Metadata\ResourceClassResolverInterface;
 use ApiPlatform\State\ProviderInterface;
 use Gingerminds\LaravelCore\Console\Commands\Make\CreateApiProvider;
+use Gingerminds\LaravelCore\Serializer\JsonCollectionNormalizer;
 use Gingerminds\LaravelCore\Console\Commands\Make\CreateControllerFull;
 use Gingerminds\LaravelCore\Console\Commands\Make\CreateFormRequest;
 use Gingerminds\LaravelCore\Console\Commands\Make\CreatePolicy;
@@ -28,6 +31,20 @@ class LaravelCoreServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+        $this->app->singleton(JsonCollectionNormalizer::class, function () {
+            return new JsonCollectionNormalizer(
+                $this->app->make(ResourceClassResolverInterface::class),
+                config('api-platform.pagination.page_parameter_name'),
+                $this->app->make(ResourceMetadataCollectionFactoryInterface::class),
+            );
+        });
+
+        $this->app->extend('api_platform_normalizer_list', function (\SplPriorityQueue $list) {
+            $list->insert($this->app->make(JsonCollectionNormalizer::class), -800);
+
+            return $list;
+        });
+
         $this->mergeConfigFrom(
             __DIR__ . '/../../config/gingerminds-core.php',
             'gingerminds-core'
