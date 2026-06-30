@@ -13,8 +13,9 @@
                 </option>
             @endforeach
         @else
-            @foreach($selectedItems as $item)
-                <option value="{{ $item->id }}" selected>
+            @foreach($allItems as $item)
+                <option value="{{ $item->id }}"
+                    {{ in_array((string)$item->id, array_map('strval', (array)$value)) ? 'selected' : '' }}>
                     {{ $this->getDisplayValue($item) }}
                 </option>
             @endforeach
