@@ -89,11 +89,8 @@ class SelectModel extends Component
     {
         $modelClass = $this->options['model'];
 
-        if (!$this->isMultiple) {
-            // Mode single : on charge tous les items pour les afficher comme <option>
-            $query    = $modelClass::query();
-            $allItems = $query->limit(100)->get();
-        }
+        // Mode single et multiple : on charge tous les items pour les afficher comme <option>
+        $allItems = $modelClass::query()->limit(100)->get();
 
         $selectedItems = new Collection();
         if (isset($this->value) && !in_array($this->value, ['', '0', 0, []], true)) {
