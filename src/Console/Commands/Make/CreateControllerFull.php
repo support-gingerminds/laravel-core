@@ -146,9 +146,9 @@ class CreateControllerFull extends Command
         }
 
         // Insert before the end of the auth middleware group.
-        $needle = "});\n\nRoute::get('/health'";
-        if (str_contains($content, $needle)) {
-            $content = str_replace($needle, $routeLine . "\n});\n\nRoute::get('/health'", $content);
+        // Match `});` followed by any top-level Route:: call outside the group.
+        if (preg_match('/\}\);\n\nRoute::/', $content)) {
+            $content = (string) preg_replace('/\}\);\n\nRoute::/', $routeLine . "\n});\n\nRoute::", $content, 1);
             file_put_contents($web, $content);
             $this->info('Route registered in routes/web.php');
             return;
