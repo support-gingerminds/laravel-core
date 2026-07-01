@@ -13,10 +13,8 @@
                     @csrf
                     @method('DELETE')
 
-                    <div class="avatar-sm mb-4 mx-auto">
-                        <div class="avatar-title bg-danger text-danger bg-opacity-10 fs-24 rounded-3">
-                            <i class="bi bi-trash"></i>
-                        </div>
+                    <div class="modal-delete-icon bg-danger text-danger bg-opacity-10 mb-4 mx-auto">
+                        <i class="bi bi-trash"></i>
                     </div>
                     <p id="remove-confirm" class="text-muted fs-16 mb-4"
                        data-template="@lang('gingerminds-core::translation.action.remove_confirm', ['name' => ':name'])">

@@ -92,6 +92,7 @@ return [
         'see' => 'See',
         'move_up' => 'Move up',
         'move_down' => 'Move down',
+        'back' => 'Back'
     ],
 
     'users' => [

@@ -94,6 +94,7 @@ return [
         'see' => 'Voir',
         'move_up' => 'Monter',
         'move_down' => 'Descendre',
+        'back' => 'Retour'
     ],
 
     'users' => [
