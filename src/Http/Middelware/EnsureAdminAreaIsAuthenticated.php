@@ -22,26 +22,20 @@ class EnsureAdminAreaIsAuthenticated
 
     public function handle(Request $request, Closure $next): Response
     {
-        $prefix = trim((string) config('gingerminds-core.admin_prefix'), '/');
-
-        if ($prefix === '' || ! $request->is($prefix, $prefix . '/*')) {
-            return $next($request);
-        }
-
+        $prefix    = trim((string) config('gingerminds-core.admin_prefix'), '/');
         $routeName = $request->route()?->getName();
 
-        if ($routeName !== null && in_array($routeName, self::GUEST_ROUTE_NAMES, true)) {
+        $isAdminRoute = $prefix !== '' && $request->is($prefix, $prefix . '/*');
+        $isGuestRoute = $routeName !== null && in_array($routeName, self::GUEST_ROUTE_NAMES, true);
+
+        if (! $isAdminRoute || $isGuestRoute || Auth::guard('web')->check()) {
             return $next($request);
         }
 
-        if (! Auth::guard('web')->check()) {
-            if ($request->expectsJson()) {
-                abort(401);
-            }
-
-            return redirect()->guest(route('gingerminds-core.login'));
+        if ($request->expectsJson()) {
+            abort(401);
         }
 
-        return $next($request);
+        return redirect()->guest(route('gingerminds-core.login'));
     }
 }
