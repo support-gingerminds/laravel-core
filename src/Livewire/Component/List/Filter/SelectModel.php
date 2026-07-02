@@ -37,52 +37,69 @@ class SelectModel extends Component
         $modelClass = $this->options['model'];
         $query      = $modelClass::query();
 
-        // Déterminer le champ d'ordre
-        $orderField = 'id';
-        $testItem   = $modelClass::first();
-        if ($testItem) {
-            if (isset($testItem->name)) {
-                $orderField = 'name';
-            } elseif (isset($testItem->label)) {
-                $orderField = 'label';
-            } elseif (isset($testItem->title)) {
-                $orderField = 'title';
-            }
+        $this->applySearchFilter($query, $modelClass, $search);
+
+        $query->orderBy($this->resolveOrderField($modelClass), 'asc');
+
+        return $query->limit(10)->get()
+            ->map(fn ($item) => $this->formatSearchResult($item))
+            ->toArray();
+    }
+
+    /**
+     * Détermine le champ à utiliser pour trier les résultats.
+     *
+     * @param class-string $modelClass
+     */
+    private function resolveOrderField(string $modelClass): string
+    {
+        $testItem = $modelClass::first();
+
+        return match (true) {
+            $testItem === null      => 'id',
+            isset($testItem->name)  => 'name',
+            isset($testItem->label) => 'label',
+            isset($testItem->title) => 'title',
+            default                 => 'id',
+        };
+    }
+
+    /**
+     * Applique le filtre de recherche à la requête, selon que le modèle
+     * soit "searchable" ou non.
+     *
+     * @param mixed $query
+     * @param class-string $modelClass
+     */
+    private function applySearchFilter($query, string $modelClass, string $search): void
+    {
+        if ($search === '' || $search === '0') {
+            return;
         }
 
-        if ($search !== '' && $search !== '0') {
-            if (is_subclass_of($modelClass, SearchableModelInterface::class)) {
-                $query->where(function ($q) use ($modelClass, $search) {
-                    foreach ($modelClass::getSearchableFields() as $field) {
-                        $q->orWhere($field, 'like', '%' . $search . '%');
-                    }
-                });
-            } else {
-                $query->where('id', 'like', '%' . $search . '%');
-            }
+        if (! is_subclass_of($modelClass, SearchableModelInterface::class)) {
+            $query->where('id', 'like', '%' . $search . '%');
+
+            return;
         }
 
-        $query->orderBy($orderField, 'asc');
+        $query->where(function ($q) use ($modelClass, $search) {
+            foreach ($modelClass::getSearchableFields() as $field) {
+                $q->orWhere($field, 'like', '%' . $search . '%');
+            }
+        });
+    }
 
-        return $query->limit(10)->get()->map(function ($item) {
-
-            $display = $this->options['display'] ?? null;
-
-            return [
-                'id'   => $item->id,
-                'text' => match (true) {
-                    is_callable($display) => $display($item),
-
-                    is_string($display) && method_exists($item, $display)
-                    => $item->{$display}(),
-
-                    is_string($display) && isset($item->{$display})
-                    => $item->{$display},
-
-                    default => $item->name ?? $item->label ?? $item->title ?? $item->id,
-                },
-            ];
-        })->toArray();
+    /**
+     * @param mixed $item
+     * @return array<string, mixed>
+     */
+    private function formatSearchResult($item): array
+    {
+        return [
+            'id'   => $item->id,
+            'text' => $this->getDisplayValue($item),
+        ];
     }
 
     public function render(): View
@@ -115,19 +132,27 @@ class SelectModel extends Component
             return $display($item);
         }
 
-        if (is_string($display)) {
-            if (method_exists($item, $display)) {
-                return $item->{$display}();
-            }
-
-            if (isset($item->{$display})) {
-                return $item->{$display};
-            }
-        }
-
-        return $item->name
+        return $this->resolveDisplayFromProperty($item, $display)
+            ?? $item->name
             ?? $item->label
             ?? $item->title
             ?? (string) $item->getKey();
+    }
+
+    /**
+     * Résout la valeur d'affichage à partir d'une méthode ou d'une propriété
+     * du modèle, lorsque `display` est une chaîne.
+     */
+    private function resolveDisplayFromProperty(ResourceModelInterface $item, mixed $display): ?string
+    {
+        if (! is_string($display)) {
+            return null;
+        }
+
+        if (method_exists($item, $display)) {
+            return $item->{$display}();
+        }
+
+        return isset($item->{$display}) ? $item->{$display} : null;
     }
 }

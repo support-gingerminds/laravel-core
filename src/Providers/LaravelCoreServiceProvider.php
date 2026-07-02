@@ -22,6 +22,7 @@ use Gingerminds\LaravelCore\Http\Controllers\Role\RoleController;
 use Gingerminds\LaravelCore\Http\Controllers\User\ContributorController;
 use Gingerminds\LaravelCore\Http\Controllers\User\UserController;
 use Gingerminds\LaravelCore\Http\Middelware\Authenticate;
+use Gingerminds\LaravelCore\Http\Middelware\EnsureAdminAreaIsAuthenticated;
 use Gingerminds\LaravelCore\Http\Requests\Permission\PermissionRequest;
 use Gingerminds\LaravelCore\Http\Requests\Role\RoleRequest;
 use Gingerminds\LaravelCore\Http\Requests\User\ContributorRequest;
@@ -196,6 +197,11 @@ class LaravelCoreServiceProvider extends ServiceProvider
         $this->app->make('router')->aliasMiddleware(
             'gingerminds-core.auth',
             Authenticate::class
+        );
+
+        $this->app->make('router')->pushMiddlewareToGroup(
+            'web',
+            EnsureAdminAreaIsAuthenticated::class
         );
 
         // Avoid web server static-file rules intercepting "/livewire/livewire.js" with a 404.

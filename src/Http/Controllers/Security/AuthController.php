@@ -37,7 +37,7 @@ class AuthController extends Controller
             ])->withInput();
         }
 
-        Auth::login($result['data']['user']);
+        Auth::login($result['data']['user'], $request->boolean('remember'));
 
         return redirect()->route('dashboard');
     }

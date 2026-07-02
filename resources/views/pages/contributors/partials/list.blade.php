@@ -29,7 +29,7 @@
             @endif
         </td>
         <td class="text-end">
-            <div class="btn-group" role="group">
+            <fieldset class="btn-group">
                 <a href="{{ route('gingerminds-core.contributors.edit', $contributor->id) }}"
                    class="btn btn-sm btn-outline-primary fs-12"
                    data-bs-toggle="tooltip"
@@ -50,7 +50,7 @@
                 >
                     <i class="bi bi-trash"></i>
                 </button>
-            </div>
+            </fieldset>
         </td>
     </tr>
 @empty

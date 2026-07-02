@@ -12,6 +12,24 @@ function resetMultipleSelectPlaceholder(el) {
          .attr('placeholder', 'Add an option');
 }
 
+document.addEventListener('click', function (e) {
+    const toggle = e.target.closest('#password-addon');
+    if (!toggle) return;
+
+    const input = toggle.closest('.input-group')?.querySelector('input[type="password"], input[type="text"]');
+    if (!input) return;
+
+    const icon = toggle.querySelector('i');
+    const showPassword = input.type === 'password';
+
+    input.type = showPassword ? 'text' : 'password';
+
+    if (icon) {
+        icon.classList.toggle('bi-eye', !showPassword);
+        icon.classList.toggle('bi-eye-slash', showPassword);
+    }
+});
+
 document.addEventListener('DOMContentLoaded', function () {
     $('.select2:not([multiple])').select2();
 

@@ -16,7 +16,7 @@
             <span class="badge bg-light text-body border fs-11">{{ $role->permissions_count ?? $role->permissions()->count() }}</span>
         </td>
         <td class="text-end">
-            <div class="btn-group" role="group">
+            <fieldset class="btn-group">
                 <a class="btn btn-sm btn-outline-primary fs-12"
                    href="{{ route('gingerminds-core.roles.edit', $role->id) }}"
                    data-bs-toggle="tooltip"
@@ -36,7 +36,7 @@
                 >
                     <i class="bi bi-trash"></i>
                 </button>
-            </div>
+            </fieldset>
         </td>
     </tr>
 @empty
