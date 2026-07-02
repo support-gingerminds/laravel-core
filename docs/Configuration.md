@@ -21,6 +21,14 @@ Every admin route (from the package itself and from other Gingerminds packages) 
 
 This value is also what the [authentication guard](Authentication.md) uses to decide whether a URL belongs to the admin area, so changing it is enough — you don't need to touch any middleware.
 
+## Health check route
+
+```php
+'health_check_path' => env('HEALTH_CHECK_PATH', 'health'),
+```
+
+Registers a `GET {health_check_path}` route (default `/health`) that always returns a `200` JSON response (`{"status": "ok"}`), outside the admin prefix and without any auth middleware. Since the application root typically redirects into the admin area (and therefore into a login redirect for guests), point CI/monitoring health checks at this route instead of `/`.
+
 ## Resource bindings: the `resources` array
 
 ```php

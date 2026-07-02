@@ -7,6 +7,12 @@ use Gingerminds\LaravelCore\Resolver\ResourceResolver;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('web')
+    ->get(config('gingerminds-core.health_check_path'), function () {
+        return response()->json(['status' => 'ok']);
+    })
+    ->name('gingerminds-core.health-check');
+
+Route::middleware('web')
     ->prefix(config('gingerminds-core.admin_prefix'))
     ->name('gingerminds-core.')
     ->group(function () {

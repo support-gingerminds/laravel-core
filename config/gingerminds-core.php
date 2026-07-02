@@ -36,6 +36,19 @@ return [
     */
     'admin_prefix' => env('GINGERMINDS_CORE_PREFIX', 'admin'),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Health Check Route
+    |--------------------------------------------------------------------------
+    |
+    | Path of a lightweight, unauthenticated route that always returns a 200
+    | JSON response. Registered outside the admin prefix, so it is never
+    | caught by the login redirect — useful as a CI/monitoring health check
+    | target, since the application root usually redirects to the admin area.
+    |
+    */
+    'health_check_path' => env('HEALTH_CHECK_PATH', 'health'),
+
     'resources' => [
         'user' => [
             'model' => User::class,

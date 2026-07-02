@@ -55,6 +55,10 @@ This is how every admin route in the package, and in `laravel-media-manager` / `
 
 This means **any route registered under the admin prefix is protected automatically**, even if a new route group forgets to add `gingerminds-core.auth`. It's a defense-in-depth measure, not a replacement for adding the middleware explicitly — always add `gingerminds-core.auth` to new admin route groups; don't rely on the safety net alone.
 
+### The health check route is intentionally outside this
+
+The [health check route](Configuration.md#health-check-route) (`/health` by default) is registered outside the admin prefix and without `gingerminds-core.auth`, precisely so it stays reachable and returns a plain `200` regardless of authentication state — useful for CI/monitoring, since the application root usually redirects into the (protected) admin area.
+
 ## Authorization (Policies)
 
 Authentication (who are you) is separate from authorization (what can you do). Once a resource has a Policy — generated with `php artisan make:policy` (see [Commands](Commands.md)) — it's registered in `AuthServiceProvider`'s `$policies` array and can be checked the usual Laravel way (`$this->authorize(...)`, `@can` in Blade, `Gate::allows(...)`).
