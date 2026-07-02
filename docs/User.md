@@ -1,33 +1,35 @@
-# User Documentation
+# User
 
-## The User/Contributor logic
+## The User / Contributor split
 
-In the core you will have two models related to the user part: User and Contributor.
+The core defines two related models: `User` and `Contributor`.
 
-This system prevents deletion of datas and keeps separate datas for login and user.
+Splitting them keeps login data separate from profile/business data, and avoids losing profile history when a login account is removed.
 
 ### The User
-The User model is the one who is logged in. It represents the authenticated user and contains information such as username, email, password and roles.
+
+The `User` model is the one that authenticates. It holds login-related data: email, password, and roles ([Spatie permissions](https://spatie.be/docs/laravel-permission)). See [Authentication](Authentication.md) for the login flow.
 
 ### The Contributor
-The Contributor represents account datas and is linked to a User. All functionnalities that are used in the application and needs 
-user datas are linked to a Contributor. Not to a User.
+
+The `Contributor` represents the person's profile data (name, contact info, etc.) and is linked to a `User`. Any feature that needs "who is this" data should reference the `Contributor`, not the `User` directly — the `User` should only ever be used for authentication concerns.
 
 ## Roles & Permissions
 
-When you create a new Resource you can add permissions that will be linked to it.
+Every generated resource can be assigned permissions. The default convention is:
 
-The default logic is :
+1. `view resource` — access the list and detail pages.
+2. `edit resource` — access the create/edit pages.
+3. `delete resource` — perform deletion.
 
-1. `view resource` to access list and show page
-2. `edit resource` to access create/edit page
-3. `delete resource` to process deletion
-
-Permissions are linked to a resource by the Policies 
+Permissions are enforced through Policies — see [`make:policy`](Commands.md#makepolicy) and [Authentication → Authorization](Authentication.md#authorization-policies).
 
 ## Commands
 
-1. Create a new user
+Create a new user (interactive prompt for email, role, name and password):
+
 ```bash
-    php artisan gingerminds:create:user
+php artisan gingerminds:create:user
 ```
+
+See [Commands](Commands.md#gingermindscreateuser) for details.

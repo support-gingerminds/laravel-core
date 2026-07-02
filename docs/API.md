@@ -1,59 +1,59 @@
-# API Documentation
+# API
 
-This project work on ApiPlatform v4
+The API layer runs on API Platform 4.
+
 ## Operations configuration
 
-With laravel we need to create specific configuration to work with our own repository logic and with plain ID's instead of ApiPlatform's IRI. To do so we will need:
-- A state processor (it will do the request mapping between ApiPlatform and our repositories)
-- An Api provider (it will do the request mapping between our repositories and ApiPlatform)
-- Model configuration
-### StateProcessor Configuration
-This processor will be used in the model configuration, it extends BaseStateProcessor and we only need to set:
+Laravel needs a bit of glue to work with API Platform's IRI-based model and our own repository logic, using plain IDs instead. Three pieces are involved:
 
-- The repository of the resource (RepositoryInterface)
-- The form request of the resource (FormRequestInterface)
-- The resource model of the resource (ResourceModelInterface)
+- A **state processor** — maps requests from API Platform to our repositories (writes).
+- An **API provider** — maps our repositories to API Platform (reads).
+- **Model configuration** — wires the two above to the `#[ApiResource]` attribute.
 
-All base configs are explained in the [ResourceModel.md](ResourceModel.md)
+### StateProcessor configuration
+
+Extends `BaseStateProcessor` and only needs to set the resource's repository, form request, and model. Base model/repository/request structure is covered in [Resource Model](ResourceModel.md).
 
 ```php
-use ApiPlatform\State\ProcessorInterface;  
-use App\Http\Requests\Model\ModelRequest;  
-use App\Models\Model\Model;  
-use App\Repositories\Model\ModelRepository;  
-use App\StateProcessor\BaseStateProcessor;  
-use Illuminate\Contracts\Validation\Factory as ValidationFactory;  
-use Illuminate\Http\Request;  
-  
-/**  
- * @implements ProcessorInterface<Model, Model>  
- */class ModelStateProcessor extends BaseStateProcessor implements ProcessorInterface  
-{  
-    public function __construct(  
-        ModelRepository $repository,  
-        Request $request,  
-        ValidationFactory $validationFactory  
-    ) {  
-        $this->repository = $repository;  
-        $this->formRequest = new ModelRequest();  
-        $this->resourceModel = new Model();  
-  
-        parent::__construct($request, $validationFactory);  
-    }  
+use ApiPlatform\State\ProcessorInterface;
+use App\Http\Requests\Model\ModelRequest;
+use App\Models\Model\Model;
+use App\Repositories\Model\ModelRepository;
+use Gingerminds\LaravelCore\StateProcessor\BaseStateProcessor;
+use Illuminate\Contracts\Validation\Factory as ValidationFactory;
+use Illuminate\Http\Request;
+
+/**
+ * @implements ProcessorInterface<Model, Model>
+ */
+class ModelStateProcessor extends BaseStateProcessor implements ProcessorInterface
+{
+    public function __construct(
+        ModelRepository $repository,
+        Request $request,
+        ValidationFactory $validationFactory
+    ) {
+        $this->repository = $repository;
+        $this->formRequest = new ModelRequest();
+        $this->resourceModel = new Model();
+
+        parent::__construct($request, $validationFactory);
+    }
 }
 ```
 
-You can easily create a new StateProcessor by using command : `php artisan make:state-processor Model/Model`
+Generate the scaffold with `php artisan make:state-processor Namespace/Model` (see [Commands](Commands.md)).
 
-### Api Provider configuration
-To centralize logic between Back-office and API we will need to add a provider to our ApiPlatform configuration.
+### API Provider configuration
+
+Centralizes the read logic shared between the admin panel and the API.
 
 ```php
 use ApiPlatform\State\ProviderInterface;
-use App\ApiProvider\AbstractApiProvider;
-use App\ApiProvider\ApiProviderInterface;
-use App\Repositories\Model\ModelRepository;  
-use App\Models\Model\Model;  
+use App\Models\Model\Model;
+use App\Repositories\Model\ModelRepository;
+use Gingerminds\LaravelCore\ApiProvider\AbstractApiProvider;
+use Gingerminds\LaravelCore\ApiProvider\ApiProviderInterface;
 
 /**
  * @implements ProviderInterface<Model>
@@ -66,20 +66,17 @@ class ModelProvider extends AbstractApiProvider implements ProviderInterface, Ap
     }
 }
 ```
-You can easily create a new ApiProvider by using command : `php artisan make:api-provider Model/Model`
 
-#### ApiProvider Additional configuration
-In some cases you will need to convert uriVariables into filters.
-To do so you will need to add a method to your ApiProvider :
+Generate the scaffold with `php artisan make:api-provider Namespace/Model`.
 
-*For Example we have an endpoint `/api/properties/{property}/{id}`*
+#### Mapping URI variables to filters
 
-You don't need to define the logic for the `{id}`. It's managed by the AbstractApiProvider and the Repository.
+For nested endpoints such as `/api/properties/{property}/{id}`, you don't need to handle `{id}` — `AbstractApiProvider` and the repository already do. But `{property}` needs to be turned into a filter:
 
 ```php
 public function addFilters(Request $request, array $uriVariables, array $context): void
 {
-    $filters  = $request->query('filters', []);
+    $filters    = $request->query('filters', []);
     $propertyId = $uriVariables['property'] ?? $request->route('property');
 
     if ($propertyId) {
@@ -90,50 +87,60 @@ public function addFilters(Request $request, array $uriVariables, array $context
 }
 ```
 
-After that you will need to enable filtering for your resource : Look at the [filters.md](partials/filters.md)
-
-**If the resource does not have filters or relation contexted property. You don't need to do anything.**
+You then need to enable that filter for the resource — see [Filters](partials/filters.md). If the resource has no filters or contextual/nested property, you don't need to do anything.
 
 ### Model configuration
-To work with our state we need:
-- To disable ApiPlatform's deserialization (To prevent ApiPlatform to automatically transform sub resources into IRI)
-- A processor with the stateProcessor created just above
-- A provider with the ApiProvider created just above
+
+To work with the state processor/provider above, the model needs to:
+
+- Disable API Platform's deserialization (so it doesn't try to turn sub-resources into IRIs itself).
+- Point each write operation at the state processor.
+- Point each operation at the API provider.
 
 ```php
 use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\Patch;  
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
-use Illuminate\Database\Eloquent\Model;
-use App\Models\ResourceModelInterface;
-use App\StateProcessor\Model\ModelStateProcessor;
 use App\ApiProvider\Model\ModelProvider;
+use App\StateProcessor\Model\ModelStateProcessor;
+use Gingerminds\LaravelCore\Models\ResourceModelInterface;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-#[ApiResource(  
-    operations: [  
+#[ApiResource(
+    operations: [
         new GetCollection(
             provider: ModelProvider::class
         ),
         new Get(
             provider: ModelProvider::class
         ),
-        new Post(   
-            deserialize: false,  
+        new Post(
+            deserialize: false,
             provider: ModelProvider::class,
-            processor: ModelStateProcessor::class  
-        ),  
-        new Patch(   
-            deserialize: false,  
+            processor: ModelStateProcessor::class
+        ),
+        new Patch(
+            deserialize: false,
             provider: ModelProvider::class,
-            processor: ModelStateProcessor::class  
-        ),  
-    ],  
+            processor: ModelStateProcessor::class
+        ),
+    ],
 )]
 class Model extends Model implements ResourceModelInterface
 {
-	use HasFactory;  
-	use LogsActivity;
-	
-	protected $fillable = [];
+    use HasFactory;
+
+    protected $fillable = [];
 }
 ```
+
+`make:resource --api` (see [Commands](Commands.md)) scaffolds this whole chain — model, repository, form request, state processor and API provider — in one go.
+
+## See also
+
+- [Resource Model](ResourceModel.md) — the model/repository/request contract these classes build on.
+- [Configuration](Configuration.md) — registering the resource in `config/gingerminds-core.php` so it can also be resolved dynamically (e.g. by `ResourceResolver`).
+- [Filters](partials/filters.md) — enabling filters consumed by both the admin panel and the API.

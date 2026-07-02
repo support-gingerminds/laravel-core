@@ -1,6 +1,6 @@
 # Filters
 
-You can add filters to your crud list. To do so add `FilterableModelInterface` to your model + add `getFilters` method.
+Filters power the collapsible panel on `crud.list` [pages](../templating/layouts.md#crudlist). To add one, implement `Gingerminds\LaravelCore\Models\FilterableModelInterface` on your model and add a static `getFilters(): array` method (see [Resource Model](../ResourceModel.md#optional-interfaces)). Each key of the returned array is a request/query parameter name; the value configures how it's rendered and applied.
 
 ## Date filter
 
@@ -70,7 +70,7 @@ public static function getFilters(): array
                     2 => 'translation.choice.2',
                     3 => 'translation.choice.3',
                     4 => 'translation.choice.4',
-                ]
+                ],
             'multiple' => true, // this option is optional, by default if not set it's false
             'disabled_for_back' => true, // this option is optional, by default is true,
         ],
@@ -118,7 +118,13 @@ public static function getFilters(): array
             'disabled_for_back' => true, // this option is optional, by default is true,
         ],
     ];
+}
 ```
 
-This will automatically add a select field into crud filters `model_property`.
-If multiple is set to true, the select will enable search.
+This will automatically add a select field into crud filters `model_property`, backed by a `SelectModel` Livewire component that queries `model` directly. If `multiple` is set to `true`, the select also enables search.
+
+## See also
+
+- [Resource Model](../ResourceModel.md#optional-interfaces) — where `FilterableModelInterface` fits among the other optional model interfaces.
+- [Layouts](../templating/layouts.md#crudlist) — how the filters panel is rendered on list pages.
+- [Sorting](../Sorting.md) — column sorting, the other list-refinement mechanism.
