@@ -6,6 +6,7 @@ use Gingerminds\LaravelCore\Http\Controllers\AbstractController as Controller;
 use Gingerminds\LaravelCore\Http\Requests\Permission\PermissionRequest;
 use Gingerminds\LaravelCore\Models\Permission\Permission;
 use Gingerminds\LaravelCore\Repositories\Permission\PermissionRepository;
+use Gingerminds\LaravelCore\Resolver\ResourceResolver;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -32,7 +33,7 @@ class PermissionController extends Controller
         $view = 'gingerminds-core::pages.permissions.index';
 
         return view($view, [
-            'resource' => Permission::class,
+            'resource' => ResourceResolver::model('permission'),
             'items'    => $permissions,
         ]);
     }
@@ -55,7 +56,7 @@ class PermissionController extends Controller
 
     public function store(PermissionRequest $request): RedirectResponse
     {
-        $this->authorize('create', Permission::class);
+        $this->authorize('create', ResourceResolver::model('permission'));
 
         $request->validated();
 

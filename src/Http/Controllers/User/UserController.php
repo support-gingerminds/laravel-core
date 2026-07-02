@@ -9,6 +9,7 @@ use Gingerminds\LaravelCore\Models\Role\Role;
 use Gingerminds\LaravelCore\Models\User\Contributor;
 use Gingerminds\LaravelCore\Models\User\User;
 use Gingerminds\LaravelCore\Repositories\User\UserRepository;
+use Gingerminds\LaravelCore\Resolver\ResourceResolver;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -37,7 +38,7 @@ class UserController extends Controller
         $view = 'gingerminds-core::pages.users.index';
 
         return view($view, [
-            'resource' => User::class,
+            'resource' => ResourceResolver::model('user'),
             'items'    => $users,
             'roles'    => $roles,
         ]);
@@ -45,7 +46,7 @@ class UserController extends Controller
 
     public function create(): Factory|View
     {
-        $this->authorize('create', User::class);
+        $this->authorize('create', ResourceResolver::model('user'));
 
         $roles        = Role::query()->orderBy('name')->get();
         $contributors = Contributor::query()
@@ -64,7 +65,7 @@ class UserController extends Controller
 
     public function store(UserRequest $request): RedirectResponse
     {
-        $this->authorize('create', User::class);
+        $this->authorize('create', ResourceResolver::model('user'));
 
         $request->validated();
 
