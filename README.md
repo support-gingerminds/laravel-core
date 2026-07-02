@@ -1,10 +1,11 @@
 # Gingerminds Laravel Core
 
-This package include all basic functionnalities for a Laravel application.
+Core package for Gingerminds admin panels: CRUD scaffolding, an API layer built on API Platform 4, authentication, and resource caching.
 
-- CRUD
-- API with ApiPlatform 4
-- Caching
+- CRUD generators (models, repositories, controllers, Blade views, routes)
+- API Platform 4 integration (providers, state processors)
+- Session-based admin authentication
+- Resource caching
 
 ## Installation
 
@@ -12,10 +13,29 @@ This package include all basic functionnalities for a Laravel application.
 composer require gingerminds/laravel-core
 ```
 
-## Documentations
+Publish the config file to customize the admin route prefix or override a resource binding (see [Configuration](docs/Configuration.md)):
 
-1. [Resource Model](./docs/ResourceModel.md) - Basic usage of Resource Model.
-2. [User](docs/User.md) - Basic usage of user logic.
-3. [API](./docs/API.md) - Basic usage of API.
-4. [Filters](./docs/partials/filters.md) - Usage of CRUD list filters.
-5. [Forms](./docs/templating/forms.md) - Usage of CRUD forms blade components.
+```bash
+php artisan vendor:publish --tag=gingerminds-config
+```
+
+## Documentation
+
+**Getting started**
+
+- [Resource Model](docs/ResourceModel.md) — the model/repository/request structure a resource must follow.
+- [Configuration](docs/Configuration.md) — the `admin_prefix` setting and how to override a built-in resource without touching the package.
+- [Commands](docs/Commands.md) — reference for every `make:*` generator.
+
+**Admin panel**
+
+- [Authentication](docs/Authentication.md) — login flow, "remember me", and how admin routes get protected.
+- [User](docs/User.md) — the User/Contributor split, roles and permissions.
+- [Layouts](docs/templating/layouts.md) — which Blade layout to extend for a list, a form, or a tree view.
+- [Forms](docs/templating/forms.md) — form field components (`<x-form.inputs.*>`).
+- [Filters](docs/partials/filters.md) — list filters (date, number, boolean, select, select-model).
+- [Sorting](docs/Sorting.md) — column sorting and drag & drop reordering.
+
+**API**
+
+- [API](docs/API.md) — wiring a model to API Platform (providers, state processors).

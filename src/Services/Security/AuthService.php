@@ -19,7 +19,6 @@ class AuthService
             $credentials = $request->validate([
                 'username' => 'required|email',
                 'password' => 'required',
-                'remember' => 'boolean',
             ]);
 
             $throttleKey = Str::lower($credentials['username']) . '|' . $request->ip();

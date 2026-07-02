@@ -7,6 +7,7 @@ use Gingerminds\LaravelCore\Http\Requests\Role\RoleRequest;
 use Gingerminds\LaravelCore\Models\Permission\Permission;
 use Gingerminds\LaravelCore\Models\Role\Role;
 use Gingerminds\LaravelCore\Repositories\Role\RoleRepository;
+use Gingerminds\LaravelCore\Resolver\ResourceResolver;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -32,7 +33,7 @@ class RoleController extends Controller
         $view = 'gingerminds-core::pages.roles.index';
 
         return view($view, [
-            'resource' => Role::class,
+            'resource' => ResourceResolver::model('role'),
             'items'    => $roles,
         ]);
     }
@@ -70,7 +71,7 @@ class RoleController extends Controller
 
     public function store(RoleRequest $request): RedirectResponse
     {
-        $this->authorize('create', Role::class);
+        $this->authorize('create', ResourceResolver::model('role'));
 
         $request->validated();
 

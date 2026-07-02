@@ -2,11 +2,8 @@
 
 declare(strict_types=1);
 
-use Gingerminds\LaravelCore\Http\Controllers\Permission\PermissionController;
-use Gingerminds\LaravelCore\Http\Controllers\Role\RoleController;
 use Gingerminds\LaravelCore\Http\Controllers\Security\AuthController;
-use Gingerminds\LaravelCore\Http\Controllers\User\ContributorController;
-use Gingerminds\LaravelCore\Http\Controllers\User\UserController;
+use Gingerminds\LaravelCore\Resolver\ResourceResolver;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('web')
@@ -24,14 +21,14 @@ Route::middleware('web')
                 Route::post('logout', 'logout')->name('logout');
             });
 
-            Route::controller(UserController::class)->name('profile.')->group(function () {
+            Route::controller(ResourceResolver::controller('user'))->name('profile.')->group(function () {
                 Route::get('profile', 'editProfile')->name('edit-profile');
-                Route::post('profile', 'updateProfile')->name('update-profile');
+                Route::patch('profile', 'updateProfile')->name('update-profile');
             });
 
-            Route::resource('users', UserController::class);
-            Route::resource('contributors', ContributorController::class);
-            Route::resource('roles', RoleController::class);
-            Route::resource('permissions', PermissionController::class);
+            Route::resource('users', ResourceResolver::controller('user'));
+            Route::resource('contributors', ResourceResolver::controller('contributor'));
+            Route::resource('roles', ResourceResolver::controller('role'));
+            Route::resource('permissions', ResourceResolver::controller('permission'));
         });
     });

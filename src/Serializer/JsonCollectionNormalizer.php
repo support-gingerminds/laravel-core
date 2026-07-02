@@ -4,22 +4,12 @@ declare(strict_types=1);
 
 namespace Gingerminds\LaravelCore\Serializer;
 
-use ApiPlatform\Metadata\Resource\Factory\ResourceMetadataCollectionFactoryInterface;
-use ApiPlatform\Metadata\ResourceClassResolverInterface;
 use ApiPlatform\Serializer\AbstractCollectionNormalizer;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
 class JsonCollectionNormalizer extends AbstractCollectionNormalizer
 {
     public const string FORMAT = 'json';
-
-    public function __construct(
-        ResourceClassResolverInterface $resourceClassResolver,
-        string $pageParameterName,
-        ResourceMetadataCollectionFactoryInterface $resourceMetadataFactory,
-    ) {
-        parent::__construct($resourceClassResolver, $pageParameterName, $resourceMetadataFactory);
-    }
 
     /**
      * @param iterable<object> $object

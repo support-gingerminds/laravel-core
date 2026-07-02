@@ -5,6 +5,10 @@ namespace Gingerminds\LaravelCore\Providers;
 use ApiPlatform\Metadata\Resource\Factory\ResourceMetadataCollectionFactoryInterface;
 use ApiPlatform\Metadata\ResourceClassResolverInterface;
 use ApiPlatform\State\ProviderInterface;
+use Gingerminds\LaravelCore\ApiProvider\Permission\PermissionProvider;
+use Gingerminds\LaravelCore\ApiProvider\Role\RoleProvider;
+use Gingerminds\LaravelCore\ApiProvider\User\ContributorProvider;
+use Gingerminds\LaravelCore\ApiProvider\User\UserProvider;
 use Gingerminds\LaravelCore\Console\Commands\Make\CreateApiProvider;
 use Gingerminds\LaravelCore\Console\Commands\Make\CreateControllerFull;
 use Gingerminds\LaravelCore\Console\Commands\Make\CreateFormRequest;
@@ -13,10 +17,32 @@ use Gingerminds\LaravelCore\Console\Commands\Make\CreateRepository;
 use Gingerminds\LaravelCore\Console\Commands\Make\CreateResource;
 use Gingerminds\LaravelCore\Console\Commands\Make\CreateStateProcessor;
 use Gingerminds\LaravelCore\Console\Commands\Security\CreateUser;
+use Gingerminds\LaravelCore\Http\Controllers\Permission\PermissionController;
+use Gingerminds\LaravelCore\Http\Controllers\Role\RoleController;
+use Gingerminds\LaravelCore\Http\Controllers\User\ContributorController;
+use Gingerminds\LaravelCore\Http\Controllers\User\UserController;
 use Gingerminds\LaravelCore\Http\Middelware\Authenticate;
+use Gingerminds\LaravelCore\Http\Middelware\EnsureAdminAreaIsAuthenticated;
+use Gingerminds\LaravelCore\Http\Requests\Permission\PermissionRequest;
+use Gingerminds\LaravelCore\Http\Requests\Role\RoleRequest;
+use Gingerminds\LaravelCore\Http\Requests\User\ContributorRequest;
+use Gingerminds\LaravelCore\Http\Requests\User\UserRequest;
 use Gingerminds\LaravelCore\Livewire\Component\List\Filter\SelectModel;
 use Gingerminds\LaravelCore\Models\CacheableResourceInterface;
+use Gingerminds\LaravelCore\Models\Permission\Permission;
+use Gingerminds\LaravelCore\Models\Role\Role;
+use Gingerminds\LaravelCore\Models\User\Contributor;
+use Gingerminds\LaravelCore\Models\User\User;
+use Gingerminds\LaravelCore\Repositories\Permission\PermissionRepository;
+use Gingerminds\LaravelCore\Repositories\Role\RoleRepository;
+use Gingerminds\LaravelCore\Repositories\User\ContributorRepository;
+use Gingerminds\LaravelCore\Repositories\User\UserRepository;
+use Gingerminds\LaravelCore\Resolver\ResourceResolver;
 use Gingerminds\LaravelCore\Serializer\JsonCollectionNormalizer;
+use Gingerminds\LaravelCore\StateProcessor\Permission\PermissionStateProcessor;
+use Gingerminds\LaravelCore\StateProcessor\Role\RoleStateProcessor;
+use Gingerminds\LaravelCore\StateProcessor\User\ContributorStateProcessor;
+use Gingerminds\LaravelCore\StateProcessor\User\UserStateProcessor;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Console\ModelMakeCommand as BaseModelMakeCommand;
 use Illuminate\Support\Facades\Cache;
@@ -82,10 +108,17 @@ class LaravelCoreServiceProvider extends ServiceProvider
         if ($toTag !== []) {
             $this->app->tag($toTag, ProviderInterface::class);
         }
+
+        $this->bindResources();
     }
 
     public function boot(): void
     {
+        Route::model('user', ResourceResolver::model('user'));
+        Route::model('contributor', ResourceResolver::model('contributor'));
+        Route::model('role', ResourceResolver::model('role'));
+        Route::model('permission', ResourceResolver::model('permission'));
+
         // Chargement des routes du package
         if (! $this->app->routesAreCached()) {
             $this->loadRoutesFrom(__DIR__ . '/../../routes/web.php');
@@ -166,6 +199,11 @@ class LaravelCoreServiceProvider extends ServiceProvider
             Authenticate::class
         );
 
+        $this->app->make('router')->pushMiddlewareToGroup(
+            'web',
+            EnsureAdminAreaIsAuthenticated::class
+        );
+
         // Avoid web server static-file rules intercepting "/livewire/livewire.js" with a 404.
         Livewire::setScriptRoute(function ($handle) {
             return Route::get('/livewire/script', $handle);
@@ -196,5 +234,108 @@ class LaravelCoreServiceProvider extends ServiceProvider
         }
 
         Cache::tags([$model::getCacheKey()])->flush();
+    }
+
+    private function bindResources(): void
+    {
+        $this->app->bind(
+            User::class,
+            ResourceResolver::model('user')
+        );
+        $this->app->bind(
+            UserController::class,
+            ResourceResolver::controller('user')
+        );
+        $this->app->bind(
+            UserRepository::class,
+            ResourceResolver::repository('user')
+        );
+        $this->app->bind(
+            UserProvider::class,
+            ResourceResolver::provider('user')
+        );
+        $this->app->bind(
+            UserRequest::class,
+            ResourceResolver::request('user')
+        );
+        $this->app->bind(
+            UserStateProcessor::class,
+            ResourceResolver::stateProcessor('user')
+        );
+
+        $this->app->bind(
+            Contributor::class,
+            ResourceResolver::model('contributor')
+        );
+        $this->app->bind(
+            ContributorController::class,
+            ResourceResolver::controller('contributor')
+        );
+        $this->app->bind(
+            ContributorRepository::class,
+            ResourceResolver::repository('contributor')
+        );
+        $this->app->bind(
+            ContributorProvider::class,
+            ResourceResolver::provider('contributor')
+        );
+        $this->app->bind(
+            ContributorRequest::class,
+            ResourceResolver::request('contributor')
+        );
+        $this->app->bind(
+            ContributorStateProcessor::class,
+            ResourceResolver::stateProcessor('contributor')
+        );
+
+        $this->app->bind(
+            Role::class,
+            ResourceResolver::model('role')
+        );
+        $this->app->bind(
+            RoleController::class,
+            ResourceResolver::controller('role')
+        );
+        $this->app->bind(
+            RoleRepository::class,
+            ResourceResolver::repository('role')
+        );
+        $this->app->bind(
+            RoleProvider::class,
+            ResourceResolver::provider('role')
+        );
+        $this->app->bind(
+            RoleRequest::class,
+            ResourceResolver::request('role')
+        );
+        $this->app->bind(
+            RoleStateProcessor::class,
+            ResourceResolver::stateProcessor('role')
+        );
+
+        $this->app->bind(
+            Permission::class,
+            ResourceResolver::model('permission')
+        );
+        $this->app->bind(
+            PermissionController::class,
+            ResourceResolver::controller('permission')
+        );
+        $this->app->bind(
+            PermissionRepository::class,
+            ResourceResolver::repository('permission')
+        );
+        $this->app->bind(
+            PermissionProvider::class,
+            ResourceResolver::provider('permission')
+        );
+        $this->app->bind(
+            PermissionRequest::class,
+            ResourceResolver::request('permission')
+        );
+        $this->app->bind(
+            PermissionStateProcessor::class,
+            ResourceResolver::stateProcessor('permission')
+        );
     }
 }

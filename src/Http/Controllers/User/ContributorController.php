@@ -7,6 +7,7 @@ use Gingerminds\LaravelCore\Http\Requests\User\ContributorRequest;
 use Gingerminds\LaravelCore\Models\User\Contributor;
 use Gingerminds\LaravelCore\Models\User\User;
 use Gingerminds\LaravelCore\Repositories\User\ContributorRepository;
+use Gingerminds\LaravelCore\Resolver\ResourceResolver;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -33,7 +34,7 @@ class ContributorController extends Controller
         $view = 'gingerminds-core::pages.contributors.index';
 
         return view($view, [
-            'resource' => Contributor::class,
+            'resource' => ResourceResolver::model('contributor'),
             'items'    => $contributors,
         ]);
     }
@@ -41,7 +42,7 @@ class ContributorController extends Controller
     public function create(): Factory|View
     {
         // Autorisation de consulter le formulaire d'édition
-        $this->authorize('create', Contributor::class);
+        $this->authorize('create', ResourceResolver::model('contributor'));
 
         // Charger la liste des utilisateurs pour lier/délier un compte utilisateur
         $users = User::query()
@@ -59,7 +60,7 @@ class ContributorController extends Controller
 
     public function store(ContributorRequest $request): RedirectResponse
     {
-        $this->authorize('create', Contributor::class);
+        $this->authorize('create', ResourceResolver::model('contributor'));
 
         $request->validated();
 

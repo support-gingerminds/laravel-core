@@ -1,58 +1,53 @@
-# Resource model Documentation
+# Resource Model
 
-To create a new resource, you can use the command : `php artisan make:resource Model/Model`
+To create a new resource, use `php artisan make:resource Namespace/Model` (see [Commands](Commands.md) for the full list of generators and options, including `--api` for API Platform wiring and `--trad-base` for a custom translation key).
 
-You can add the `--api` option to create a resource for ApiPlatform.
-You can add the `--trad-base` option to create a resource with a base translation key.
+To work with API Platform, the model, repository and form request all need to follow the structure below.
 
-In order to work with ApiPlatform. All bases models, repository and formRequest need to have some structure like following.
 ## Base model structure
 
 ```php
 use Illuminate\Database\Eloquent\Model;
-use App\Models\ResourceModelInterface;
+use Gingerminds\LaravelCore\Models\ResourceModelInterface;
 
 class Model extends Model implements ResourceModelInterface
 {
-	protected $fillable = [];
+    protected $fillable = [];
 }
 ```
 
-You can easily create a new Model by using command : `php artisan make:model Model/Model`
+You can create a bare model with `php artisan make:model Namespace/Model` (the package registers a custom stub, so this already implements `ResourceModelInterface`).
 
-### Optionnal Interfaces
+### Optional interfaces
 
-#### App\Models\EntityContextedModelInterface
-If the resource is entity contextualized you will need this interface + `use App\Models\Trait\EntityContextedModelTrait`
+All of these live under `Gingerminds\LaravelCore\Models`.
 
-#### App\Models\SortableModelInterface
-If you want to enable sorting on your resource
-
-#### App\Models\SearchableModelInterface
-If you want to enable search on your resource. This will add getSearchableFields method to your model
-
-#### App\Models\FilterableModelInterface
-If you want to enable filters on your resource. This will add getFilters method to your model. If you want to see all available filters,
-go to [filters.md](partials/filters.md)
-
-#### App\Models\CacheableResourceInterface
-If you want to enable cache on your resource. This will add getCacheKey method to your model
+| Interface | Effect |
+|---|---|
+| `SortableModelInterface` | Enables column-header sorting (`?sortBy=&sort=`) on list pages. See [Sorting](Sorting.md). |
+| `SearchableModelInterface` | Enables the free-text search box on list pages. Requires a `getSearchableFields(): array` method. |
+| `FilterableModelInterface` | Enables the filters panel on list pages. Requires a `getFilters(): array` method — see [Filters](partials/filters.md). |
+| `CacheableResourceInterface` | Enables query caching for this resource. Requires a `getCacheKey(): string` method. Cache is flushed automatically on `saved`/`deleted`/`restored`/`forceDeleted` events. |
 
 ## Base repository structure
 
 ```php
-use App\Http\Requests\FormRequestInterface;
-use App\Models\ResourceModelInterface;
-use App\Repositories\RepositoryInterface;
-use App\Repositories\AbstractRepository;
+use Gingerminds\LaravelCore\Http\Requests\FormRequestInterface;
+use Gingerminds\LaravelCore\Models\ResourceModelInterface;
+use Gingerminds\LaravelCore\Repositories\AbstractRepository;
 use App\Models\Model;
 use InvalidArgumentException;
 
 /**
  * @extends AbstractRepository<Model>
  */
-class ModelRepository extends AbstractRepository  implements RepositoryInterface
+class ModelRepository extends AbstractRepository
 {
+    public function getModelClass(): string
+    {
+        return Model::class;
+    }
+
     public function update(
         ?FormRequestInterface $request,
         ResourceModelInterface $resourceModel
@@ -64,22 +59,22 @@ class ModelRepository extends AbstractRepository  implements RepositoryInterface
         if (!$request instanceof FormRequestInterface) {
             return $resourceModel;
         }
-        
+
         $resourceModel->fill($request->all());
         $resourceModel->save();
-        
+
         return $resourceModel;
     }
 }
 ```
 
-You can easily create a new Repository by using command : `php artisan make:repository Model/Model`
+`getModelClass()` and `update()` are the two methods `AbstractRepository` doesn't implement for you — everything else (pagination, caching, sorting, filtering) is handled by the base class. Generate the scaffold with `php artisan make:repository Namespace/Model`.
 
 ## Base form request structure
 
 ```php
 use Illuminate\Foundation\Http\FormRequest;
-use App\Http\Requests\FormRequestInterface;
+use Gingerminds\LaravelCore\Http\Requests\FormRequestInterface;
 
 class ModelRequest extends FormRequest implements FormRequestInterface
 {
@@ -90,22 +85,19 @@ class ModelRequest extends FormRequest implements FormRequestInterface
 }
 ```
 
-You can easily create a new FormRequest by using command : `php artisan make:form-request Model/Model`
+Generate it with `php artisan make:form-request Namespace/Model`.
 
 ## Base controller structure
 
-The controller will be built with the following structure :
+Generated controllers implement `index`, `create`, `edit`, `store`, `update`, `destroy` (no `show` — `edit` is used as the detail page), wired to the model's `FormRequest` and repository.
 
-- index
-- create
-- edit
-- store
-- update
-- destroy
+```bash
+php artisan make:controller-full Namespace/Model [--trad-base=]
+```
 
-The base will be configured with The model FormRequest and the repository.
+## See also
 
-You can easily create a new Controller by using command : `php artisan make:controller-full Model/Model`
-
-You can add the `--trad-base` option to create a resource with a base translation key.
-
+- [Commands](Commands.md) — every generator, including the all-in-one `make:resource`.
+- [Configuration](Configuration.md) — registering the resource (and overriding a built-in one) in `config/gingerminds-core.php`.
+- [API](API.md) — exposing the resource through API Platform.
+- [Layouts](templating/layouts.md) and [Forms](templating/forms.md) — building the Blade views.
