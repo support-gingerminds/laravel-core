@@ -59,6 +59,10 @@ return [
         'configuration' => 'Configuration'
     ],
 
+    'title' => [
+        'login' => 'Connexion',
+    ],
+
     'form' => [
         'name' => 'Nom',
         'lastname' => 'Nom',
