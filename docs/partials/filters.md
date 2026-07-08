@@ -80,17 +80,19 @@ public static function getFilters(): array
 
 ### Select state filter
 
+Use this for a property backed by a [`spatie/laravel-model-states`](https://spatie.be/docs/laravel-model-states) cast (e.g. `protected $casts = ['status' => StatusState::class];`, where `StatusState extends \Spatie\ModelStates\State`).
+
 ```php
 public static function getFilters(): array
 {
     $stateChoices = [];
 
-    foreach (State::getStateMapping() as $state) {
-        $stateChoices[$state::label()] = 'translation.models.states.' . $state::label(); // label translation key will be different between your cases
+    foreach (StatusState::getStateMapping() as $state) {
+        $stateChoices[$state::code()] = 'translation.models.states.' . $state::code(); // translation key will be different between your cases
     }
-    
+
     return [
-        'select_state_property' => [
+        'select_state_property' => [ // Ex: status
             'type'    => 'select-state',
             'label'   => 'your_label_translation_key',
             'choices' => $stateChoices,
@@ -101,8 +103,9 @@ public static function getFilters(): array
 }
 ```
 
-This will automatically add a select field into crud filters `select_state_property`. It will work as same as api you send de stringyfied code of state
-and the repository will translate it into a std class.
+This will automatically add a select field into crud filters `select_state_property`, rendered the same way as a plain `select` filter. On the API side, send the same value(s) you used as `choices` keys above: `filters[select_state_property]=draft` for a single value, or `filters[select_state_property][]=draft&filters[select_state_property][]=archived` when `multiple` is `true`. Send `all` (single-value only) to clear the filter.
+
+The repository resolves each submitted value against every state registered on the property's base state class (`AbstractRepository::convertState()`), matching — in order — its `code()`, its `label()`, its morph class, or its short class name (case-insensitively), and converts it to the fully-qualified state class actually stored in the column before querying. If a value can't be resolved this way, it's used as-is (so an already-qualified state class name still works). This requires the model's cast for that property to resolve to a class extending `Spatie\ModelStates\State` (declared either via the `$casts` property or a `casts()` method) — otherwise the value is passed through unconverted.
 
 ### Select Model filter
 

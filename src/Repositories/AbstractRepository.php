@@ -14,6 +14,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Spatie\ModelStates\State;
+use Throwable;
 
 /**
  * @template TModel of Model
@@ -245,6 +247,7 @@ abstract class AbstractRepository implements RepositoryInterface
                     'date'         => $this->applyDateFilter($query, $property, $value),
                     'number'       => $this->applyNumberFilter($query, $property, $value),
                     'select'       => $this->applySelectFilter($query, $property, $value),
+                    'select-state' => $this->applySelectStateFilter($query, $property, $value),
                     'select-model' => $this->applySelectModelFilter($query, $property, $value),
                     'boolean'      => $this->applyBooleanFilter($query, $property, $value),
                     default        => null,
@@ -359,6 +362,98 @@ abstract class AbstractRepository implements RepositoryInterface
 
             $query->where($tableProperty, '=', $value);
         }
+    }
+
+    /**
+     * @param Builder<TModel> $query
+     * @param string|array<string> $value
+     */
+    protected function applySelectStateFilter(Builder $query, string $property, string|array $value): void
+    {
+        $table         = $query->getModel()->getTable();
+        $tableProperty = str_contains($property, '.') ? $property : "$table.$property";
+
+        if (is_array($value)) {
+            $formattedValues = [];
+            foreach ($value as $stateValue) {
+                $formattedValues[] = $this->convertState(get_class($query->getModel()), $property, $stateValue);
+            }
+
+            $query->whereIn($tableProperty, $formattedValues);
+
+            return;
+        }
+
+        if ($value === 'all') {
+            return;
+        }
+
+        $query->where($tableProperty, '=', $this->convertState(get_class($query->getModel()), $property, $value));
+    }
+
+    /**
+     * Resolves a filter value (state short name, morph class, or `code()`/`label()`
+     * translation key) into the fully-qualified state class name stored in the
+     * database. Falls back to the raw value untouched if it can't be resolved,
+     * so an already-qualified class name (or an unrecognized value) still works.
+     */
+    protected function convertState(string $modelClass, string $property, ?string $value = null): ?string
+    {
+        if (null === $value || class_exists($value)) {
+            return $value;
+        }
+
+        if (!class_exists($modelClass)) {
+            return $value;
+        }
+
+        $model = new $modelClass();
+
+        if (!method_exists($model, 'getCasts')) {
+            return $value;
+        }
+
+        $casts = $model->getCasts();
+        if (!isset($casts[$property])) {
+            return $value;
+        }
+
+        $stateBaseClass = $casts[$property];
+
+        if (!is_string($stateBaseClass) || !is_a($stateBaseClass, State::class, true)) {
+            return $value;
+        }
+
+        try {
+            $states = $stateBaseClass::all();
+
+            foreach ($states as $stateClass) {
+                if (!class_exists($stateClass)) {
+                    continue;
+                }
+
+                if (method_exists($stateClass, 'code') && strcasecmp((string) $stateClass::code(), $value) === 0) {
+                    return $stateClass;
+                }
+
+                if (method_exists($stateClass, 'label') && strcasecmp((string) $stateClass::label(), $value) === 0) {
+                    return $stateClass;
+                }
+
+                $morph = $stateClass::getMorphClass();
+                if (is_string($morph) && strcasecmp($morph, $value) === 0) {
+                    return $stateClass;
+                }
+
+                if (strcasecmp(class_basename($stateClass), $value) === 0) {
+                    return $stateClass;
+                }
+            }
+        } catch (Throwable) {
+            return $value;
+        }
+
+        return $value;
     }
 
     /**
