@@ -33,6 +33,13 @@ use Gingerminds\LaravelCore\Models\Permission\Permission;
 use Gingerminds\LaravelCore\Models\Role\Role;
 use Gingerminds\LaravelCore\Models\User\Contributor;
 use Gingerminds\LaravelCore\Models\User\User;
+use Gingerminds\LaravelCore\Repositories\Filters\FilterHandlerRegistry;
+use Gingerminds\LaravelCore\Repositories\Filters\Handlers\BooleanFilterHandler;
+use Gingerminds\LaravelCore\Repositories\Filters\Handlers\DateFilterHandler;
+use Gingerminds\LaravelCore\Repositories\Filters\Handlers\NumberFilterHandler;
+use Gingerminds\LaravelCore\Repositories\Filters\Handlers\SelectFilterHandler;
+use Gingerminds\LaravelCore\Repositories\Filters\Handlers\SelectModelFilterHandler;
+use Gingerminds\LaravelCore\Repositories\Filters\Handlers\SelectStateFilterHandler;
 use Gingerminds\LaravelCore\Repositories\Permission\PermissionRepository;
 use Gingerminds\LaravelCore\Repositories\Role\RoleRepository;
 use Gingerminds\LaravelCore\Repositories\User\ContributorRepository;
@@ -76,6 +83,21 @@ class LaravelCoreServiceProvider extends ServiceProvider
             __DIR__ . '/../../config/gingerminds-core.php',
             'gingerminds-core'
         );
+
+        // Registre extensible des types de filtre (getFilters()' "type").
+        // Tout package peut ajouter le sien via FilterHandlerRegistry::register()
+        // depuis son propre service provider, sans modifier ce package.
+        $this->app->singleton(FilterHandlerRegistry::class, function () {
+            $registry = new FilterHandlerRegistry();
+            $registry->register('date', new DateFilterHandler());
+            $registry->register('number', new NumberFilterHandler());
+            $registry->register('select', new SelectFilterHandler());
+            $registry->register('select-model', new SelectModelFilterHandler());
+            $registry->register('select-state', new SelectStateFilterHandler());
+            $registry->register('boolean', new BooleanFilterHandler());
+
+            return $registry;
+        });
 
         // Enregistrement des configurations ou services si nécessaire
         $this->app->register(LaravelCoreAuthServiceProvider::class);
