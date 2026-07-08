@@ -2,11 +2,11 @@
 
 namespace Gingerminds\LaravelCore\Repositories;
 
-use Carbon\Carbon;
 use Gingerminds\LaravelCore\Models\CacheableResourceInterface;
 use Gingerminds\LaravelCore\Models\FilterableModelInterface;
 use Gingerminds\LaravelCore\Models\SearchableModelInterface;
 use Gingerminds\LaravelCore\Models\SortableModelInterface;
+use Gingerminds\LaravelCore\Repositories\Filters\FilterHandlerRegistry;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -14,8 +14,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-use Spatie\ModelStates\State;
-use Throwable;
 
 /**
  * @template TModel of Model
@@ -228,6 +226,10 @@ abstract class AbstractRepository implements RepositoryInterface
     }
 
     /**
+     * Dispatches each active filter to the handler registered for its `type`
+     * in FilterHandlerRegistry. Unregistered types are silently ignored, same
+     * as the old `default => null` match arm.
+     *
      * @param Builder<TModel> $query
      * @param array<mixed> $filters
      */
@@ -240,259 +242,14 @@ abstract class AbstractRepository implements RepositoryInterface
         }
 
         $resourceFilterConfig = $model::getFilters();
+        $registry             = app(FilterHandlerRegistry::class);
 
         foreach ($filters as $property => $value) {
-            if (array_key_exists($property, $resourceFilterConfig)) {
-                match ($resourceFilterConfig[$property]['type']) {
-                    'date'         => $this->applyDateFilter($query, $property, $value),
-                    'number'       => $this->applyNumberFilter($query, $property, $value),
-                    'select'       => $this->applySelectFilter($query, $property, $value),
-                    'select-state' => $this->applySelectStateFilter($query, $property, $value),
-                    'select-model' => $this->applySelectModelFilter($query, $property, $value),
-                    'boolean'      => $this->applyBooleanFilter($query, $property, $value),
-                    default        => null,
-                };
-            }
-        }
-    }
-
-    /**
-     * @param Builder<TModel> $query
-     * @param string|array<string> $value
-     */
-    protected function applySelectModelFilter(Builder $query, string $property, string|array|null $value): void
-    {
-        if ($value === 'all' || $value === null) {
-            if ($value === null) {
-                $query->whereNull($property);
-            }
-            return;
-        }
-
-        $model = $query->getModel();
-
-        // Check if the property is a relation
-        if (method_exists($model, $property) && !str_ends_with($property, '_id')) {
-            $query->whereHas($property, function (Builder $query) use ($value) {
-                if (is_array($value)) {
-                    $query->whereIn($query->getModel()->getTable() . '.id', $value);
-                } else {
-                    $query->where($query->getModel()->getTable() . '.id', '=', $value);
-                }
-            });
-
-            return;
-        }
-
-        if (is_array($value)) {
-            $query->whereIn($property, $value);
-        } else {
-            $table         = $model->getTable();
-            $tableProperty = str_contains($property, '.') ? $property : "$table.$property";
-
-            $query->where($tableProperty, '=', $value);
-        }
-    }
-
-    /**
-     * @param Builder<TModel> $query
-     * @param array<mixed> $value
-     */
-    protected function applyDateFilter(Builder $query, string $property, array $value): void
-    {
-        $from = empty($value['from']) ? null : Carbon::createFromFormat('Y-m-d', $value['from']);
-        $to   = empty($value['to']) ? null : Carbon::createFromFormat('Y-m-d', $value['to']);
-
-        if ($from instanceof Carbon) {
-            $from = $from->startOfDay();
-        }
-
-        if ($to instanceof Carbon) {
-            $to = $to->endOfDay();
-        }
-
-        $table    = $query->getModel()->getTable();
-        $property = str_contains($property, '.') ? $property : "$table.$property";
-
-        if ($from && $to) {
-            $query->whereBetween($property, [$from, $to]);
-        } elseif ($from) {
-            $query->where($property, '>=', $from);
-        } elseif ($to) {
-            $query->where($property, '<=', $to);
-        }
-    }
-
-    /**
-     * @param Builder<TModel> $query
-     * @param array<mixed> $value
-     */
-    protected function applyNumberFilter(Builder $query, string $property, array $value): void
-    {
-        $from = empty($value['from']) ? null : floatval($value['from']);
-        $to   = empty($value['to']) ? null : floatval($value['to']);
-
-        $table    = $query->getModel()->getTable();
-        $property = str_contains($property, '.') ? $property : "$table.$property";
-
-        if ($from && $to) {
-            $query->whereBetween($property, [$from, $to]);
-        } elseif ($from) {
-            $query->where($property, '>=', $from);
-        } elseif ($to) {
-            $query->where($property, '<=', $to);
-        }
-    }
-
-    /**
-     * @param Builder<TModel> $query
-     * @param string|array<string> $value
-     */
-    protected function applySelectFilter(Builder $query, string $property, string|array $value): void
-    {
-        if (is_array($value)) {
-            $query->whereIn($property, $value);
-        } else {
-            if ($value === 'all') {
-                return;
+            if (!array_key_exists($property, $resourceFilterConfig)) {
+                continue;
             }
 
-            $table         = $query->getModel()->getTable();
-            $tableProperty = str_contains($property, '.') ? $property : "$table.$property";
-
-            $query->where($tableProperty, '=', $value);
-        }
-    }
-
-    /**
-     * @param Builder<TModel> $query
-     * @param string|array<string> $value
-     */
-    protected function applySelectStateFilter(Builder $query, string $property, string|array $value): void
-    {
-        $table         = $query->getModel()->getTable();
-        $tableProperty = str_contains($property, '.') ? $property : "$table.$property";
-
-        if (is_array($value)) {
-            $formattedValues = [];
-            foreach ($value as $stateValue) {
-                $formattedValues[] = $this->convertState(get_class($query->getModel()), $property, $stateValue);
-            }
-
-            $query->whereIn($tableProperty, $formattedValues);
-
-            return;
-        }
-
-        if ($value === 'all') {
-            return;
-        }
-
-        $query->where($tableProperty, '=', $this->convertState(get_class($query->getModel()), $property, $value));
-    }
-
-    /**
-     * Resolves a filter value (state short name, morph class, or `code()`/`label()`
-     * translation key) into the fully-qualified state class name stored in the
-     * database. Falls back to the raw value untouched if it can't be resolved,
-     * so an already-qualified class name (or an unrecognized value) still works.
-     */
-    protected function convertState(string $modelClass, string $property, ?string $value = null): ?string
-    {
-        if (null === $value || class_exists($value)) {
-            return $value;
-        }
-
-        return $this->matchStateClass($modelClass, $property, $value) ?? $value;
-    }
-
-    /**
-     * Looks up the fully-qualified state class matching $value among every state
-     * registered on $property's base state class, or null if none matches
-     * (unresolvable model/property/cast, or no state matched $value).
-     */
-    private function matchStateClass(string $modelClass, string $property, string $value): ?string
-    {
-        $stateBaseClass = $this->resolveStateBaseClass($modelClass, $property);
-
-        if (null === $stateBaseClass) {
-            return null;
-        }
-
-        foreach ($this->safeStateList($stateBaseClass) as $stateClass) {
-            if (class_exists($stateClass) && $this->stateMatchesValue($stateClass, $value)) {
-                return $stateClass;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Resolves the base Spatie state class registered as a cast for $property on
-     * $modelClass, or null if it can't be resolved (unknown model, no `getCasts()`,
-     * no cast for $property, or the cast isn't a state class).
-     */
-    private function resolveStateBaseClass(string $modelClass, string $property): ?string
-    {
-        if (!class_exists($modelClass)) {
-            return null;
-        }
-
-        $model          = new $modelClass();
-        $stateBaseClass = method_exists($model, 'getCasts') ? ($model->getCasts()[$property] ?? null) : null;
-
-        if (!is_string($stateBaseClass) || !is_a($stateBaseClass, State::class, true)) {
-            return null;
-        }
-
-        return $stateBaseClass;
-    }
-
-    /**
-     * @return iterable<class-string>
-     */
-    private function safeStateList(string $stateBaseClass): iterable
-    {
-        try {
-            return $stateBaseClass::all();
-        } catch (Throwable) {
-            return [];
-        }
-    }
-
-    /**
-     * Whether $value matches $stateClass's `code()`, `label()`, morph class, or
-     * short class name, case-insensitively.
-     */
-    private function stateMatchesValue(string $stateClass, string $value): bool
-    {
-        $morph = $stateClass::getMorphClass();
-
-        return (method_exists($stateClass, 'code') && strcasecmp((string) $stateClass::code(), $value) === 0)
-            || (method_exists($stateClass, 'label') && strcasecmp((string) $stateClass::label(), $value) === 0)
-            || (is_string($morph) && strcasecmp($morph, $value) === 0)
-            || strcasecmp(class_basename($stateClass), $value) === 0;
-    }
-
-    /**
-     * @param Builder<TModel> $query
-     */
-    protected function applyBooleanFilter(Builder $query, string $property, ?string $value): void
-    {
-        if ($value === 'all') {
-            return;
-        }
-
-        $table         = $query->getModel()->getTable();
-        $tableProperty = str_contains($property, '.') ? $property : "$table.$property";
-
-        if ('yes' === $value) {
-            $query->where($tableProperty, true);
-        } elseif ('no' === $value) {
-            $query->where(function (Builder $query) use ($tableProperty) {
-                $query->where($tableProperty, false)->orWhereNull($tableProperty);
-            });
+            $registry->get($resourceFilterConfig[$property]['type'])?->apply($query, $property, $value);
         }
     }
 }

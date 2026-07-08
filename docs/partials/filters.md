@@ -126,6 +126,29 @@ public static function getFilters(): array
 
 This will automatically add a select field into crud filters `model_property`, backed by a `SelectModel` Livewire component that queries `model` directly. If `multiple` is set to `true`, the select also enables search.
 
+## Custom filter types
+
+Each filter `type` (`date`, `number`, `select`, `select-model`, `select-state`, `boolean`) is applied by a `Gingerminds\LaravelCore\Repositories\Filters\FilterHandlerInterface` implementation, looked up by type from `Gingerminds\LaravelCore\Repositories\Filters\FilterHandlerRegistry` (bound as a singleton). Any package — not just `gingerminds-laravel-core` — can register its own `type` without modifying this package:
+
+```php
+use Gingerminds\LaravelCore\Repositories\Filters\FilterHandlerInterface;
+use Gingerminds\LaravelCore\Repositories\Filters\FilterHandlerRegistry;
+use Illuminate\Database\Eloquent\Builder;
+
+class MyCustomFilterHandler implements FilterHandlerInterface
+{
+    public function apply(Builder $query, string $property, mixed $value): void
+    {
+        // build your query constraint here
+    }
+}
+
+// From your own package's ServiceProvider::register() or boot():
+$this->app->make(FilterHandlerRegistry::class)->register('my-custom-type', new MyCustomFilterHandler());
+```
+
+Once registered, `'my-custom-type'` can be used as a `getFilters()` entry's `type` like any built-in one, and `AbstractRepository::applyFilters()` picks it up automatically. An unregistered type is silently ignored (no filter applied), same as an unrecognized value previously fell through the old hardcoded `match`.
+
 ## See also
 
 - [Resource Model](../ResourceModel.md#optional-interfaces) — where `FilterableModelInterface` fits among the other optional model interfaces.
