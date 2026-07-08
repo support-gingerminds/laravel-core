@@ -403,57 +403,76 @@ abstract class AbstractRepository implements RepositoryInterface
             return $value;
         }
 
+        return $this->matchStateClass($modelClass, $property, $value) ?? $value;
+    }
+
+    /**
+     * Looks up the fully-qualified state class matching $value among every state
+     * registered on $property's base state class, or null if none matches
+     * (unresolvable model/property/cast, or no state matched $value).
+     */
+    private function matchStateClass(string $modelClass, string $property, string $value): ?string
+    {
+        $stateBaseClass = $this->resolveStateBaseClass($modelClass, $property);
+
+        if (null === $stateBaseClass) {
+            return null;
+        }
+
+        foreach ($this->safeStateList($stateBaseClass) as $stateClass) {
+            if (class_exists($stateClass) && $this->stateMatchesValue($stateClass, $value)) {
+                return $stateClass;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Resolves the base Spatie state class registered as a cast for $property on
+     * $modelClass, or null if it can't be resolved (unknown model, no `getCasts()`,
+     * no cast for $property, or the cast isn't a state class).
+     */
+    private function resolveStateBaseClass(string $modelClass, string $property): ?string
+    {
         if (!class_exists($modelClass)) {
-            return $value;
+            return null;
         }
 
-        $model = new $modelClass();
-
-        if (!method_exists($model, 'getCasts')) {
-            return $value;
-        }
-
-        $casts = $model->getCasts();
-        if (!isset($casts[$property])) {
-            return $value;
-        }
-
-        $stateBaseClass = $casts[$property];
+        $model          = new $modelClass();
+        $stateBaseClass = method_exists($model, 'getCasts') ? ($model->getCasts()[$property] ?? null) : null;
 
         if (!is_string($stateBaseClass) || !is_a($stateBaseClass, State::class, true)) {
-            return $value;
+            return null;
         }
 
+        return $stateBaseClass;
+    }
+
+    /**
+     * @return iterable<class-string>
+     */
+    private function safeStateList(string $stateBaseClass): iterable
+    {
         try {
-            $states = $stateBaseClass::all();
-
-            foreach ($states as $stateClass) {
-                if (!class_exists($stateClass)) {
-                    continue;
-                }
-
-                if (method_exists($stateClass, 'code') && strcasecmp((string) $stateClass::code(), $value) === 0) {
-                    return $stateClass;
-                }
-
-                if (method_exists($stateClass, 'label') && strcasecmp((string) $stateClass::label(), $value) === 0) {
-                    return $stateClass;
-                }
-
-                $morph = $stateClass::getMorphClass();
-                if (is_string($morph) && strcasecmp($morph, $value) === 0) {
-                    return $stateClass;
-                }
-
-                if (strcasecmp(class_basename($stateClass), $value) === 0) {
-                    return $stateClass;
-                }
-            }
+            return $stateBaseClass::all();
         } catch (Throwable) {
-            return $value;
+            return [];
         }
+    }
 
-        return $value;
+    /**
+     * Whether $value matches $stateClass's `code()`, `label()`, morph class, or
+     * short class name, case-insensitively.
+     */
+    private function stateMatchesValue(string $stateClass, string $value): bool
+    {
+        $morph = $stateClass::getMorphClass();
+
+        return (method_exists($stateClass, 'code') && strcasecmp((string) $stateClass::code(), $value) === 0)
+            || (method_exists($stateClass, 'label') && strcasecmp((string) $stateClass::label(), $value) === 0)
+            || (is_string($morph) && strcasecmp($morph, $value) === 0)
+            || strcasecmp(class_basename($stateClass), $value) === 0;
     }
 
     /**
